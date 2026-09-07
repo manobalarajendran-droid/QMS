@@ -20,6 +20,15 @@ const LEVEL_LABEL: Record<string, string> = {
   'L4': 'Forms & Records',
 };
 
+/** Seed reviewDate values are DD-MM-YYYY, which `new Date(string)` misparses as MM-DD-YYYY (or Invalid Date when day > 12). */
+function parseDDMMYYYY(value: string): Date | null {
+  const match = value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (!match) return null;
+  const [, day, month, year] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 export function DMLManager() {
   const records = useDMLStore((s) => s.records);
   const addRecord = useDMLStore((s) => s.addRecord);
@@ -67,7 +76,8 @@ export function DMLManager() {
 
   const needsReview = records.filter((r) => {
     if (!r.reviewDate) return false;
-    const rd = new Date(r.reviewDate);
+    const rd = parseDDMMYYYY(r.reviewDate);
+    if (!rd) return false;
     const soon = new Date(); soon.setMonth(soon.getMonth() + 2);
     return rd < soon && r.status === 'Published';
   });
