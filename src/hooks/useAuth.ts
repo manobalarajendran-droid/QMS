@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
 import { createElement, type ReactNode } from 'react';
 import { apiFetch } from '../lib/apiClient';
+import { useAppMode } from './useAppMode';
+import { useAuthStore } from '../store/useAuthStore';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -39,7 +41,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
   const [isLoading, setIsLoading] = useState<boolean>(() => !!localStorage.getItem(TOKEN_KEY));
 
-  const isAuthenticated = !!user && !!token;
+  // Standalone (local-only) deployments have no server to authenticate
+  // against and no login screen (see App.tsx), so `user`/`token` above stay
+  // null forever and every role-gated control in the app silently vanishes.
+  // Bridge to the local identity store instead, so role checks resolve.
+  const { mode } = useAppMode();
+  const localProfile = useAuthStore((s) => s.currentUser);
+  const ensureLocalUser = useAuthStore((s) => s.ensureLocalUser);
+
+  useEffect(() => {
+    if (mode === 'standalone') ensureLocalUser();
+  }, [mode, ensureLocalUser]);
+
+  const standaloneUser = useMemo<AuthUser | null>(() => {
+    if (mode !== 'standalone' || !localProfile) return null;
+    return {
+      id: localProfile.id,
+      email: localProfile.email,
+      name: localProfile.displayName,
+      role: localProfile.role,
+      orgId: 'standalone',
+    };
+  }, [mode, localProfile]);
+
+  const effectiveUser = mode === 'standalone' ? standaloneUser : user;
+  const isAuthenticated = mode === 'standalone' ? !!standaloneUser : (!!user && !!token);
 
   // Persist / clear tokens in localStorage
   const storeTokens = useCallback((accessToken: string, refreshToken: string) => {
@@ -162,16 +188,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<AuthState>(
     () => ({
-      user,
+      user: effectiveUser,
       token,
       isAuthenticated,
-      isLoading,
+      isLoading: mode === 'standalone' ? false : isLoading,
       login,
       register,
       logout,
       refreshToken: refreshTokenFn,
     }),
-    [user, token, isAuthenticated, isLoading, login, register, logout, refreshTokenFn],
+    [effectiveUser, token, isAuthenticated, isLoading, mode, login, register, logout, refreshTokenFn],
   );
 
   return createElement(AuthContext.Provider, { value }, children);

@@ -166,6 +166,14 @@ interface AuthState {
   /** Get permissions for current user */
   getPermissions: () => RolePermissions | null;
   hasPermission: (permission: keyof RolePermissions) => boolean;
+  /**
+   * Standalone (local-only) deployments have no login screen and no server
+   * to authenticate against, so there is otherwise no way to ever populate
+   * `currentUser`. Auto-provision a working admin identity the first time
+   * the app runs locally with nobody registered yet. No-op once any user
+   * exists, so it never overwrites a real registered identity.
+   */
+  ensureLocalUser: () => void;
 }
 
 /** Simple hash for client-side password storage (NOT production-grade — backend should handle this) */
@@ -266,6 +274,18 @@ export const useAuthStore = create<AuthState>()(
       hasPermission: (permission) => {
         const perms = get().getPermissions();
         return perms ? perms[permission] : false;
+      },
+
+      ensureLocalUser: () => {
+        if (get().currentUser || get().users.length > 0) return;
+        const admin: UserProfile = {
+          id: 'local-admin',
+          email: 'mr@local.qatrial',
+          displayName: 'Plant-Tech MR',
+          role: 'admin',
+          signatureVerified: false,
+        };
+        set({ users: [admin], currentUser: admin });
       },
     }),
     {
