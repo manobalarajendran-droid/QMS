@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCalibStore } from '../../store/useCalibStore';
 import type { CalibStatus } from '../../store/useCalibStore';
 import { Settings, Plus, AlertTriangle, CheckCircle2, Clock, MapPin, Hash, Search } from 'lucide-react';
@@ -8,11 +8,24 @@ import { StatusBadge } from '../shared/StatusBadge';
 export function CalibrationRegister() {
   const records = useCalibStore(s => s.records);
   const addRecord = useCalibStore(s => s.addRecord);
-  const updateRecord = useCalibStore(s => s.updateRecord);
+  const updateRecordInStore = useCalibStore(s => s.updateRecord);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+  const savedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const updateRecord: typeof updateRecordInStore = (id, patch) => {
+    updateRecordInStore(id, patch);
+    setJustSaved(true);
+    if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
+    savedTimeoutRef.current = setTimeout(() => setJustSaved(false), 1500);
+  };
+
+  useEffect(() => () => {
+    if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
+  }, []);
 
   // Auto-calculate status based on nextCalibDate
   const processedRecords = records.map(r => {
@@ -116,15 +129,23 @@ export function CalibrationRegister() {
                     <input value={selected.equipName} onChange={e => updateRecord(selected.id, { equipName: e.target.value })} className="text-sm bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 outline-none w-full max-w-md text-slate-600 dark:text-slate-400" />
                   </div>
                 </div>
-                <select
-                  value={selected.status}
-                  onChange={e => updateRecord(selected.id, { status: e.target.value as CalibStatus })}
-                  className="text-sm border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"
-                >
-                  <option>Active</option>
-                  <option>Out of Service</option>
-                  <option>Scrapped</option>
-                </select>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`text-xs font-medium flex items-center gap-1 text-green-600 dark:text-green-400 transition-opacity duration-300 ${justSaved ? 'opacity-100' : 'opacity-0'}`}
+                    aria-live="polite"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Saved
+                  </span>
+                  <select
+                    value={selected.status}
+                    onChange={e => updateRecord(selected.id, { status: e.target.value as CalibStatus })}
+                    className="text-sm border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"
+                  >
+                    <option>Active</option>
+                    <option>Out of Service</option>
+                    <option>Scrapped</option>
+                  </select>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-6 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
