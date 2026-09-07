@@ -32,7 +32,7 @@ export function Sidebar({ activeTab, setActiveTab, setShowTeam, setShowAuditTrai
     ? { name: authUser.name, role: authUser.role }
     : localUser
       ? { name: localUser.displayName, role: localUser.role }
-      : { name: 'Plant-Tech MR', role: 'Management Representative' };
+      : { name: 'Plant-Tech MR', role: 'admin' };
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
     'command_center': true,
