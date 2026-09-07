@@ -93,7 +93,9 @@
     "settings": "Settings",
     "optional": "Optional",
     "actions": "Actions",
-    "settings": "Settings"
+    "settings": "Settings",
+    "saving": "Saving...",
+    "and": "and"
   },
   "requirements": {
     "id": "ID",
@@ -1694,20 +1696,5 @@
     "acknowledged": "Acknowledged",
     "version": "Version",
     "noDistributions": "No distributions yet."
-  },
-  "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "actions": "Actions",
-    "back": "Back",
-    "next": "Next",
-    "yes": "Yes",
-    "no": "No",
-    "none": "None",
-    "saving": "Saving...",
-    "settings": "Settings",
-    "and": "and"
   }
 }

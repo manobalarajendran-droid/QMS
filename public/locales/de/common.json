@@ -91,7 +91,9 @@
     "required": "Pflichtfeld",
     "optional": "Optional",
     "actions": "Aktionen",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "saving": "Speichern...",
+    "and": "und"
   },
   "requirements": {
     "id": "ID",
@@ -1490,20 +1492,5 @@
     "acknowledged": "Bestätigt",
     "version": "Version",
     "noDistributions": "Noch keine Verteilungen."
-  },
-  "common": {
-    "save": "Speichern",
-    "cancel": "Abbrechen",
-    "delete": "Löschen",
-    "edit": "Bearbeiten",
-    "actions": "Aktionen",
-    "back": "Zurück",
-    "next": "Weiter",
-    "yes": "Ja",
-    "no": "Nein",
-    "none": "Keine",
-    "saving": "Speichern...",
-    "settings": "Einstellungen",
-    "and": "und"
   }
 }
