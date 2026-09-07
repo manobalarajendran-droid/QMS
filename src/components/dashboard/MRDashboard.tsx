@@ -5,8 +5,13 @@ import { useObjectivesStore } from '../../store/useObjectivesStore';
 import { ShieldCheck, CheckCircle, Clock, Info, Target, FileWarning, ArrowUpRight, Minus } from 'lucide-react';
 import { useMemo } from 'react';
 import { StatusBadge } from '../shared/StatusBadge';
+import type { ViewTab } from '../../types';
 
-export function MRDashboard() {
+interface MRDashboardProps {
+  onNavigate: (tab: ViewTab) => void;
+}
+
+export function MRDashboard({ onNavigate }: MRDashboardProps) {
   const ncrRecords = useNCRStore((s) => s.records);
   const tuvRecords = useTUVStore((s) => s.records);
   const csiRecords = useCSIStore((s) => s.records);
@@ -54,7 +59,11 @@ export function MRDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Open NCRs */}
-        <div className="glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-red-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40">
+        <button
+          type="button"
+          onClick={() => onNavigate('deviations')}
+          className="text-left glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-red-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40 cursor-pointer"
+        >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Open NCRs</h3>
             <div className="p-2.5 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"><FileWarning className="w-5 h-5" /></div>
@@ -66,10 +75,14 @@ export function MRDashboard() {
             </div>
           </div>
           <div className="text-xs text-slate-500 mt-1">Non-conformance reports awaiting closure</div>
-        </div>
+        </button>
 
         {/* KPI 2: Overdue Objectives */}
-        <div className="glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-amber-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40">
+        <button
+          type="button"
+          onClick={() => onNavigate('objectives')}
+          className="text-left glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-amber-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40 cursor-pointer"
+        >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Overdue Objectives</h3>
             <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"><Target className="w-5 h-5" /></div>
@@ -81,10 +94,14 @@ export function MRDashboard() {
             </div>
           </div>
           <div className="text-xs text-slate-500 mt-1">Action required by department heads</div>
-        </div>
+        </button>
 
         {/* KPI 3: Next Audit */}
-        <div className="glass-card-accent rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-indigo-500 shadow-lg text-slate-900 dark:text-white">
+        <button
+          type="button"
+          onClick={() => onNavigate('tuv_tracker')}
+          className="text-left glass-card-accent rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-indigo-500 shadow-lg text-slate-900 dark:text-white cursor-pointer"
+        >
           <div className="flex items-center justify-between mb-3 opacity-90">
             <h3 className="font-semibold text-sm">Next TÜV Audit</h3>
             <div className="p-2.5 rounded-xl bg-indigo-500/10 dark:bg-white/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"><Clock className="w-5 h-5" /></div>
@@ -94,10 +111,14 @@ export function MRDashboard() {
             <div className="text-sm opacity-80">Days</div>
           </div>
           <div className="text-xs opacity-70 mt-1">Surveillance No. 3 Preparation</div>
-        </div>
+        </button>
 
         {/* KPI 4: Avg CSI */}
-        <div className="glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-emerald-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40">
+        <button
+          type="button"
+          onClick={() => onNavigate('pms')}
+          className="text-left glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-emerald-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40 cursor-pointer"
+        >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Average CSI Score</h3>
             <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"><CheckCircle className="w-5 h-5" /></div>
@@ -109,7 +130,7 @@ export function MRDashboard() {
             </div>
           </div>
           <div className="text-xs text-slate-500 mt-1">Across all recent projects</div>
-        </div>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

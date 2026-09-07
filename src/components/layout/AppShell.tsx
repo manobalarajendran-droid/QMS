@@ -252,7 +252,7 @@ export function AppShell() {
               ) : (
                 <Suspense fallback={<TabSpinner />}>
                   {/* ── PTA QMS Primary Navigation ────────────────────────── */}
-                  {activeTab === 'mr_dashboard' && <MRDashboard />}
+                  {activeTab === 'mr_dashboard' && <MRDashboard onNavigate={setActiveTab} />}
                   {activeTab === 'deviations' && <NCRWorkflow />}
                   {activeTab === 'audit_records' && <AuditProgramme />}
                   {activeTab === 'tuv_tracker' && <TUVTracker />}
