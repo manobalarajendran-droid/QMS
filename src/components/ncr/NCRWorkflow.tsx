@@ -433,28 +433,30 @@ function NCRFormModal({ onClose, onSubmit }: { onClose: () => void, onSubmit: (d
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-surface w-full max-w-2xl rounded-xl p-6 shadow-2xl border border-border">
         <h3 className="text-xl font-bold mb-4">Create New NCR</h3>
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <input placeholder="Reference" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.ref} onChange={e => setFormData({...formData, ref: e.target.value})} required />
-          <input placeholder="Project" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.project} onChange={e => setFormData({...formData, project: e.target.value})} required />
-          <input placeholder="Raised By" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.raisedBy} onChange={e => setFormData({...formData, raisedBy: e.target.value})} required />
-          <input placeholder="Assigned To (Action Owner)" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.corrBy} onChange={e => setFormData({...formData, corrBy: e.target.value})} required />
-          <input placeholder="Auditee Dept" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.auditeeDept} onChange={e => setFormData({...formData, auditeeDept: e.target.value})} required />
-          <select className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.classification} onChange={e => setFormData({...formData, classification: e.target.value as any})}>
-            <option value="NCR">NCR</option>
-            <option value="Potential NCR">Potential NCR</option>
-            <option value="Observation">Observation</option>
-          </select>
-          <div className="col-span-2">
-            <textarea placeholder="Description" className="border border-border bg-surface p-2 rounded w-full focus:ring-2 focus:ring-accent outline-none" rows={3} value={formData.desc} onChange={e => setFormData({...formData, desc: e.target.value})} required />
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }}>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <input placeholder="Reference" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.ref} onChange={e => setFormData({...formData, ref: e.target.value})} required />
+            <input placeholder="Project" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.project} onChange={e => setFormData({...formData, project: e.target.value})} required />
+            <input placeholder="Raised By" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.raisedBy} onChange={e => setFormData({...formData, raisedBy: e.target.value})} required />
+            <input placeholder="Assigned To (Action Owner)" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.corrBy} onChange={e => setFormData({...formData, corrBy: e.target.value})} required />
+            <input placeholder="Auditee Dept" className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.auditeeDept} onChange={e => setFormData({...formData, auditeeDept: e.target.value})} required />
+            <select className="border border-border bg-surface p-2 rounded focus:ring-2 focus:ring-accent outline-none" value={formData.classification} onChange={e => setFormData({...formData, classification: e.target.value as any})}>
+              <option value="NCR">NCR</option>
+              <option value="Potential NCR">Potential NCR</option>
+              <option value="Observation">Observation</option>
+            </select>
+            <div className="col-span-2">
+              <textarea placeholder="Description" className="border border-border bg-surface p-2 rounded w-full focus:ring-2 focus:ring-accent outline-none" rows={3} value={formData.desc} onChange={e => setFormData({...formData, desc: e.target.value})} required />
+            </div>
+            <div className="col-span-2">
+              <textarea placeholder="Objective Evidence" className="border border-border bg-surface p-2 rounded w-full focus:ring-2 focus:ring-accent outline-none" rows={2} value={formData.objEvidence} onChange={e => setFormData({...formData, objEvidence: e.target.value})} required />
+            </div>
           </div>
-          <div className="col-span-2">
-            <textarea placeholder="Objective Evidence" className="border border-border bg-surface p-2 rounded w-full focus:ring-2 focus:ring-accent outline-none" rows={2} value={formData.objEvidence} onChange={e => setFormData({...formData, objEvidence: e.target.value})} required />
+          <div className="flex justify-end gap-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 border border-border rounded hover:bg-surface-hover">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-accent text-white rounded hover:bg-accent-hover">Submit</button>
           </div>
-        </div>
-        <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 border border-border rounded hover:bg-surface-hover">Cancel</button>
-          <button onClick={() => onSubmit(formData)} className="px-4 py-2 bg-accent text-white rounded hover:bg-accent-hover">Submit</button>
-        </div>
+        </form>
       </div>
     </div>
   );
