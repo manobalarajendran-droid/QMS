@@ -112,14 +112,28 @@ export function ImportV12() {
     const csData = extract('SEED_CS');
     const dmlData = extract('SEED_DML');
     const mrmData = extract('SEED_MRM');
+    // Legacy v12 HTML exports never contained these entities — initialise
+    // them as empty so the preview and import status match the shape
+    // produced by the JSON backup branch instead of leaving them undefined.
+    const dcrData: any[] = [];
+    const tuvData: any[] = [];
+    const auditsData: any[] = [];
+    const actionsData: any[] = [];
+    const evfileData: any[] = [];
+    const customDeptsData: any[] = [];
 
-    setExtractedData({ ncrData, objData, csData, dmlData, mrmData });
+    setExtractedData({ ncrData, objData, csData, dmlData, mrmData, dcrData, tuvData, auditsData, actionsData, evfileData, customDeptsData });
     setPreview({
       ncr: ncrData.length,
       obj: objData.length,
       cs: csData.length,
       dml: dmlData.length,
       mrm: mrmData.length,
+      dcr: dcrData.length,
+      tuv: tuvData.length,
+      audits: auditsData.length,
+      actions: actionsData.length,
+      evfile: evfileData.length,
     });
     setLoading(false);
   };
@@ -131,48 +145,48 @@ export function ImportV12() {
     
     try {
       extractedData.ncrData.forEach((item: any) => ncrStore.addRecord({ ...item, status: item.status || 'Open' }));
-      newStatus.ncr = 'Success';
-    } catch (e) { newStatus.ncr = 'Error'; }
+      newStatus.ncr = { count: extractedData.ncrData.length, error: false };
+    } catch (e) { newStatus.ncr = { count: 0, error: true }; }
 
     try {
       extractedData.objData.forEach((item: any) => objStore.addRecord({ ...item, status: item.status || 'Not Started' }));
-      newStatus.obj = 'Success';
-    } catch (e) { newStatus.obj = 'Error'; }
+      newStatus.obj = { count: extractedData.objData.length, error: false };
+    } catch (e) { newStatus.obj = { count: 0, error: true }; }
 
     try {
       extractedData.csData.forEach((item: any) => csStore.addRecord({ ...item, status: item.status || 'open' }));
-      newStatus.cs = 'Success';
-    } catch (e) { newStatus.cs = 'Error'; }
+      newStatus.cs = { count: extractedData.csData.length, error: false };
+    } catch (e) { newStatus.cs = { count: 0, error: true }; }
 
     try {
       extractedData.dmlData.forEach((item: any) => dmlStore.addRecord({ ...item, status: item.status || 'Draft' }));
-      newStatus.dml = 'Success';
-    } catch (e) { newStatus.dml = 'Error'; }
+      newStatus.dml = { count: extractedData.dmlData.length, error: false };
+    } catch (e) { newStatus.dml = { count: 0, error: true }; }
 
     try {
       extractedData.mrmData.forEach((item: any) => mrmStore.addRecord({ ...item, status: item.status || 'Scheduled' }));
-      newStatus.mrm = 'Success';
-    } catch (e) { newStatus.mrm = 'Error'; }
+      newStatus.mrm = { count: extractedData.mrmData.length, error: false };
+    } catch (e) { newStatus.mrm = { count: 0, error: true }; }
 
     try {
       extractedData.dcrData.forEach((item: any) => dcrStore.addRecord({ ...item, status: item.status || 'Draft' }));
-      newStatus.dcr = 'Success';
-    } catch (e) { newStatus.dcr = 'Error'; }
+      newStatus.dcr = { count: extractedData.dcrData.length, error: false };
+    } catch (e) { newStatus.dcr = { count: 0, error: true }; }
 
     try {
       extractedData.tuvData.forEach((item: any) => tuvStore.addRecord({ ...item, status: item.status || 'Open' }));
-      newStatus.tuv = 'Success';
-    } catch (e) { newStatus.tuv = 'Error'; }
+      newStatus.tuv = { count: extractedData.tuvData.length, error: false };
+    } catch (e) { newStatus.tuv = { count: 0, error: true }; }
 
     try {
       extractedData.auditsData.forEach((item: any) => auditStore.addRecord({ ...item, status: item.status || 'Planned' }));
-      newStatus.audits = 'Success';
-    } catch (e) { newStatus.audits = 'Error'; }
+      newStatus.audits = { count: extractedData.auditsData.length, error: false };
+    } catch (e) { newStatus.audits = { count: 0, error: true }; }
 
     try {
       extractedData.actionsData.forEach((item: any) => capaStore.addRecord({ ...item, status: item.status || 'Open' }));
-      newStatus.actions = 'Success';
-    } catch (e) { newStatus.actions = 'Error'; }
+      newStatus.actions = { count: extractedData.actionsData.length, error: false };
+    } catch (e) { newStatus.actions = { count: 0, error: true }; }
 
     try {
       if (extractedData.evfileData && extractedData.evfileData.length > 0) {
@@ -188,15 +202,15 @@ export function ImportV12() {
           uploadedBy: item.uploadedBy || 'System'
         } as any));
       }
-      newStatus.evfile = 'Success';
-    } catch (e) { newStatus.evfile = 'Error'; }
+      newStatus.evfile = { count: extractedData.evfileData?.length || 0, error: false };
+    } catch (e) { newStatus.evfile = { count: 0, error: true }; }
 
     try {
       if (extractedData.customDeptsData && extractedData.customDeptsData.length > 0) {
         // Ignored for now
       }
-      newStatus.customDepts = 'Success';
-    } catch (e) { newStatus.customDepts = 'Error'; }
+      newStatus.customDepts = { count: 0, error: false };
+    } catch (e) { newStatus.customDepts = { count: 0, error: true }; }
 
     setStatus(newStatus);
     setLoading(false);
@@ -246,10 +260,13 @@ export function ImportV12() {
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
           <h3 className="text-lg font-bold mb-4">Import Status</h3>
           <ul className="space-y-2">
-            {Object.entries(status).map(([key, val]) => (
+            {Object.entries(status).map(([key, val]: [string, any]) => (
               <li key={key} className="flex justify-between items-center py-2 border-b last:border-0">
                 <span className="uppercase font-medium text-slate-700 dark:text-slate-200">{key}</span>
-                {val === 'Success' ? <CheckCircle className="text-green-500 w-5 h-5" /> : <XCircle className="text-red-500 w-5 h-5" />}
+                <span className="flex items-center gap-2">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">{val.count} imported</span>
+                  {val.error ? <XCircle className="text-red-500 w-5 h-5" /> : <CheckCircle className="text-green-500 w-5 h-5" />}
+                </span>
               </li>
             ))}
           </ul>
