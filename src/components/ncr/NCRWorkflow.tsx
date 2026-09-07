@@ -359,17 +359,25 @@ function NCRDetailModal({
             )}
 
             {/* Workflow progression (admin override) */}
-            {isMR && (
-              <section className="mt-8 pt-6 border-t border-border border-dashed flex items-center gap-4 bg-surface-secondary/50 p-4 rounded-xl">
-                <span className="text-sm font-semibold text-text-tertiary uppercase tracking-wider">Workflow Actions:</span>
-                <div className="flex gap-2 flex-wrap">
-                  {record.status === 'Open' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'Investigation')}>Start Investigation</button>}
-                  {record.status === 'Investigation' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'RootCause')}>Request RCA</button>}
-                  {record.status === 'RootCause' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'CAPA_Planned')}>Start CAPA Planning</button>}
-                  {record.status === 'CAPA_Planned' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'CAPA_InProgress')}>Start CAPA</button>}
-                  {record.status === 'CAPA_InProgress' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'Verification')}>Request Verification</button>}
-                </div>
-              </section>
+            {['Open', 'Investigation', 'RootCause', 'CAPA_Planned', 'CAPA_InProgress'].includes(record.status) && (
+              isMR ? (
+                <section className="mt-8 pt-6 border-t border-border border-dashed flex items-center gap-4 bg-surface-secondary/50 p-4 rounded-xl">
+                  <span className="text-sm font-semibold text-text-tertiary uppercase tracking-wider">Workflow Actions:</span>
+                  <div className="flex gap-2 flex-wrap">
+                    {record.status === 'Open' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'Investigation')}>Start Investigation</button>}
+                    {record.status === 'Investigation' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'RootCause')}>Request RCA</button>}
+                    {record.status === 'RootCause' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'CAPA_Planned')}>Start CAPA Planning</button>}
+                    {record.status === 'CAPA_Planned' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'CAPA_InProgress')}>Start CAPA</button>}
+                    {record.status === 'CAPA_InProgress' && <button className="px-4 py-1.5 text-sm font-medium bg-surface hover:bg-surface-hover border border-border rounded-md shadow-sm transition-colors" onClick={() => updateStatus(record.id, 'Verification')}>Request Verification</button>}
+                  </div>
+                </section>
+              ) : (
+                <section className="mt-8 pt-6 border-t border-border border-dashed">
+                  <div className="bg-red-50 border border-red-100 p-4 rounded-lg dark:bg-red-900/20 dark:border-red-800">
+                    <p className="text-sm text-red-600 font-medium">Only Management Representative (Admin / QA Manager) can advance this NCR's workflow stage.</p>
+                  </div>
+                </section>
+              )
             )}
           </div>
 
