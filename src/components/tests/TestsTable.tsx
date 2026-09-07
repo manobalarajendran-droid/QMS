@@ -22,7 +22,7 @@ import { ConfirmDialog } from '../shared/ConfirmDialog';
 import { EmptyState } from '../shared/EmptyState';
 import { TestModal } from './TestModal';
 import { EvidencePanel } from '../evidence/EvidencePanel';
-import { useProjectData } from '../../context/ProjectDataContext';
+import { useProjectData } from '../../context/useProjectData';
 import { getProjectId } from '../../lib/projectUtils';
 import type { Test } from '../../types';
 

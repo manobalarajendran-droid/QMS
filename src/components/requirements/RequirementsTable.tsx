@@ -30,7 +30,7 @@ import { TestGenerationPanel } from '../ai/TestGenerationPanel';
 import { RiskClassificationPanel } from '../ai/RiskClassificationPanel';
 import { QualityCheckPanel } from '../ai/QualityCheckPanel';
 import { isApproved } from '../../lib/approvalHelpers';
-import { useProjectData } from '../../context/ProjectDataContext';
+import { useProjectData } from '../../context/useProjectData';
 import { getProjectId } from '../../lib/projectUtils';
 import type { Requirement } from '../../types';
 

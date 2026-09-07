@@ -16,7 +16,7 @@ import { useTestsStore } from '../../store/useTestsStore';
 import { useAuditStore } from '../../store/useAuditStore';
 import { useAppMode } from '../../hooks/useAppMode';
 import { apiFetch } from '../../lib/apiClient';
-import { useProjectData } from '../../context/ProjectDataContext';
+import { useProjectData } from '../../context/useProjectData';
 import { generateId } from '../../lib/idGenerator';
 import type { IndustryVertical } from '../../types';
 import type { DemoProject } from '../../lib/demoProjects';
