@@ -184,6 +184,7 @@ export function CommentThread({ entityType, entityId, projectId }: CommentThread
       }
     } else {
       const comment: Comment = {
+        // eslint-disable-next-line react-hooks/purity -- runs only inside this submit handler, not during render
         id: `comment-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
         entityType,
         entityId,

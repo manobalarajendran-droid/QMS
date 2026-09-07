@@ -1,6 +1,6 @@
 import { render, act, fireEvent, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ObjectivesDashboard } from '../components/objectives/ObjectivesDashboard';
 import { useClientIntakeStore } from '../store/useClientIntakeStore';
 import { useObjectivesStore } from '../store/useObjectivesStore';
@@ -20,10 +20,12 @@ describe('ObjectivesDashboard Memoization Stress Harness', () => {
   });
 
   it('renders successfully and maintains state under 500 rapid parent re-renders', () => {
-    let renderTrigger: () => void;
+    let renderTrigger: () => void = () => {};
     function ParentHarness() {
       const [count, setCount] = useState(0);
-      renderTrigger = () => setCount(c => c + 1);
+      useEffect(() => {
+        renderTrigger = () => setCount(c => c + 1);
+      });
       return (
         <div data-testid="parent-wrapper" data-count={count}>
           <ObjectivesDashboard />

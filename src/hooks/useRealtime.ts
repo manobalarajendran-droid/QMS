@@ -74,25 +74,33 @@ export function useRealtime(projectId: string) {
     es.addEventListener('entity.updated', (e: MessageEvent) => {
       try {
         setLastEvent({ event: 'entity.updated', data: JSON.parse(e.data) });
-      } catch {}
+      } catch {
+        // ignore parse errors
+      }
     });
 
     es.addEventListener('entity.created', (e: MessageEvent) => {
       try {
         setLastEvent({ event: 'entity.created', data: JSON.parse(e.data) });
-      } catch {}
+      } catch {
+        // ignore parse errors
+      }
     });
 
     es.addEventListener('entity.deleted', (e: MessageEvent) => {
       try {
         setLastEvent({ event: 'entity.deleted', data: JSON.parse(e.data) });
-      } catch {}
+      } catch {
+        // ignore parse errors
+      }
     });
 
     es.addEventListener('comment.new', (e: MessageEvent) => {
       try {
         setLastEvent({ event: 'comment.new', data: JSON.parse(e.data) });
-      } catch {}
+      } catch {
+        // ignore parse errors
+      }
     });
 
     es.onerror = () => {

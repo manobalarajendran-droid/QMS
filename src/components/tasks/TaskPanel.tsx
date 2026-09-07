@@ -150,6 +150,7 @@ export function TaskPanel({ entityType, entityId, projectId }: TaskPanelProps) {
       }
     } else {
       const task: QTask = {
+        // eslint-disable-next-line react-hooks/purity -- runs only inside this submit handler, not during render
         id: `task-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
         projectId,
         title: formTitle,

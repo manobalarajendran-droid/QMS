@@ -213,12 +213,12 @@ export function CalibrationRegister() {
 }
 
 function CalibrationFormModal({ onClose, onSubmit }: { onClose: () => void, onSubmit: (data: any) => void }) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     equipNo: '', equipName: '', manufacturer: '', serialNo: '',
     location: '', freqMonths: 12, lastCalibDate: new Date().toISOString().split('T')[0],
     nextCalibDate: new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0],
     certificateNo: '', notes: ''
-  });
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
