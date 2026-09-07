@@ -277,6 +277,7 @@
     },
     "generateReqsForGaps": "Generate Requirements for All Gaps",
     "noProvider": "No AI provider configured. Go to Settings to add one.",
+    "noProviderInSettings": "No AI provider configured. Use the Add Provider button above.",
     "providerSettings": "LLM Providers",
     "addProvider": "Add Provider",
     "testConnection": "Test",

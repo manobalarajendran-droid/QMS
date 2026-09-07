@@ -244,7 +244,7 @@ export function ProviderSettings() {
       {/* Provider list */}
       {providers.length === 0 ? (
         <div className="bg-surface rounded-xl border border-border p-8 text-center">
-          <p className="text-text-secondary">{t('ai.noProvider')}</p>
+          <p className="text-text-secondary">{t('ai.noProviderInSettings')}</p>
         </div>
       ) : (
         <div className="space-y-3">
