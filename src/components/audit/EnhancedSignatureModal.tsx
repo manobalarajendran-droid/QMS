@@ -66,6 +66,7 @@ export function EnhancedSignatureModal({
     if (!open) return;
 
     if (initialMeaning && allowedMeanings.includes(initialMeaning)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resets local editable state when the modal opens/props change, not derived state
       setMeaning(initialMeaning);
       return;
     }

@@ -39,6 +39,7 @@ export function ComplaintForm({ open, onClose, onSave, initialData }: ComplaintF
 
   useEffect(() => {
     if (initialData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resets form fields when the edit-target prop changes, not derived state
       setFormData({
         ...initialData,
         reportDate: initialData.reportDate

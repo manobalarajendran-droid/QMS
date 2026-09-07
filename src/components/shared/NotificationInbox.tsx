@@ -92,6 +92,7 @@ export function NotificationInbox() {
   // Poll unread count every 30s in server mode
   useEffect(() => {
     if (!isServer) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount, state updates happen after await, not synchronously during render
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
@@ -100,6 +101,7 @@ export function NotificationInbox() {
   // Fetch full list when dropdown opens
   useEffect(() => {
     if (open && isServer) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch triggered by dropdown opening, state updates happen after await
       fetchNotifications();
     }
   }, [open, isServer, fetchNotifications]);

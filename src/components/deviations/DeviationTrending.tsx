@@ -37,6 +37,7 @@ export function DeviationTrending() {
 
   useEffect(() => {
     if (!projectId || !token) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets loading flag for the upcoming fetch triggered by a projectId/token change
     setLoading(true);
     apiFetch<{ trending: TrendingData }>(`/deviations/trending?projectId=${encodeURIComponent(projectId)}`)
       .then((data) => {

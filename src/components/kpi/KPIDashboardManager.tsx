@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, BarChart3, Lock, Globe, Trash2, Users } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -34,7 +34,7 @@ export function KPIDashboardManager() {
   const canEdit = roleHasPermission(user?.role, 'canEdit');
   const canAdmin = roleHasPermission(user?.role, 'canAdmin');
 
-  const fetchDashboards = async () => {
+  const fetchDashboards = useCallback(async () => {
     if (!token) return;
     try {
       const data = await apiFetch<{ dashboards: DashboardSummary[] }>('/kpi/dashboards');
@@ -43,11 +43,12 @@ export function KPIDashboardManager() {
       setError(err instanceof Error ? err.message : 'Failed to load dashboards');
     }
     setLoading(false);
-  };
+  }, [token]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount, state updates happen after await, not synchronously during render
     fetchDashboards();
-  }, [token]);
+  }, [fetchDashboards]);
 
   const handleCreate = async () => {
     if (!canEdit) {

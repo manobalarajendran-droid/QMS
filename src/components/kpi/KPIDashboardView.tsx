@@ -72,6 +72,7 @@ export function KPIDashboardView({ dashboardId, onBack }: Props) {
   }, [token, dashboardId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount, state updates happen after await, not synchronously during render
     fetchDashboard();
     fetchData();
   }, [fetchDashboard, fetchData]);

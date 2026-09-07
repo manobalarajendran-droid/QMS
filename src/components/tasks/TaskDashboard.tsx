@@ -68,6 +68,7 @@ export function TaskDashboard() {
   }, [isServer]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch-on-mount (or sync local-store read), not a synchronous render-phase update
     fetchTasks();
   }, [fetchTasks]);
 
