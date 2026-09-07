@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import * as bcrypt from 'bcryptjs';
 import { prisma } from '../lib/prisma.js';
-import { authMiddleware, requireRole, requirePermission, getUser, VALID_ROLES } from '../middleware/auth.js';
+import { authMiddleware, requirePermission, getUser, VALID_ROLES } from '../middleware/auth.js';
 
 const users = new Hono();
 

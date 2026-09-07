@@ -206,14 +206,6 @@ supplierPortal.get('/:token/actions', async (c) => {
       return c.json({ message: error }, status);
     }
 
-    // Get all supplier audit IDs
-    const auditIds = (
-      await prisma.supplierAudit.findMany({
-        where: { supplierId: supplier.id },
-        select: { id: true },
-      })
-    ).map((a) => a.id);
-
     // Find open audit findings linked to those audits
     // AuditFinding references AuditRecord, not SupplierAudit directly
     // We'll return CAPA items linked to supplier audits as corrective actions

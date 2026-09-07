@@ -6,6 +6,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    env: {
+      JWT_SECRET: 'test-secret-at-least-32-chars-long-entropy-key-12345',
+    },
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}', 'server/**/*.{test,spec}.ts'],
     environmentMatchGlobs: [['server/**/*.{test,spec}.ts', 'node']],

@@ -151,7 +151,6 @@ projects.put('/:id', requirePermission('canEdit'), async (c) => {
 
 projects.delete('/:id', requirePermission('canDelete'), async (c) => {
   try {
-    const user = getUser(c);
     const { id } = c.req.param();
 
     const existing = await prisma.project.findUnique({ where: { id } });

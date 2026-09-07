@@ -4,7 +4,7 @@ import { setAuthStoreRef } from './useAuditStore';
 
 // ── User roles for RBAC ─────────────────────────────────────────────────────
 
-export type UserRole = 'admin' | 'qa_manager' | 'qa_engineer' | 'auditor' | 'reviewer';
+export type UserRole = 'admin' | 'qa_manager' | 'qa_engineer' | 'auditor' | 'reviewer' | 'department_spoc';
 
 export interface UserProfile {
   id: string;
@@ -37,6 +37,8 @@ export interface RolePermissions {
   canManageUsers: boolean;
   canViewAuditTrail: boolean;
   canExportData: boolean;
+  canEnforceCorrectiveActions: boolean;
+  canEscalateIssues: boolean;
 }
 
 export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
@@ -54,6 +56,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageUsers: true,
     canViewAuditTrail: true,
     canExportData: true,
+    canEnforceCorrectiveActions: true,
+    canEscalateIssues: true,
   },
   qa_manager: {
     canCreateRequirements: true,
@@ -69,6 +73,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageUsers: false,
     canViewAuditTrail: true,
     canExportData: true,
+    canEnforceCorrectiveActions: true,
+    canEscalateIssues: true,
   },
   qa_engineer: {
     canCreateRequirements: true,
@@ -84,6 +90,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageUsers: false,
     canViewAuditTrail: true,
     canExportData: true,
+    canEnforceCorrectiveActions: false,
+    canEscalateIssues: false,
   },
   auditor: {
     canCreateRequirements: false,
@@ -99,6 +107,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageUsers: false,
     canViewAuditTrail: true,
     canExportData: true,
+    canEnforceCorrectiveActions: false,
+    canEscalateIssues: false,
   },
   reviewer: {
     canCreateRequirements: false,
@@ -114,8 +124,28 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageUsers: false,
     canViewAuditTrail: true,
     canExportData: false,
+    canEnforceCorrectiveActions: false,
+    canEscalateIssues: false,
+  },
+  department_spoc: {
+    canCreateRequirements: false,
+    canEditRequirements: false,
+    canDeleteRequirements: false,
+    canCreateTests: false,
+    canEditTests: false,
+    canDeleteTests: false,
+    canApprove: true,
+    canSign: true,
+    canGenerateReports: true,
+    canConfigureAI: false,
+    canManageUsers: false,
+    canViewAuditTrail: true,
+    canExportData: true,
+    canEnforceCorrectiveActions: true,
+    canEscalateIssues: true,
   },
 };
+
 
 // ── Auth store ───────────────────────────────────────────────────────────────
 

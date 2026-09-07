@@ -25,3 +25,12 @@ dist-ssr
 articles/
 .claude/worktrees/
 .vercel
+.wrangler
+
+# Local tooling / secrets / scratch artifacts (not app source)
+.env
+.agents/
+.claude/
+artifacts/
+scratch/
+screenshots/

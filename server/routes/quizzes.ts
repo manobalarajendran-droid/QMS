@@ -45,7 +45,6 @@ quizzes.get('/', async (c) => {
 // Create quiz with questions
 quizzes.post('/', requirePermission('canEdit'), async (c) => {
   try {
-    const user = getUser(c);
     const body = await c.req.json();
 
     if (!body.courseId || !body.title) {
@@ -121,7 +120,6 @@ quizzes.get('/:id', async (c) => {
 // Update quiz
 quizzes.put('/:id', requirePermission('canEdit'), async (c) => {
   try {
-    const user = getUser(c);
     const { id } = c.req.param();
     const body = await c.req.json();
 
@@ -129,7 +127,7 @@ quizzes.put('/:id', requirePermission('canEdit'), async (c) => {
     if (!existing) return c.json({ message: 'Quiz not found' }, 404);
 
     // Update quiz fields
-    const quiz = await prisma.quiz.update({
+    await prisma.quiz.update({
       where: { id },
       data: {
         title: body.title ?? existing.title,

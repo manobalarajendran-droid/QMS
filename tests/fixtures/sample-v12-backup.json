@@ -1,0 +1,178 @@
+{
+  "_at": 1740925200000,
+  "saved": "2026-03-02T14:20:00.000Z",
+  "seedVer": 12,
+  "customDepts": null,
+  "nid": {
+    "cs": 21,
+    "dcr": 9,
+    "dml": 209,
+    "mrm": 3,
+    "ncr": 26,
+    "obj": 51,
+    "audits": 14,
+    "actions": 6
+  },
+  "cs": [
+    {
+      "id": 1,
+      "cl": "AR-RAZI",
+      "yr": "2025",
+      "obs": "More focus on Quality Work and Time",
+      "icon": "✔",
+      "proj": "TAM IV-2025 — Catalyst Bed R-4101 HDS",
+      "score": "0.88",
+      "rating": "Good",
+      "scores": {
+        "1A": 8, "1B": 9, "2A": 8, "2B": 8, "3A": 9, "3B": 8,
+        "4A": 8, "4B": 9, "5A": 7, "5B": 8, "6A": 7, "6B": 8,
+        "6C": 8, "7A": 7, "7B": 9, "7C": 9, "8A": 9, "8C": 8,
+        "8D": 9, "8E": 9, "9": 9
+      },
+      "projCode": "PTA-2025-001",
+      "clientName": "Abdullah Al-Ghamdi",
+      "clientDesig": "Turnaround Superintendent"
+    },
+    {
+      "id": 2,
+      "cl": "TASNEE",
+      "yr": "2025",
+      "obs": "Excellent turnaround performance",
+      "icon": "★",
+      "proj": "AA Unit SD-2025",
+      "score": "0.939",
+      "rating": "Excellent"
+    }
+  ],
+  "dcr": [
+    {
+      "id": 1,
+      "dcrNo": "DCR-2025-001",
+      "docNo": "PT/QCR/47",
+      "title": "Turnaround Flange Torque Verification",
+      "requestor": "T. Manobala",
+      "dept": "Operations",
+      "change": "Incorporate hydraulic tensioner calibration log reference",
+      "reason": "Client technical requirement update",
+      "st": "Approved",
+      "reviewedBy": "T. Manobala (MR)",
+      "reviewDate": "2025-02-10",
+      "approvedBy": "General Manager",
+      "approvalDate": "2025-02-15"
+    }
+  ],
+  "dml": [
+    {
+      "id": 1,
+      "no": "PT/QCR/01",
+      "tt": "Quality Management System Manual",
+      "dept": "Quality",
+      "sec": "Management",
+      "lv": "L1",
+      "rev": "04",
+      "dt": "2025-01-15",
+      "rd": "2026-01-15",
+      "st": "Active",
+      "iso": "4.4, 7.5"
+    },
+    {
+      "id": 2,
+      "no": "PT/SOP/OPS/02",
+      "title": "Catalyst Handling & Reactor Loading",
+      "dept": "Operations",
+      "sec": "Field Services",
+      "lv": "L2",
+      "rev": "02",
+      "dt": "2024-06-01",
+      "rd": "2025-06-01",
+      "st": "Active",
+      "iso": "8.5"
+    }
+  ],
+  "mrm": [
+    {
+      "id": 1,
+      "ref": "MRM-2025-02",
+      "dt": "2025-08-20",
+      "chr": "General Manager",
+      "att": "MANOBALA (IED/MR), Mubashir (HR), Shoaib (Projects), Zahid (HSE)",
+      "dec": "Approved 2025 Mid-Year Objectives and Quality Resource Allocations",
+      "st": "Approved",
+      "min": "Minutes_MRM_2025_02.pdf"
+    }
+  ],
+  "ncr": [
+    {
+      "id": 1,
+      "ref": "NCR-2025-001",
+      "dt": "2025-03-12",
+      "project": "SABIC Ibn Rushd TAM",
+      "raisedBy": "QA Inspector 1",
+      "auditeeDept": "Mechanical",
+      "clsType": "NCR",
+      "desc": "Uncalibrated torque wrench used on heat exchanger flange E-102",
+      "objEvidence": "Torque wrench serial TW-408 calibration tag expired 2025-02-28",
+      "rca": "Tool storekeeper released equipment without checking sticker",
+      "corrAction": "Re-torqued all 24 flange bolts using calibrated wrench TW-512",
+      "prevAction": "Automated calibration alert register implemented in store",
+      "st": "Closed",
+      "verifiedBy": "T. Manobala",
+      "verifiedDate": "2025-03-15",
+      "approvedBy": "MR Approver",
+      "approvalDate": "2025-03-16"
+    }
+  ],
+  "obj": [
+    {
+      "id": 1,
+      "dept": "Quality",
+      "desc": "Zero customer audit non-conformances in external audits",
+      "target": "100%",
+      "progress": 100,
+      "st": "Achieved",
+      "yr": "2025"
+    }
+  ],
+  "tuv": [
+    {
+      "id": 1,
+      "recNo": "TUV-REC-01",
+      "clause": "9.2 Internal Audit",
+      "desc": "Enhance auditor independence cross-departmental scheduling",
+      "owner": "T. Manobala",
+      "targetDate": "2025-05-30",
+      "st": "Closed",
+      "evidence": "Cross-department audit matrix approved in MRM-2025-02"
+    }
+  ],
+  "audits": [
+    {
+      "id": 1,
+      "ref": "IA-2025-01",
+      "dept": "Procurement & Warehouse",
+      "auditor": "External Lead Auditor",
+      "plannedDate": "2025-04-10",
+      "scope": "Supplier Evaluation & Calibration Control",
+      "st": "Completed"
+    }
+  ],
+  "actions": [
+    {
+      "id": 1,
+      "mrm": "MRM-2025-02",
+      "action": "Procure digital calibration management software license",
+      "owner": "IT / Quality",
+      "due": "2025-10-15",
+      "st": "Closed"
+    }
+  ],
+  "evfile": [
+    {
+      "id": 1,
+      "name": "Quality Policy 2025 Signed",
+      "category": "Mandatory Governance",
+      "docNo": "PTA-QP-01",
+      "st": "Active"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import type { JwtPayload } from './middleware/auth.js';
 
@@ -467,6 +468,7 @@ describe('server app contracts', () => {
     };
 
     prisma.requirement.findUnique.mockResolvedValue({ projectId: 'project-1' });
+    prisma.project.findFirst.mockResolvedValue({ id: 'project-1', name: 'Alpha', workspaceId: 'ws-1' });
     prisma.approval.findFirst
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(pendingApproval);
@@ -519,6 +521,7 @@ describe('server app contracts', () => {
       requestedBy: 'user-1',
     };
 
+    prisma.project.findFirst.mockResolvedValue({ id: 'project-1', name: 'Alpha', workspaceId: 'ws-1' });
     prisma.approval.findFirst.mockResolvedValue(pendingApproval);
     prisma.approval.findUnique.mockResolvedValue(pendingApproval);
 
@@ -638,7 +641,7 @@ describe('server app contracts', () => {
   });
 
   it('lists, measures completeness, downloads, and deletes evidence records', async () => {
-    const storagePath = path.join('/tmp', `qatrial-evidence-${Date.now()}-${Math.random().toString(16).slice(2)}.txt`);
+    const storagePath = path.join(os.tmpdir(), `qatrial-evidence-${Date.now()}-${Math.random().toString(16).slice(2)}.txt`);
     fs.writeFileSync(storagePath, 'hello evidence');
 
     const evidenceRecord = {
@@ -652,6 +655,7 @@ describe('server app contracts', () => {
       entityId: 'req-1',
     };
 
+    prisma.project.findFirst.mockResolvedValue({ id: 'project-1', name: 'Alpha', workspaceId: 'ws-1' });
     prisma.evidence.findMany
       .mockResolvedValueOnce([evidenceRecord])
       .mockResolvedValueOnce([

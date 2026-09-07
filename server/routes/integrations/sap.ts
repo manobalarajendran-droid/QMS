@@ -116,8 +116,6 @@ sap.post('/sync-batches', requirePermission('canEdit'), async (c) => {
       return c.json({ message: 'SAP QM not connected' }, 400);
     }
 
-    const config = integration.config as Record<string, any>;
-
     // Placeholder: In production, this would call SAP OData/RFC
     // e.g. GET ${config.baseUrl}/sap/opu/odata/sap/API_BATCH_SRV/A_Batch?$filter=Material eq '...'
     // For now, simulate fetching and return a sync summary

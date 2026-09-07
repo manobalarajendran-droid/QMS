@@ -124,7 +124,7 @@ export interface DashboardFilters {
   testStatus: TestStatus | 'All';
 }
 
-export type ViewTab = 'requirements' | 'tests' | 'dashboard' | 'reports' | 'settings' | 'design_control' | 'complaints' | 'suppliers' | 'batches' | 'training' | 'documents' | 'systems' | 'impact' | 'pms' | 'udi' | 'stability' | 'envmon' | 'audit_records' | 'workflows' | 'change_control' | 'deviations' | 'tasks' | 'kpi' | 'forms' | 'etmf' | 'econsent' | 'submissions' | 'scheduled_reports';
+export type ViewTab = 'requirements' | 'tests' | 'dashboard' | 'reports' | 'settings' | 'design_control' | 'complaints' | 'suppliers' | 'batches' | 'training' | 'documents' | 'systems' | 'impact' | 'pms' | 'udi' | 'stability' | 'envmon' | 'audit_records' | 'workflows' | 'change_control' | 'deviations' | 'tasks' | 'kpi' | 'forms' | 'etmf' | 'econsent' | 'submissions' | 'scheduled_reports' | 'mr_dashboard' | 'mrm' | 'dml' | 'tuv_tracker' | 'mrm_manager' | 'dml_manager' | 'objectives' | 'voc' | 'compliance_map' | 'dcr_workflow' | 'calibration_register' | 'import_v12';
 
 // ── Templates ─────────────────────────────────────────────────────────────────
 
@@ -192,6 +192,9 @@ export type AuditAction =
   | 'unlink'
   | 'approve'
   | 'reject'
+  | 'review'
+  | 'archive'
+  | 'unarchive'
   | 'sign'
   | 'export'
   | 'generate_report'
@@ -201,6 +204,25 @@ export type AuditAction =
   | 'login'
   | 'logout'
   | 'import';
+
+export type AuditEntityType =
+  | 'ncr'
+  | 'csi'
+  | 'dml'
+  | 'dcr'
+  | 'mrm'
+  | 'mrm_action'
+  | 'tuv'
+  | 'supplier'
+  | 'calibration'
+  | 'objective'
+  | 'audit_programme'
+  | 'action'
+  | 'evfile'
+  | 'requirement'
+  | 'test'
+  | 'risk'
+  | 'change_control';
 
 export interface AuditEntry {
   id: string;
@@ -459,4 +481,553 @@ export interface QTask {
   createdBy: string;
   createdAt: string;
   completedAt?: string;
+}
+
+// ── Base Entity & Approval Metadata ──────────────────────────────────────────
+
+export interface BaseEntity {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  isArchived?: boolean;
+}
+
+export interface ApprovalMetadata {
+  reviewedBy?: string;
+  reviewDate?: string;
+  reviewComments?: string;
+  approvedBy?: string;
+  approvalDate?: string;
+  approvalComments?: string;
+  rejectedBy?: string;
+  rejectionDate?: string;
+  rejectionReason?: string;
+}
+
+// ── Store Architecture Contracts ─────────────────────────────────────────────
+
+export interface BaseStore<T extends BaseEntity> {
+  records: T[];
+  addRecord: (data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>) => T;
+  updateRecord: (id: string, data: Partial<Omit<T, 'id' | 'createdAt'>>) => void;
+  deleteRecord: (id: string) => void;
+  archiveRecord: (id: string) => void;
+  toggleArchive: (id: string) => void;
+  setRecords: (records: T[]) => void;
+}
+
+export interface LifecycleStore<T extends BaseEntity, TStatus extends string> extends BaseStore<T> {
+  updateStatus: (id: string, status: TStatus, reason?: string) => void;
+}
+
+export interface ApprovalStore<T extends BaseEntity> extends BaseStore<T> {
+  reviewRecord: (id: string, reviewerName: string, comments?: string) => void;
+  approveRecord: (id: string, approverName: string, comments?: string) => void;
+  rejectRecord: (id: string, rejectorName: string, reason: string) => void;
+}
+
+// ── PTA Standard Departments ──────────────────────────────────────────────────
+
+export const PTA_DEPARTMENTS = [
+  'IED / QAQC',
+  'Projects',
+  'OSD',
+  'IT',
+  'Facility',
+  'Procurement',
+  'Stores',
+  'P&E',
+  'HR',
+  'Marketing',
+  'ESD',
+  'Fabrication',
+  'Contracts & Planning',
+  'MR',
+] as const;
+
+export type PTADepartment = (typeof PTA_DEPARTMENTS)[number] | string;
+
+// ── NCR Workflow ─────────────────────────────────────────────────────────────
+
+export type NCRRecordStatus =
+  | 'Open'
+  | 'Under Investigation'
+  | 'Corrective Action Pending'
+  | 'Verification'
+  | 'Closed'
+  // Legacy aliases for backward compatibility:
+  | 'Investigation'
+  | 'RootCause'
+  | 'CAPA_Planned'
+  | 'CAPA_InProgress';
+
+export interface NCRRecord extends BaseEntity, ApprovalMetadata {
+  ref?: string;
+  dt?: string;
+  project?: string;
+  raisedBy?: string;
+  auditeeName?: string;
+  auditeeDept?: string;
+  refDoc?: string;
+  auditeeEmail?: string;
+  classification?: 'NCR' | 'Potential NCR' | 'Observation';
+  obSubType?: string;
+  desc?: string;
+  objEvidence?: string;
+  rcaCat?: string;
+  rca?: string;
+  corrAction?: string;
+  corrBy?: string;
+  prevAction?: string;
+  prevBy?: string;
+  finalDecision?: string;
+  verifiedBy?: string;
+  verifiedDate?: string;
+  status: NCRRecordStatus;
+  slaDeadline?: string;
+  assignedTo?: string;
+  assignedDept?: string;
+}
+
+// ── CSI Survey & 22-Criteria Scoring ─────────────────────────────────────────
+
+export type CSIRecordStatus = 'open' | 'closed' | 'in_progress';
+export type CSIRating = 'Excellent' | 'Good' | 'Fair' | 'Poor' | 'Satisfactory' | 'Needs Improvement';
+export type CSIIcon = '★' | '✔' | '◑' | '▲' | '✘';
+
+export interface CSICriteriaQuestion {
+  code: string; // '1A', '1B', ... '9'
+  question: string;
+}
+
+export interface CSICriteriaCategory {
+  category: string;
+  questions: readonly CSICriteriaQuestion[];
+}
+
+export const CSI_QUESTIONS: readonly CSICriteriaCategory[] = [
+  {
+    category: '1. Overall Service',
+    questions: [
+      { code: '1A', question: 'How would you rate the overall quality of the services provided?' },
+      { code: '1B', question: 'Were you satisfied with the level of service you received from our team?' },
+    ],
+  },
+  {
+    category: '2. Timeliness and Efficiency',
+    questions: [
+      { code: '2A', question: 'Were our services delivered within the promised timeframe?' },
+      { code: '2B', question: 'Did you find our team to be prompt and efficient in handling your requests?' },
+    ],
+  },
+  {
+    category: '3. Communication and Responsiveness',
+    questions: [
+      { code: '3A', question: 'How satisfied were you with the communication from our team throughout the service process?' },
+      { code: '3B', question: 'Did our team respond promptly to your inquiries and concerns?' },
+    ],
+  },
+  {
+    category: '4. Expertise and Knowledge',
+    questions: [
+      { code: '4A', question: 'Did you find our team knowledgeable and competent in addressing your needs?' },
+      { code: '4B', question: 'Were you satisfied with the expertise demonstrated by our team in delivering the services?' },
+    ],
+  },
+  {
+    category: '5. Problem Resolution',
+    questions: [
+      { code: '5A', question: 'If you encountered any issues or challenges, were they resolved to your satisfaction?' },
+      { code: '5B', question: 'How satisfied were you with the way our team handled any problems or complaints?' },
+    ],
+  },
+  {
+    category: '6. Quality Services',
+    questions: [
+      { code: '6A', question: 'Have you noticed any inconsistencies in the quality of our services across different interactions?' },
+      { code: '6B', question: 'How would you compare the overall quality of our services to other contracting companies?' },
+      { code: '6C', question: 'Do you believe that our company maintains consistent service standards over time?' },
+    ],
+  },
+  {
+    category: '7. Compliance with Safety Regulations',
+    questions: [
+      { code: '7A', question: 'Do you believe our team adheres to all relevant safety regulations and standards?' },
+      { code: '7B', question: 'Did you feel that our team took the necessary precautions to ensure safety during the service?' },
+      { code: '7C', question: 'Were you satisfied with the communication and implementation of safety measures during turnaround/projects?' },
+    ],
+  },
+  {
+    category: '8. Leadership',
+    questions: [
+      { code: '8A', question: 'How would you rate the effectiveness of our leadership team in providing direction and vision?' },
+      { code: '8B', question: 'How responsive do you find our leadership team?' },
+      { code: '8C', question: 'How effective is the communication from our leadership?' },
+      { code: '8D', question: 'Do you feel that our leadership takes accountability for deviations and promptly addresses issues?' },
+      { code: '8E', question: 'How effective is our leadership team in resolving problems?' },
+    ],
+  },
+  {
+    category: '9. Overall Performance (Time, Quality, Safety)',
+    questions: [
+      { code: '9', question: "How would you rate our company's overall performance in terms of Time, Quality, and Safety?" },
+    ],
+  },
+] as const;
+
+export interface CSIRecord extends BaseEntity, ApprovalMetadata {
+  status?: CSIRecordStatus;
+  clientName?: string;
+  clientDesig?: string;
+  projectName?: string;
+  surveyDate?: string;
+  scores?: Record<string, number>; // map: '1A'..'9' -> 1..10
+  totalScore?: number; // 0-100 calculated
+  rating?: CSIRating;
+  icon?: CSIIcon | string;
+  evaluatorName?: string;
+  comments?: string;
+  // Legacy & V12 compatibility fields:
+  cl?: string;
+  proj?: string;
+  score?: string | number;
+  yr?: string | number;
+  obs?: string;
+  projCode?: string;
+  po?: string;
+  suggestions?: string;
+  dt?: string;
+}
+
+export function calculateCSIScore(scores?: Record<string, number>): {
+  totalScore: number;
+  scoreNormalized: string;
+  rating: CSIRating;
+  icon: CSIIcon;
+  answeredCount: number;
+} {
+  if (!scores || typeof scores !== 'object') {
+    return {
+      totalScore: 0,
+      scoreNormalized: '0.00',
+      rating: 'Needs Improvement',
+      icon: '✘',
+      answeredCount: 0,
+    };
+  }
+
+  const validEntries = Object.entries(scores).filter(
+    ([, val]) => typeof val === 'number' && !isNaN(val) && val >= 1 && val <= 10
+  );
+
+  if (validEntries.length === 0) {
+    return {
+      totalScore: 0,
+      scoreNormalized: '0.00',
+      rating: 'Needs Improvement',
+      icon: '✘',
+      answeredCount: 0,
+    };
+  }
+
+  const sum = validEntries.reduce((acc, [, val]) => acc + val, 0);
+  const avg = sum / validEntries.length; // 1 to 10
+  const totalScore = Math.round(avg * 10 * 100) / 100;
+  const scoreNormalized = (avg / 10).toFixed(4);
+
+  let rating: CSIRating = 'Needs Improvement';
+  let icon: CSIIcon = '✘';
+
+  if (totalScore >= 90) {
+    rating = 'Excellent';
+    icon = '★';
+  } else if (totalScore >= 85) {
+    rating = 'Good';
+    icon = '✔';
+  } else if (totalScore >= 80) {
+    rating = 'Satisfactory';
+    icon = '◑';
+  } else if (totalScore >= 75) {
+    rating = 'Fair';
+    icon = '▲';
+  }
+
+  return {
+    totalScore,
+    scoreNormalized,
+    rating,
+    icon,
+    answeredCount: validEntries.length,
+  };
+}
+
+// ── Document Master List (DML) ────────────────────────────────────────────────
+
+export type DMLRecordStatus =
+  | 'Active'
+  | 'Under Review'
+  | 'Draft'
+  | 'UnderReview'
+  | 'Approved'
+  | 'Published'
+  | 'Obsolete';
+
+export interface DMLRecord extends BaseEntity, ApprovalMetadata {
+  no?: string;
+  tt?: string;
+  hierarchyLevel?: 'L1' | 'L2' | 'L3' | 'L4';
+  dept?: string;
+  rv?: string;
+  reviewDate?: string;
+  ret?: string;
+  cl?: string;
+  status: DMLRecordStatus;
+  nt?: string;
+}
+
+// ── Document Change Request (DCR) ─────────────────────────────────────────────
+
+export type DCRStatus =
+  | 'Draft'
+  | 'Reviewed'
+  | 'Approved'
+  | 'Rejected'
+  // Legacy aliases:
+  | 'Pending Review'
+  | 'Pending QA Approval'
+  | 'Implemented';
+
+export interface DCRRecord extends BaseEntity, ApprovalMetadata {
+  dcrNo: string;
+  docId: string;
+  docNo: string;
+  title: string;
+  requestor: string;
+  department: string;
+  changeDescription: string;
+  reason: string;
+  status: DCRStatus;
+  // V12 import fields:
+  dt?: string;
+  ref?: string;
+  reqBy?: string;
+  revNo?: string;
+  summary?: string;
+  comments?: string;
+  docTitle?: string;
+}
+
+// ── Management Review Meetings (MRM) ──────────────────────────────────────────
+
+export type MRMStatus =
+  | 'Draft'
+  | 'Reviewed'
+  | 'Approved'
+  // Legacy aliases:
+  | 'Scheduled'
+  | 'In Progress'
+  | 'Completed'
+  | 'Cancelled';
+
+export interface MRMActionItem {
+  id: string;
+  description: string;
+  owner: string;
+  dueDate: string;
+  status: 'Open' | 'In Progress' | 'Closed';
+  closedAt?: string;
+  mrmRef?: string;
+  clause?: string;
+  evidence?: string;
+}
+
+export interface MRMRecord extends BaseEntity, ApprovalMetadata {
+  meetingDate: string;
+  meetingNo: string;
+  chairperson: string;
+  attendees: string[];
+  venue: string;
+  status: MRMStatus;
+  agendaItems: string[];
+  inputs: {
+    customerFeedback: boolean;
+    objectivesReview: boolean;
+    processPerformance: boolean;
+    ncrsAndCAPAs: boolean;
+    auditFindings: boolean;
+    supplierPerformance: boolean;
+    resourceAdequacy: boolean;
+    riskOpportunities: boolean;
+  };
+  minutesSummary: string;
+  decisions: string;
+  actionItems: MRMActionItem[];
+  flaggedObjectiveMisses: string[];
+  flaggedSLABreaches: string[];
+  // V12 backup mappings:
+  ref?: string;
+  mr?: string;
+  att?: string;
+  dec?: string;
+  min?: string;
+  chr?: string;
+  nt?: string;
+}
+
+// ── TÜV Tracker ───────────────────────────────────────────────────────────────
+
+export type TUVRecordStatus =
+  | 'Open'
+  | 'Action Taken'
+  | 'Verified'
+  | 'Closed'
+  // Legacy alias:
+  | 'In Progress';
+
+export interface TUVRecord extends BaseEntity, ApprovalMetadata {
+  num?: string;
+  cl?: string;
+  desc?: string;
+  owner?: string;
+  due?: string;
+  status: TUVRecordStatus;
+  evidence?: string;
+  closed?: string;
+  actionTaken?: string;
+  actionTakenDate?: string;
+  verifiedBy?: string;
+  verifiedDate?: string;
+}
+
+// ── Supplier Evaluation & AVL ─────────────────────────────────────────────────
+
+export type SupplierStatus =
+  | 'Under Evaluation'
+  | 'Approved'
+  | 'Conditional'
+  | 'Rejected'
+  // Legacy alias:
+  | 'Pending Evaluation';
+
+export interface SupplierEvalRecord extends BaseEntity, ApprovalMetadata {
+  name: string;
+  category: string;
+  status: SupplierStatus;
+  score: number;
+  lastEvalDate: string;
+  nextEvalDate: string;
+  contactPerson: string;
+  email: string;
+  findings: string;
+}
+
+// ── Calibration Register ──────────────────────────────────────────────────────
+
+export type CalibStatus =
+  | 'Valid'
+  | 'Due'
+  | 'Overdue'
+  | 'Out of Service'
+  // Legacy aliases:
+  | 'Active'
+  | 'Due Soon'
+  | 'Scrapped';
+
+export interface CalibRecord extends BaseEntity, ApprovalMetadata {
+  equipNo: string;
+  equipName: string;
+  manufacturer: string;
+  serialNo: string;
+  location: string;
+  freqMonths: number;
+  lastCalibDate: string;
+  nextCalibDate: string;
+  status: CalibStatus;
+  certificateNo: string;
+  notes: string;
+  calibrationAgency?: string;
+  calibratedBy?: string;
+}
+
+// ── Quality Objectives ────────────────────────────────────────────────────────
+
+export type ObjectiveRecordStatus =
+  | 'Not Started'
+  | 'In Progress'
+  | 'Achieved'
+  | 'Not Achieved'
+  // Legacy aliases:
+  | 'Completed'
+  | 'Ongoing'
+  | 'Pending Submission';
+
+export interface ObjectiveRecord extends BaseEntity, ApprovalMetadata {
+  yr?: string;
+  dept?: string;
+  ref?: string;
+  objId?: string;
+  desc?: string;
+  kpi?: string;
+  owner?: string;
+  deadline?: string;
+  status: ObjectiveRecordStatus;
+  pct?: number;
+  actual?: string;
+  evidence?: string;
+  remarks?: string;
+  parentId?: string;
+}
+
+// ── Audit Programme ───────────────────────────────────────────────────────────
+
+export type AuditProgrammeRecordStatus =
+  | 'Planned'
+  | 'In Progress'
+  | 'Completed'
+  | 'Follow-up'
+  // Legacy alias:
+  | 'Report Issued';
+
+export interface AuditProgrammeRecord extends BaseEntity, ApprovalMetadata {
+  ref?: string;
+  sc?: string;
+  aud?: string;
+  dep?: string;
+  dt?: string;
+  nc?: number | string;
+  obs?: number | string;
+  fnd?: string;
+  status: AuditProgrammeRecordStatus;
+  rpt?: string;
+  auditee?: string;
+  phase?: string;
+  ncrIds?: string[];
+  completedDate?: string;
+  followUpDate?: string;
+}
+
+// ── Ancillary Modules: Actions & Evfile ────────────────────────────────────────
+
+export type ActionItemStatus = 'Open' | 'In Progress' | 'Completed' | 'Closed';
+
+export interface QMSActionItem extends BaseEntity {
+  ref: string;
+  mrm?: string;
+  cl?: string;
+  desc: string;
+  own: string;
+  due: string;
+  st: ActionItemStatus;
+  ev?: string;
+  closedAt?: string;
+}
+
+export type EvfileStatus = 'Pending' | 'Ready' | 'Verified';
+
+export interface EvfileRecord extends BaseEntity {
+  num: string;
+  item: string;
+  ref: string;
+  note?: string;
+  status: EvfileStatus;
 }

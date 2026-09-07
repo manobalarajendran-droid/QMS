@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { authMiddleware, getUser, requireRole } from '../middleware/auth.js';
+import { authMiddleware, requireRole } from '../middleware/auth.js';
 
 const aiRoutes = new Hono();
 
@@ -117,7 +117,7 @@ async function llmComplete(
 aiRoutes.post('/complete', async (c) => {
   try {
     const body = await c.req.json();
-    const { prompt, purpose, maxTokens, temperature } = body;
+    const { prompt, maxTokens, temperature } = body;
 
     if (!prompt) {
       return c.json({ message: 'prompt is required' }, 400);

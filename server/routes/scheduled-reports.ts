@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { prisma } from '../lib/prisma.js';
 import { authMiddleware, getUser, requirePermission } from '../middleware/auth.js';
-import { logAudit } from '../services/audit.service.js';
 
 const scheduledReports = new Hono();
 

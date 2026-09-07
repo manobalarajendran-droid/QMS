@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import { useAppMode } from './hooks/useAppMode';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage } from './components/auth/LoginPage';
+import { ErrorBoundary } from './components/shared/ErrorBoundary';
 
 const AuditModeView = lazy(() => import('./components/audit/AuditModeView').then((m) => ({ default: m.AuditModeView })));
 const SupplierPortalView = lazy(() => import('./components/suppliers/SupplierPortalView').then((m) => ({ default: m.SupplierPortalView })));
@@ -82,9 +83,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

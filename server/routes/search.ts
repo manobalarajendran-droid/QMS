@@ -66,7 +66,6 @@ search.get('/', async (c) => {
       : ['requirements', 'tests', 'capa', 'complaints', 'deviations', 'documents'];
 
     const query = q.trim();
-    const likePattern = `%${query}%`;
     const results: SearchResult[] = [];
 
     // Search requirements
