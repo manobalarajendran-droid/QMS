@@ -235,6 +235,7 @@ function ObjectiveFormModal({ record, onClose, onSubmit }: { record: ObjectiveRe
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
       <div className="bg-white dark:bg-slate-800 w-full max-w-xl rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto animate-modal-enter">
         <h3 className="text-xl font-bold mb-4 text-slate-800 dark:text-white">{record ? 'Edit Objective' : 'New Objective'}</h3>
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Year *</label>
@@ -341,9 +342,10 @@ function ObjectiveFormModal({ record, onClose, onSubmit }: { record: ObjectiveRe
           </div>
         </div>
         <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-          <button onClick={onClose} className="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors">Cancel</button>
-          <button onClick={() => onSubmit(formData)} className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-colors">Save Objective</button>
+          <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors">Cancel</button>
+          <button type="submit" className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-colors">Save Objective</button>
         </div>
+        </form>
       </div>
     </div>
   );
