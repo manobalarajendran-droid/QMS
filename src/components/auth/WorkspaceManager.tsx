@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
+import { useAppMode } from '../../hooks/useAppMode';
+import { useAuthStore } from '../../store/useAuthStore';
 import { apiFetch } from '../../lib/apiClient';
 import { Users, UserPlus, Shield, Pencil, Eye, Loader2, X } from 'lucide-react';
 
@@ -59,6 +61,7 @@ function roleIcon(role: string) {
 export function WorkspaceManager({ open, onClose }: WorkspaceManagerProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { mode } = useAppMode();
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [orgName, setOrgName] = useState('');
@@ -85,8 +88,12 @@ export function WorkspaceManager({ open, onClose }: WorkspaceManagerProps) {
           setMembers(data.members || []);
         }
       } catch {
-        // If endpoint not available, show at least the current user
-        if (!cancelled && user) {
+        // No server to hit in standalone mode — list the locally registered users instead.
+        if (!cancelled && mode === 'standalone') {
+          const localUsers = useAuthStore.getState().users;
+          setMembers(localUsers.map((u) => ({ id: u.id, email: u.email, name: u.displayName, role: u.role })));
+          setOrgName('Organization');
+        } else if (!cancelled && user) {
           setMembers([{ id: user.id, email: user.email, name: user.name, role: user.role }]);
           setOrgName('Organization');
         }
@@ -97,7 +104,7 @@ export function WorkspaceManager({ open, onClose }: WorkspaceManagerProps) {
 
     load();
     return () => { cancelled = true; };
-  }, [open, user]);
+  }, [open, user, mode]);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -245,6 +252,11 @@ export function WorkspaceManager({ open, onClose }: WorkspaceManagerProps) {
                   {inviteError && (
                     <p className="text-xs text-red-500 mt-1">{inviteError}</p>
                   )}
+                </div>
+              )}
+              {!isAdmin && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-xs text-text-tertiary">Only Admins can invite new team members.</p>
                 </div>
               )}
             </>
