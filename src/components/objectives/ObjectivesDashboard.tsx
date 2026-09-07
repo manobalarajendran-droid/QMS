@@ -219,8 +219,8 @@ export function ObjectivesDashboard() {
 
 function ObjectiveFormModal({ record, onClose, onSubmit }: { record: ObjectiveRecord | null, onClose: () => void, onSubmit: (data: any) => void }) {
   const [formData, setFormData] = useState({
-    yr: record?.yr || String(new Date().getFullYear()),
-    dept: record?.dept || "Management",
+    yr: record?.yr || "",
+    dept: record?.dept || "",
     ref: record?.ref || "NEW",
     desc: record?.desc || "",
     kpi: record?.kpi || "",
