@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { GraduationCap, Plus, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
@@ -46,7 +46,7 @@ export function TrainingDashboard() {
   const [error, setError] = useState('');
   const canEdit = roleHasPermission(user?.role, 'canEdit');
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!token) return;
     setLoading(true);
     setError('');
@@ -69,11 +69,11 @@ export function TrainingDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [fetchData]);
 
   const handleAssign = async () => {
     if (!token || !assignData.userId || !assignData.courseId) return;

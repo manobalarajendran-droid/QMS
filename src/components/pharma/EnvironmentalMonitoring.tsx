@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
@@ -52,7 +52,7 @@ export function EnvironmentalMonitoring() {
   const projectId = getProjectId(project);
   const canEdit = roleHasPermission(user?.role, 'canEdit');
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!projectId || !token) return;
     setLoading(true);
     setError('');
@@ -69,11 +69,11 @@ export function EnvironmentalMonitoring() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, token]);
 
   useEffect(() => {
     fetchData();
-  }, [projectId, token]);
+  }, [fetchData]);
 
   const loadReadings = async (id: string) => {
     const data = await apiFetch<{ readings: ReadingData[] }>(`/envmon/points/${id}/readings`);

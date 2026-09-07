@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClipboardCheck, Plus, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -60,7 +60,7 @@ export function AuditSchedule() {
   const projectId = getProjectId(project);
   const canEdit = roleHasPermission(user?.role, 'canEdit');
 
-  const fetchAudits = async () => {
+  const fetchAudits = useCallback(async () => {
     if (!projectId || !token) return;
     setLoading(true);
     try {
@@ -78,11 +78,11 @@ export function AuditSchedule() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, token]);
 
   useEffect(() => {
     fetchAudits();
-  }, [projectId, token]);
+  }, [fetchAudits]);
 
   const handleCreate = async (formData: any) => {
     if (!projectId || !token || !canEdit) return;

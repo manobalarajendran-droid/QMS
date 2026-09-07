@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HelpCircle, Plus, Trash2, GripVertical, Eye } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -43,7 +43,7 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [error, setError] = useState('');
 
-  const fetchQuizzes = async () => {
+  const fetchQuizzes = useCallback(async () => {
     if (!token || !courseId) return;
     try {
       const data: any = await apiFetch(`/api/quizzes?courseId=${courseId}`, {});
@@ -53,11 +53,11 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, courseId]);
 
   useEffect(() => {
     fetchQuizzes();
-  }, [token, courseId]);
+  }, [fetchQuizzes]);
 
   const addQuestion = () => {
     setQuestions([

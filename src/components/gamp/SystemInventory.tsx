@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Server, Plus, RefreshCw, AlertTriangle, Archive } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -51,7 +51,7 @@ export function SystemInventory() {
   const [error, setError] = useState('');
   const canEdit = roleHasPermission(user?.role, 'canEdit');
 
-  const fetchSystems = async () => {
+  const fetchSystems = useCallback(async () => {
     if (!token) return;
     setLoading(true);
     setError('');
@@ -64,11 +64,11 @@ export function SystemInventory() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchSystems();
-  }, [token]);
+  }, [fetchSystems]);
 
   const handleCreate = async (formData: any) => {
     if (!token) return;

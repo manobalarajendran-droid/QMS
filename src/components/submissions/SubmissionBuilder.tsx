@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileText, Plus, Download, Send, RefreshCw, Trash2, ChevronDown, ChevronUp, Edit3 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -61,7 +61,7 @@ export function SubmissionBuilder() {
   const [createType, setCreateType] = useState('');
   const [error, setError] = useState('');
 
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     if (!token || !projectId) return;
     try {
       const data: any = await apiFetch(`/api/submissions?projectId=${projectId}`, {});
@@ -71,11 +71,11 @@ export function SubmissionBuilder() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, projectId]);
 
   useEffect(() => {
     fetchSubmissions();
-  }, [token, projectId]);
+  }, [fetchSubmissions]);
 
   const handleCreate = async () => {
     if (!createType || !createTitle.trim()) return;

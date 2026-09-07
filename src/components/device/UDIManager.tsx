@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Barcode, Plus, Download, CheckCircle2, XCircle } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -32,7 +32,7 @@ export function UDIManager() {
   const canEdit = roleHasPermission(user?.role, 'canEdit');
   const canExport = roleHasPermission(user?.role, 'canExport');
 
-  const fetchUDIs = async () => {
+  const fetchUDIs = useCallback(async () => {
     if (!projectId || !token) return;
     setLoading(true);
     setError('');
@@ -45,11 +45,11 @@ export function UDIManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, token]);
 
   useEffect(() => {
     fetchUDIs();
-  }, [projectId, token]);
+  }, [fetchUDIs]);
 
   const handleCreate = async (formData: any) => {
     if (!projectId || !token) return;

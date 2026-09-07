@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock, Plus, Play, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -57,7 +57,7 @@ export function ScheduledReports() {
   });
   const [error, setError] = useState('');
 
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     if (!token) return;
     try {
       const data: any = await apiFetch('/api/scheduled-reports', {});
@@ -67,11 +67,11 @@ export function ScheduledReports() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchReports();
-  }, [token]);
+  }, [fetchReports]);
 
   const handleSave = async () => {
     setError('');

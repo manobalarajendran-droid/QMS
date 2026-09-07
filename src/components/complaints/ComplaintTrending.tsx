@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LineChart, Line, PieChart, Pie, Cell, BarChart, Bar,
@@ -41,7 +41,7 @@ export function ComplaintTrending() {
   const projectId = getProjectId(project);
   const canEdit = roleHasPermission(user?.role, 'canEdit');
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!projectId || !token) return;
     setLoading(true);
     setError('');
@@ -58,11 +58,11 @@ export function ComplaintTrending() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, token]);
 
   useEffect(() => {
     fetchData();
-  }, [projectId, token]);
+  }, [fetchData]);
 
   const handleSave = async (data: any) => {
     if (!projectId || !token) return;

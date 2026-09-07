@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileText, Plus, History } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -51,7 +51,7 @@ export function DocumentManager() {
   // New version form
   const [newVersion, setNewVersion] = useState({ content: '', changeReason: '', majorVersion: false });
 
-  const fetchDocuments = async () => {
+  const fetchDocuments = useCallback(async () => {
     if (!projectId || !token) return;
     setLoading(true);
     try {
@@ -64,7 +64,7 @@ export function DocumentManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, token]);
 
   const fetchDocDetail = async (id: string) => {
     if (!token) return;
@@ -80,7 +80,7 @@ export function DocumentManager() {
 
   useEffect(() => {
     fetchDocuments();
-  }, [projectId, token]);
+  }, [fetchDocuments]);
 
   const handleCreate = async () => {
     if (!projectId || !token || !newDoc.title || !canEdit) return;

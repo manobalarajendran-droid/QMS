@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlaskConical, Plus, AlertTriangle, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -58,7 +58,7 @@ export function BatchRecordForm() {
   const canEdit = roleHasPermission(user?.role, 'canEdit');
   const canApprove = roleHasPermission(user?.role, 'canApprove');
 
-  const fetchBatches = async () => {
+  const fetchBatches = useCallback(async () => {
     if (!projectId || !token) return;
     setLoading(true);
     setError('');
@@ -71,7 +71,7 @@ export function BatchRecordForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, token]);
 
   const fetchBatchDetail = async (id: string) => {
     if (!token) return;
@@ -86,7 +86,7 @@ export function BatchRecordForm() {
 
   useEffect(() => {
     fetchBatches();
-  }, [projectId, token]);
+  }, [fetchBatches]);
 
   const handleCreateBatch = async () => {
     if (!projectId || !token || !newBatch.productName || !newBatch.batchNumber) return;

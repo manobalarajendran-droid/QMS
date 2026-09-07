@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Building2, Plus, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -34,7 +34,7 @@ export function SupplierScorecard() {
   const [newAudit, setNewAudit] = useState({ auditDate: '', auditor: '', auditType: 'routine', score: '', findings: '' });
   const canEdit = roleHasPermission(user?.role, 'canEdit');
 
-  const fetchSuppliers = async () => {
+  const fetchSuppliers = useCallback(async () => {
     if (!token) return;
     setLoading(true);
     setError('');
@@ -47,11 +47,11 @@ export function SupplierScorecard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchSuppliers();
-  }, [token]);
+  }, [fetchSuppliers]);
 
   const handleAddSupplier = async () => {
     if (!token || !newSupplier.name) return;

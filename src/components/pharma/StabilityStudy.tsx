@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -60,7 +60,7 @@ export function StabilityStudy() {
   const projectId = getProjectId(project);
   const canEdit = roleHasPermission(user?.role, 'canEdit');
 
-  const fetchStudies = async () => {
+  const fetchStudies = useCallback(async () => {
     if (!projectId || !token) return;
     setLoading(true);
     setError('');
@@ -73,11 +73,11 @@ export function StabilityStudy() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, token]);
 
   useEffect(() => {
     fetchStudies();
-  }, [projectId, token]);
+  }, [fetchStudies]);
 
   const loadStudyData = async (id: string) => {
     const [detailData, trendData] = await Promise.all([
