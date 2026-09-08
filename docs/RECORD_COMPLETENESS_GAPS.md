@@ -1074,6 +1074,49 @@ No field is technically "orphaned" in the strict Item-4 sense — every declared
 7. Add evidence attachment (extend `EvidencePanel`'s `entityType` union), comment thread, and export/print.
 8. Align store conventions with the other modules: extend `ClientIntakeRecord` to `BaseEntity`/`ApprovalMetadata`; add archive functions to the store; switch the `id` generator to the shared `generateRecordId()` helper — **first confirm nothing parses the current ID format** before changing it.
 
+### f. Status — Phase 3 (implemented)
+
+`UnifiedVoC.tsx` fully rewritten to a flat, non-selection-gated card list (unlike Calibration/Suppliers' master-detail pattern — VoC's original UX was already flat, and every seeded/created record needs to stay simultaneously visible for dispatch-style triage). `useClientIntakeStore.ts` extended with `transitionStatus`, `archiveRecord`, `unarchiveRecord`, `toggleArchive`; `ClientIntakeRecord` extended with `assignedTo`, `dueDate`, `correctiveAction`/`correctiveOwner`/`correctiveTargetDate`/`correctiveCompletionDate`, `stateHistory`, `isArchived` (all optional — no persist migration needed). `EvidenceAttachment.entityType` and `EvidencePanel`'s `entityType` union both extended with `'voc'`. ID generation switched to `generateRecordId('voc')`.
+
+| # | Item | Score | Evidence |
+|---|---|---|---|
+| 1 | Ownership | **Pass** | `assignedTo` (`UserSelect`, populated from `useAuthStore().users`) and the existing `routedToDept` (acting as `assignedDept`) shown and editable on every card; `dueDate` computed at creation from `slaHours(intakeType)` (4h Emergency / 24h Complaint / 48h Inquiry) via `defaultDueDate()`, then independently editable; `isVoCOverdue()` drives a per-card "OVERDUE" badge, the KPI strip's Overdue count, and an "Overdue only" list filter. |
+| 2 | Action plan | **Pass** | Single corrective-action block (`correctiveAction`/`correctiveOwner` via `UserSelect`/`correctiveTargetDate`/`correctiveCompletionDate`) behind a per-card "Action Plan" toggle, plus evidence attachment via the shared `EvidencePanel`. Not built on the shared `ActionPlanTable` — same precedent as Approved Vendors: a client intake's remediation is a single corrective step tied to one dispatch record, not a multi-row CAPA-style action list, so a bespoke single block matches the domain. |
+| 3 | State machine | **Pass** | Both bypasses of the audited setter are fixed — Acknowledge and Mobilize now route through `transitionStatus()` with a system-supplied reason ("Acknowledged via quick action" / "Crew mobilized via quick action", `kind:'forward'`), preserving the one-click quick-action UX while still recording a full `{from,to,by,at,reason,kind}` history entry. Close (`kind:'verify'`), Return-to-previous (`kind:'reject'`), and Reopen (`kind:'reopen'`) are gated to `isMR` (`admin`/`qa_manager`) and require a genuine typed reason via an inline `gate`/`gateReason` Confirm/Cancel panel. The prior hard terminal dead-end at Closed is fixed: Reopen returns a Closed record to `Acknowledged`. Every transition appends to `stateHistory`, rendered as a reverse-chronological list on each card — verified live (see below). |
+| 4 | No orphan fields | **Pass** | All fields added this phase are surfaced immediately (ownership grid, action-plan block, history list); pre-existing fields (`timeLogged`/`timeAcknowledged`/`timeMobilized`/`description`/`receivedBy`) remain shown exactly as before. |
+| 5 | Form validation | **Pass** | The prior *silent* no-op on `title` is fixed — `title`, `receivedBy`, and `routedToDept` are now required at submit with inline error messages (`formErrors` state), matching the pattern used across all other rewritten modules. |
+| 6 | Evidence/comments/export/audit trail | **Pass** | `EvidencePanel entityType="voc"` and `CommentThread entityType="voc"` wired in per-card (toggle icons); Print action added (`window.print()`); every transition and field update already logs to `useAuditStore` via the store's existing `create`/`update`/`status_change` calls, now reason-carrying for every transition. |
+| 7 | List view | **Pass** | Search (title/description/receivedBy), status filter, department filter, assignee filter, sort (newest/oldest/due-soonest), "Overdue only" and "Show Archived" checkboxes all added — replacing the previously flat, unfiltered, unsearchable list (the weakest of any module at Phase 1). |
+
+**Overall: 7 Pass.**
+
+**Design decisions / notes:**
+- **System-supplied-reason quick actions**: Acknowledge/Mobilize stay single-click (no modal, no typing) by passing a fixed system reason string into `transitionStatus()`, while Close/Reject-return/Reopen — the decisions an MR actually needs to justify — require a typed reason via the `gate` panel. This satisfies the Standard's "every transition requires a reason" requirement without turning routine dispatch acknowledgement into a multi-step form.
+- **`routedToDept` doubles as `assignedDept`**: rather than adding a second, redundant department field, the existing `routedToDept` (already dept-only per the Phase 1 gap analysis) is treated as the ownership department; a local `DEPTS` const (distinct from `PTA_DEPARTMENTS`) drives the picker, with a fallback `<option>` preserving free-text legacy/test values (e.g. `objectives_memo_stress.test.tsx`'s `routedToDept: 'Field'`) not in the canonical list.
+- **Corrective-action-only scope, no separate preventive field**: matches the Calibration/Approved Vendors precedent — a single corrective-action block is proportionate to a customer-intake remediation; a full containment/correction/preventive triad (as on NCR) was judged disproportionate to this record type's actual workflow.
+- **ID format switch**: new records now get `generateRecordId('voc')` (e.g. `voc-433ace89-0d56-4b2b-90e7-a40dd9537285`) instead of the old `'clientintakestores-' + Date.now() + ...'` format — confirmed live via localStorage inspection after creating a test record; existing seeded records (`voc-2026-00N`) already used a compatible `voc-` prefix so no migration was needed.
+- **Status-filter dropdown label disambiguation**: filter options read "Logged records"/"Acknowledged records"/"Mobilized records"/"Closed records" rather than the bare status words, to avoid an exact-match `getByText` collision with `StatusBadge`'s identical bare-word text in the locked-in `qms_smoke.test.tsx` — confirmed by the smoke test still passing unmodified.
+- **Flat list architecture preserved**: unlike Calibration/Suppliers' master-detail rewrite, VoC keeps its original flat card list (no selection step) since dispatch-style triage benefits from seeing every active record at once; ownership/action-plan/evidence/comments are inline or behind a per-card expand toggle instead of a separate detail panel.
+- **No `BaseEntity`/`ApprovalMetadata` extension**: Phase 1's ordered work list item 8 suggested aligning `ClientIntakeRecord` to extend `BaseEntity`/`ApprovalMetadata` like every other module. This was **deferred** — the record already carries its own `createdAt`/`updatedAt`, and none of the 7 Standard items required the unused approval-workflow fields (`reviewedBy`/`approvalComments`/etc.) that extension would add; forcing it on would create a fresh batch of legitimately-unused orphan fields, the same pattern already accepted as non-orphan on NCR/DCR/CSI/Suppliers for those shared fields specifically. Store archive functions (`archiveRecord`/`unarchiveRecord`/`toggleArchive`) and the `isArchived` field **were** added, since Item 7 (List view) genuinely needed a "Show Archived" filter.
+- **Live browser verification** (`http://localhost:5174`): flat list rendering of all 5 seeded records plus a newly created test record simultaneously (no selection step); Acknowledge quick-action confirmed via localStorage `stateHistory` entry with the system-supplied reason; new-intake form validation exercised on both the failure path (inline errors) and success path (new record with correct `voc-` ID and SLA-computed `dueDate`); MR-gated Close flow exercised with a typed reason, confirmed in `stateHistory`; cross-module consumers `ObjectivesDashboard.tsx` ("Avg Emergency Reaction" tile) and `MRMManager.tsx` (auto-flagged pre-read-pack item for unacknowledged Logged complaints) both confirmed still rendering correctly post-rewrite, with no regression to the `intakeRecords`/`r.status`/`r.timeAcknowledged` field-access patterns they depend on. Test-created localStorage state (`qatrial:useClientIntakeStore`) was cleared afterward to restore default seed data.
+
+```
+npx tsc -b
+```
+(clean exit, no output)
+
+```
+Test Files  19 passed (19)
+     Tests  230 passed (230)
+  Duration  22.91s
+```
+
+```
+npm run build
+✓ built in 1.39s
+```
+(new `UnifiedVoC-Bvh3XJde.js` chunk produced; no new errors or warnings)
+
 ---
 
 ## Summary: modules ranked by number of Missing items

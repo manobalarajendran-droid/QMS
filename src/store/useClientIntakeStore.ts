@@ -1,34 +1,29 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
+import { generateRecordId } from '../lib/idGenerator';
+import type { ClientIntakeRecord, ClientIntakeRecordStatus, ClientIntakeStateHistoryEntry } from '../types';
 
-// ── Types ────────────────────────────────────────────────────────────────────
-
-export type ClientIntakeRecordStatus = 'Logged' | 'Acknowledged' | 'Mobilized' | 'Closed';
-
-export interface ClientIntakeRecord {
-  id: string;
-  intakeType: 'Complaint' | 'Emergency' | 'Inquiry';
-  receivedBy: string;
-  routedToDept: string;
-  timeLogged: string;
-  timeAcknowledged?: string;
-  timeMobilized?: string;
-  description: string;
-  title: string;
-  status: ClientIntakeRecordStatus;
-  /** Timestamps */
-  createdAt: string;
-  updatedAt: string;
-}
+export type { ClientIntakeRecord, ClientIntakeRecordStatus, ClientIntakeStateHistoryEntry };
 
 // ── Store ────────────────────────────────────────────────────────────────────
 
-interface ClientIntakeStoreState {
+export interface ClientIntakeStoreState {
   records: ClientIntakeRecord[];
   addRecord: (data: Omit<ClientIntakeRecord, 'id' | 'createdAt' | 'updatedAt'>) => ClientIntakeRecord;
   updateRecord: (id: string, data: Partial<Omit<ClientIntakeRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: ClientIntakeRecordStatus) => void;
+  transitionStatus: (
+    id: string,
+    to: ClientIntakeRecordStatus,
+    by: string,
+    reason: string,
+    kind: ClientIntakeStateHistoryEntry['kind']
+  ) => void;
+  archiveRecord: (id: string) => void;
+  unarchiveRecord: (id: string) => void;
+  toggleArchive: (id: string) => void;
+  setRecords: (records: ClientIntakeRecord[]) => void;
   deleteRecord: (id: string) => void;
 }
 
@@ -102,24 +97,21 @@ const SEED_DATA: ClientIntakeRecord[] = [
   },
 ];
 
-let idCounter = 5;
-
 export const useClientIntakeStore = create<ClientIntakeStoreState>()(
   persist(
     (set, get) => ({
       records: SEED_DATA,
 
       addRecord: (data) => {
-        idCounter += 1;
-        const id = 'clientintakestores-' + Date.now() + '-' + idCounter;
+        const id = generateRecordId('voc');
         const now = new Date().toISOString();
-        const record = {
+        const record: ClientIntakeRecord = {
           ...data,
           id,
           createdAt: now,
           updatedAt: now,
-        } as ClientIntakeRecord;
-        
+        };
+
         set((state) => ({ records: [...state.records, record] }));
 
         useAuditStore.getState().log(
@@ -151,7 +143,7 @@ export const useClientIntakeStore = create<ClientIntakeStoreState>()(
         const existing = get().records.find((r) => r.id === id);
         if (!existing) return;
         const now = new Date().toISOString();
-        
+
         set((state) => ({
           records: state.records.map((r) =>
             r.id === id ? { ...r, status, updatedAt: now } : r
@@ -164,6 +156,45 @@ export const useClientIntakeStore = create<ClientIntakeStoreState>()(
           status
         );
       },
+
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: ClientIntakeStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id
+              ? { ...r, status: to, stateHistory: [...(r.stateHistory ?? []), historyEntry], updatedAt: now }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'clientintakestores', id, existing.status, to, reason);
+      },
+
+      archiveRecord: (id) => {
+        set((state) => ({
+          records: state.records.map((r) => (r.id === id ? { ...r, isArchived: true, updatedAt: new Date().toISOString() } : r)),
+        }));
+      },
+
+      unarchiveRecord: (id) => {
+        set((state) => ({
+          records: state.records.map((r) => (r.id === id ? { ...r, isArchived: false, updatedAt: new Date().toISOString() } : r)),
+        }));
+      },
+
+      toggleArchive: (id) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id ? { ...r, isArchived: !r.isArchived, updatedAt: new Date().toISOString() } : r
+          ),
+        }));
+      },
+
+      setRecords: (records) => set({ records }),
 
       deleteRecord: (id) => {
         const existing = get().records.find((r) => r.id === id);

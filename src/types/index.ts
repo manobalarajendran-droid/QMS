@@ -1069,6 +1069,39 @@ export interface CalibStateHistoryEntry {
   kind: 'forward' | 'reject' | 'reopen' | 'verify';
 }
 
+// ── Client Intake / Voice of Customer (VoC) ──────────────────────────────────
+
+export type ClientIntakeRecordStatus = 'Logged' | 'Acknowledged' | 'Mobilized' | 'Closed';
+
+export interface ClientIntakeRecord extends BaseEntity, ApprovalMetadata {
+  intakeType: 'Complaint' | 'Emergency' | 'Inquiry';
+  receivedBy: string;
+  routedToDept: string;
+  timeLogged: string;
+  timeAcknowledged?: string;
+  timeMobilized?: string;
+  description: string;
+  title: string;
+  status: ClientIntakeRecordStatus;
+  // Record Completeness Standard additions:
+  assignedTo?: string;
+  dueDate?: string;
+  correctiveAction?: string;
+  correctiveOwner?: string;
+  correctiveTargetDate?: string;
+  correctiveCompletionDate?: string;
+  stateHistory?: ClientIntakeStateHistoryEntry[];
+}
+
+export interface ClientIntakeStateHistoryEntry {
+  from: ClientIntakeRecordStatus;
+  to: ClientIntakeRecordStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
+}
+
 // ── Quality Objectives ────────────────────────────────────────────────────────
 
 export type ObjectiveRecordStatus =
