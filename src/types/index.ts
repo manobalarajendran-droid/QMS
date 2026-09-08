@@ -1109,10 +1109,21 @@ export type ObjectiveRecordStatus =
   | 'In Progress'
   | 'Achieved'
   | 'Not Achieved'
+  | 'Delayed'
+  | 'On Hold'
   // Legacy aliases:
   | 'Completed'
   | 'Ongoing'
   | 'Pending Submission';
+
+export interface ObjectiveStateHistoryEntry {
+  from: ObjectiveRecordStatus;
+  to: ObjectiveRecordStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
+}
 
 export interface ObjectiveRecord extends BaseEntity, ApprovalMetadata {
   yr?: string;
@@ -1129,6 +1140,11 @@ export interface ObjectiveRecord extends BaseEntity, ApprovalMetadata {
   evidence?: string;
   remarks?: string;
   parentId?: string;
+  stateHistory?: ObjectiveStateHistoryEntry[];
+  correctiveAction?: string;
+  correctiveOwner?: string;
+  correctiveTargetDate?: string;
+  correctiveCompletionDate?: string;
 }
 
 // ── Audit Programme ───────────────────────────────────────────────────────────

@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId } from '../lib/idGenerator';
-import type { ObjectiveRecord, ObjectiveRecordStatus } from '../types';
+import type { ObjectiveRecord, ObjectiveRecordStatus, ObjectiveStateHistoryEntry } from '../types';
 
-export type { ObjectiveRecord, ObjectiveRecordStatus } from '../types';
+export type { ObjectiveRecord, ObjectiveRecordStatus, ObjectiveStateHistoryEntry } from '../types';
 
 // ── Store ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +13,13 @@ export interface ObjectivesStoreState {
   addRecord: (data: Omit<ObjectiveRecord, 'id' | 'createdAt' | 'updatedAt'>) => ObjectiveRecord;
   updateRecord: (id: string, data: Partial<Omit<ObjectiveRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: ObjectiveRecordStatus, remarks?: string) => void;
+  transitionStatus: (
+    id: string,
+    to: ObjectiveRecordStatus,
+    by: string,
+    reason: string,
+    kind: ObjectiveStateHistoryEntry['kind']
+  ) => void;
   deleteRecord: (id: string) => void;
   archiveRecord: (id: string) => void;
   unarchiveRecord: (id: string) => void;
@@ -877,6 +884,39 @@ export const useObjectivesStore = create<ObjectivesStoreState>()(
           status,
           remarks
         );
+      },
+
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: ObjectiveStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+
+        const approvalFields: Partial<ObjectiveRecord> =
+          kind === 'reject'
+            ? { reviewedBy: by, reviewDate: now, reviewComments: reason }
+            : kind === 'verify' && to === 'Not Achieved'
+            ? { rejectedBy: by, rejectionDate: now, rejectionReason: reason }
+            : kind === 'verify'
+            ? { approvedBy: by, approvalDate: now, approvalComments: reason }
+            : {};
+
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  ...approvalFields,
+                  status: to,
+                  pct: to === 'Achieved' || to === 'Completed' ? 100 : r.pct,
+                  stateHistory: [...(r.stateHistory ?? []), historyEntry],
+                  updatedAt: now,
+                }
+              : r
+          ),
+        }));
+
+        useAuditStore.getState().log('status_change', 'objective', id, existing.status, to, reason);
       },
 
       deleteRecord: (id) => {

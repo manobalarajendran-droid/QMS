@@ -30,7 +30,7 @@ export function resolveStatusVariant(status?: string): BadgeVariant {
     return 'amber';
   }
   // Red: Open, Overdue, Rejected, Not Achieved, Failed, Scrapped, Cancelled, Logged, Out of Service
-  if (['open', 'overdue', 'rejected', 'not achieved', 'failed', 'scrapped', 'cancelled', 'logged', 'out of service'].includes(s)) {
+  if (['open', 'overdue', 'rejected', 'not achieved', 'failed', 'scrapped', 'cancelled', 'logged', 'out of service', 'delayed'].includes(s)) {
     return 'red';
   }
   // Blue: Under Investigation, Root Cause, Investigation, Scheduled, Mobilized, Pending Evaluation, Under Evaluation
