@@ -5,8 +5,11 @@ import { generateRecordId } from '../lib/idGenerator';
 import type {
   CSIRecord,
   CSIRecordStatus,
+  CSIFollowUp,
+  CSIFollowUpStatus,
+  CSIFollowUpStateHistoryEntry,
 } from '../types';
-import { calculateCSIScore } from '../types';
+import { calculateCSIScore, csiNeedsFollowUp } from '../types';
 
 export type {
   CSIRecord,
@@ -15,9 +18,20 @@ export type {
   CSIIcon,
   CSICriteriaQuestion,
   CSICriteriaCategory,
+  CSIFollowUp,
+  CSIFollowUpStatus,
+  CSIFollowUpStateHistoryEntry,
 } from '../types';
-export { calculateCSIScore, CSI_QUESTIONS } from '../types';
+export { calculateCSIScore, csiNeedsFollowUp, CSI_QUESTIONS } from '../types';
 export { CSI_QUESTIONS as CS_QUESTIONS } from '../types';
+
+/** Derives the record-level status from the follow-up lifecycle (or lack thereof). */
+function deriveCSIStatus(followUp: CSIFollowUp | undefined): CSIRecordStatus {
+  if (!followUp) return 'closed';
+  if (followUp.status === 'Closed') return 'closed';
+  if (followUp.status === 'In Progress') return 'in_progress';
+  return 'open';
+}
 
 // ── Store ────────────────────────────────────────────────────────────────────
 
@@ -31,6 +45,14 @@ export interface CSIStoreState {
   unarchiveRecord: (id: string) => void;
   toggleArchive: (id: string) => void;
   setRecords: (records: CSIRecord[]) => void;
+  updateFollowUp: (id: string, data: Partial<Omit<CSIFollowUp, 'status' | 'stateHistory'>>) => void;
+  transitionFollowUp: (
+    id: string,
+    to: CSIFollowUpStatus,
+    by: string,
+    reason: string,
+    kind: CSIFollowUpStateHistoryEntry['kind']
+  ) => void;
 }
 
 const SEED_DATA: CSIRecord[] = [
@@ -268,6 +290,10 @@ export const useCSIStore = create<CSIStoreState>()(
           icon = icon ?? calc.icon;
         }
 
+        // A low rating auto-spawns an owned, due-dated follow-up if one wasn't already supplied.
+        const followUp: CSIFollowUp | undefined =
+          data.followUp ?? (csiNeedsFollowUp(rating) ? { status: 'Open', stateHistory: [] } : undefined);
+
         const record: CSIRecord = {
           ...data,
           id,
@@ -275,7 +301,8 @@ export const useCSIStore = create<CSIStoreState>()(
           totalScore,
           rating,
           icon,
-          status: data.status || 'open',
+          followUp,
+          status: data.status || deriveCSIStatus(followUp),
           isArchived: data.isArchived ?? false,
           createdAt: now,
           updatedAt: now,
@@ -310,10 +337,16 @@ export const useCSIStore = create<CSIStoreState>()(
           };
         }
 
+        const effectiveRating = computedFields.rating ?? data.rating ?? existing.rating;
+        const followUp: CSIFollowUp | undefined =
+          data.followUp ?? existing.followUp ?? (csiNeedsFollowUp(effectiveRating) ? { status: 'Open', stateHistory: [] } : undefined);
+
         const updated: CSIRecord = {
           ...existing,
           ...data,
           ...computedFields,
+          followUp,
+          status: data.status ?? deriveCSIStatus(followUp),
           updatedAt: now,
         };
 
@@ -409,6 +442,61 @@ export const useCSIStore = create<CSIStoreState>()(
         } else {
           get().archiveRecord(id);
         }
+      },
+
+      updateFollowUp: (id, data) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const followUp: CSIFollowUp = {
+          status: 'Open',
+          stateHistory: [],
+          ...existing.followUp,
+          ...data,
+        };
+
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id ? { ...r, followUp, updatedAt: now } : r
+          ),
+        }));
+
+        useAuditStore.getState().log(
+          'update',
+          'csi_followup',
+          id,
+          JSON.stringify(existing.followUp ?? {}),
+          JSON.stringify(data)
+        );
+      },
+
+      transitionFollowUp: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing?.followUp) return;
+        const now = new Date().toISOString();
+        const from = existing.followUp.status;
+
+        const historyEntry: CSIFollowUpStateHistoryEntry = { from, to, by, at: now, reason, kind };
+        const followUp: CSIFollowUp = {
+          ...existing.followUp,
+          status: to,
+          completionDate: to === 'Closed' ? now : existing.followUp.completionDate,
+          stateHistory: [...(existing.followUp.stateHistory ?? []), historyEntry],
+        };
+
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id ? { ...r, followUp, status: deriveCSIStatus(followUp), updatedAt: now } : r
+          ),
+        }));
+
+        useAuditStore.getState().log(
+          'status_change',
+          'csi_followup',
+          id,
+          from,
+          `${to} (${kind}): ${reason}`
+        );
       },
 
       setRecords: (records) => {

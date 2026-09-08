@@ -715,6 +715,35 @@ export interface CSIRecord extends BaseEntity, ApprovalMetadata {
   po?: string;
   suggestions?: string;
   dt?: string;
+  followUp?: CSIFollowUp;
+}
+
+// ── CSI low-rating follow-up (Ownership / Action plan / State machine) ───────
+
+export type CSIFollowUpStatus = 'Open' | 'In Progress' | 'Closed';
+
+export interface CSIFollowUpStateHistoryEntry {
+  from: CSIFollowUpStatus;
+  to: CSIFollowUpStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
+}
+
+export interface CSIFollowUp {
+  owner?: string;
+  assignedDept?: string;
+  dueDate?: string;
+  status: CSIFollowUpStatus;
+  correctiveAction?: string;
+  completionDate?: string;
+  stateHistory?: CSIFollowUpStateHistoryEntry[];
+}
+
+/** Ratings below Satisfactory (v12's own rating-filter bucket boundary) require an owned corrective follow-up. */
+export function csiNeedsFollowUp(rating?: CSIRating): boolean {
+  return rating === 'Fair' || rating === 'Needs Improvement';
 }
 
 export function calculateCSIScore(scores?: Record<string, number>): {
