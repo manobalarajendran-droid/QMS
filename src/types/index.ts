@@ -1050,6 +1050,23 @@ export interface CalibRecord extends BaseEntity, ApprovalMetadata {
   notes: string;
   calibrationAgency?: string;
   calibratedBy?: string;
+  // Record Completeness Standard additions:
+  assignedTo?: string;
+  assignedDept?: string;
+  correctiveAction?: string;
+  correctiveOwner?: string;
+  correctiveTargetDate?: string;
+  correctiveCompletionDate?: string;
+  stateHistory?: CalibStateHistoryEntry[];
+}
+
+export interface CalibStateHistoryEntry {
+  from: CalibStatus;
+  to: CalibStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
 }
 
 // ── Quality Objectives ────────────────────────────────────────────────────────

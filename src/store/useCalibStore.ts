@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId } from '../lib/idGenerator';
-import type { CalibStatus, CalibRecord } from '../types';
+import type { CalibStatus, CalibRecord, CalibStateHistoryEntry } from '../types';
 
 export type { CalibStatus, CalibRecord } from '../types';
 
@@ -15,6 +15,14 @@ export function getCalibDaysRemaining(nextCalibDate?: string): number | null {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return Math.ceil((target.getTime() - today.getTime()) / (1000 * 3600 * 24));
+}
+
+function computeStatusFromDate(nextCalibDate?: string): CalibStatus {
+  const days = getCalibDaysRemaining(nextCalibDate);
+  if (days === null) return 'Valid';
+  if (days < 0) return 'Overdue';
+  if (days <= 30) return 'Due';
+  return 'Valid';
 }
 
 export function computeCalibStatus(record: CalibRecord): CalibStatus {
@@ -41,6 +49,17 @@ export interface CalibStoreState {
   addRecord: (data: Omit<CalibRecord, 'id' | 'createdAt' | 'updatedAt'>) => CalibRecord;
   updateRecord: (id: string, data: Partial<Omit<CalibRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: CalibStatus, notes?: string) => void;
+  transitionStatus: (
+    id: string,
+    to: CalibStatus,
+    by: string,
+    reason: string,
+    kind: CalibStateHistoryEntry['kind']
+  ) => void;
+  reportOutOfTolerance: (id: string, by: string, reason: string) => void;
+  verifyReturnToService: (id: string, by: string, reason: string) => void;
+  scrapInstrument: (id: string, by: string, reason: string) => void;
+  reopenFromScrap: (id: string, by: string, reason: string) => void;
   deleteRecord: (id: string) => void;
   archiveRecord: (id: string) => void;
   unarchiveRecord: (id: string) => void;
@@ -127,6 +146,112 @@ export const useCalibStore = create<CalibStoreState>()(
           status,
           notes
         );
+      },
+
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const from = computeCalibStatus(existing);
+        const entry: CalibStateHistoryEntry = { from, to, by, at: now, reason, kind };
+        set((s) => ({
+          records: s.records.map((r) =>
+            r.id === id
+              ? { ...r, status: to, updatedAt: now, stateHistory: [...(r.stateHistory ?? []), entry] }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'calibration', id, from, to, reason);
+      },
+
+      reportOutOfTolerance: (id, by, reason) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        get().transitionStatus(id, 'Out of Service', by, reason, 'forward');
+      },
+
+      verifyReturnToService: (id, by, reason) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const to = computeStatusFromDate(existing.nextCalibDate);
+        const entry: CalibStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind: 'verify' };
+        set((s) => ({
+          records: s.records.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  status: to,
+                  approvedBy: by,
+                  approvalDate: now,
+                  approvalComments: reason,
+                  updatedAt: now,
+                  stateHistory: [...(r.stateHistory ?? []), entry],
+                }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'calibration', id, existing.status, to, reason);
+      },
+
+      scrapInstrument: (id, by, reason) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const entry: CalibStateHistoryEntry = {
+          from: existing.status,
+          to: 'Scrapped',
+          by,
+          at: now,
+          reason,
+          kind: 'forward',
+        };
+        set((s) => ({
+          records: s.records.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  status: 'Scrapped',
+                  rejectedBy: by,
+                  rejectionDate: now,
+                  rejectionReason: reason,
+                  updatedAt: now,
+                  stateHistory: [...(r.stateHistory ?? []), entry],
+                }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'calibration', id, existing.status, 'Scrapped', reason);
+      },
+
+      reopenFromScrap: (id, by, reason) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const entry: CalibStateHistoryEntry = {
+          from: existing.status,
+          to: 'Out of Service',
+          by,
+          at: now,
+          reason,
+          kind: 'reopen',
+        };
+        set((s) => ({
+          records: s.records.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  status: 'Out of Service',
+                  rejectedBy: undefined,
+                  rejectionDate: undefined,
+                  rejectionReason: undefined,
+                  updatedAt: now,
+                  stateHistory: [...(r.stateHistory ?? []), entry],
+                }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'calibration', id, existing.status, 'Out of Service', reason);
       },
 
       deleteRecord: (id) => {
