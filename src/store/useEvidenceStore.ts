@@ -20,7 +20,7 @@ export interface EvidenceAttachment {
   id: string;
   /** Linked requirement or test ID */
   entityId: string;
-  entityType: 'requirement' | 'test' | 'capa' | 'risk_assessment';
+  entityType: 'requirement' | 'test' | 'capa' | 'risk_assessment' | 'ncr';
   /** Human-readable name */
   name: string;
   /** File name (original) */

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId } from '../lib/idGenerator';
-import type { NCRRecord, NCRRecordStatus } from '../types';
+import type { NCRRecord, NCRRecordStatus, NCRStateHistoryEntry } from '../types';
 
 export type { NCRRecord, NCRRecordStatus } from '../types';
 
@@ -13,6 +13,14 @@ export interface NCRStoreState {
   addRecord: (data: Omit<NCRRecord, 'id' | 'createdAt' | 'updatedAt'>) => NCRRecord;
   updateRecord: (id: string, data: Partial<Omit<NCRRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: NCRRecordStatus, reason?: string) => void;
+  /** Generic state-machine transition: forward, reject/return, or reopen — always records reason + history. */
+  transitionStatus: (
+    id: string,
+    to: NCRRecordStatus,
+    by: string,
+    reason: string,
+    kind: NCRStateHistoryEntry['kind']
+  ) => void;
   approveNCR: (id: string, approver: string, comments?: string) => void;
   rejectNCR: (id: string, rejector: string, comments?: string) => void;
   archiveRecord: (id: string) => void;
@@ -347,7 +355,7 @@ export const useNCRStore = create<NCRStoreState>()(
         const existing = get().records.find((r) => r.id === id);
         if (!existing) return;
         const now = new Date().toISOString();
-        
+
         set((state) => ({
           records: state.records.map((r) =>
             r.id === id ? { ...r, status, updatedAt: now } : r
@@ -364,11 +372,52 @@ export const useNCRStore = create<NCRStoreState>()(
         );
       },
 
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: NCRStateHistoryEntry = {
+          from: existing.status,
+          to,
+          by,
+          at: now,
+          reason,
+          kind,
+        };
+
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id
+              ? { ...r, status: to, updatedAt: now, stateHistory: [...(r.stateHistory ?? []), historyEntry] }
+              : r
+          ),
+        }));
+
+        useAuditStore.getState().log(
+          'status_change',
+          'ncr',
+          id,
+          existing.status,
+          to,
+          reason
+        );
+      },
+
       approveNCR: (id, approver, comments) => {
         const existing = get().records.find((r) => r.id === id);
         if (!existing) return;
         const now = new Date().toISOString();
         const todayStr = now.split('T')[0];
+        const reason = comments || 'NCR verified and closed by MR';
+
+        const historyEntry: NCRStateHistoryEntry = {
+          from: existing.status,
+          to: 'Closed',
+          by: approver,
+          at: now,
+          reason,
+          kind: 'verify',
+        };
 
         const updatedFields: Partial<NCRRecord> = {
           status: 'Closed',
@@ -379,6 +428,7 @@ export const useNCRStore = create<NCRStoreState>()(
           verifiedBy: existing.verifiedBy || approver,
           verifiedDate: existing.verifiedDate || todayStr,
           updatedAt: now,
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
         };
 
         set((state) => ({
@@ -391,7 +441,7 @@ export const useNCRStore = create<NCRStoreState>()(
           id,
           JSON.stringify({ status: existing.status }),
           JSON.stringify(updatedFields),
-          comments || 'NCR verified and closed by MR'
+          reason
         );
       },
 
@@ -400,13 +450,24 @@ export const useNCRStore = create<NCRStoreState>()(
         if (!existing) return;
         const now = new Date().toISOString();
         const todayStr = now.split('T')[0];
+        const reason = comments || 'NCR rejected by MR (returned to CAPA)';
+
+        const historyEntry: NCRStateHistoryEntry = {
+          from: existing.status,
+          to: 'CAPA_InProgress',
+          by: rejector,
+          at: now,
+          reason,
+          kind: 'reject',
+        };
 
         const updatedFields: Partial<NCRRecord> = {
-          status: 'Corrective Action Pending',
+          status: 'CAPA_InProgress',
           rejectedBy: rejector,
           rejectionDate: todayStr,
           rejectionReason: comments ?? '',
           updatedAt: now,
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
         };
 
         set((state) => ({
@@ -419,7 +480,7 @@ export const useNCRStore = create<NCRStoreState>()(
           id,
           JSON.stringify({ status: existing.status }),
           JSON.stringify(updatedFields),
-          comments || 'NCR rejected by MR (returned to CAPA)'
+          reason
         );
       },
 

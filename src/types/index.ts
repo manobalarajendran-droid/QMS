@@ -578,8 +578,16 @@ export interface NCRRecord extends BaseEntity, ApprovalMetadata {
   rca?: string;
   corrAction?: string;
   corrBy?: string;
+  containmentAction?: string;
+  containmentBy?: string;
+  containmentTargetDate?: string;
+  containmentDate?: string;
+  corrTargetDate?: string;
+  corrCompletionDate?: string;
   prevAction?: string;
   prevBy?: string;
+  prevTargetDate?: string;
+  prevCompletionDate?: string;
   finalDecision?: string;
   verifiedBy?: string;
   verifiedDate?: string;
@@ -587,6 +595,16 @@ export interface NCRRecord extends BaseEntity, ApprovalMetadata {
   slaDeadline?: string;
   assignedTo?: string;
   assignedDept?: string;
+  stateHistory?: NCRStateHistoryEntry[];
+}
+
+export interface NCRStateHistoryEntry {
+  from: NCRRecordStatus;
+  to: NCRRecordStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
 }
 
 // ── CSI Survey & 22-Criteria Scoring ─────────────────────────────────────────
