@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId } from '../lib/idGenerator';
-import type { AuditProgrammeRecord, AuditProgrammeRecordStatus } from '../types';
+import type { AuditProgrammeRecord, AuditProgrammeRecordStatus, AuditStateHistoryEntry } from '../types';
 
-export type { AuditProgrammeRecord, AuditProgrammeRecordStatus } from '../types';
+export type { AuditProgrammeRecord, AuditProgrammeRecordStatus, AuditStateHistoryEntry } from '../types';
 
 // ── Store ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +13,13 @@ export interface AuditProgrammeStoreState {
   addRecord: (data: Omit<AuditProgrammeRecord, 'id' | 'createdAt' | 'updatedAt'>) => AuditProgrammeRecord;
   updateRecord: (id: string, data: Partial<Omit<AuditProgrammeRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: AuditProgrammeRecordStatus, notes?: string) => void;
+  transitionStatus: (
+    id: string,
+    to: AuditProgrammeRecordStatus,
+    by: string,
+    reason: string,
+    kind: AuditStateHistoryEntry['kind']
+  ) => void;
   deleteRecord: (id: string) => void;
   archiveRecord: (id: string) => void;
   unarchiveRecord: (id: string) => void;
@@ -318,6 +325,34 @@ export const useAuditProgrammeStore = create<AuditProgrammeStoreState>()(
           status,
           notes
         );
+      },
+
+      /** Generic state-machine mover: records a typed, reasoned entry in stateHistory for every transition. */
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: AuditStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+        const completedDate =
+          to === 'Completed' ? existing.completedDate || now.split('T')[0] : existing.completedDate;
+        const followUpDate = to === 'Follow-up' ? existing.followUpDate || now.split('T')[0] : existing.followUpDate;
+
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  status: to,
+                  completedDate,
+                  followUpDate,
+                  stateHistory: [...(r.stateHistory ?? []), historyEntry],
+                  updatedAt: now,
+                }
+              : r
+          ),
+        }));
+
+        useAuditStore.getState().log('status_change', 'audit_programme', id, existing.status, to, reason);
       },
 
       deleteRecord: (id) => {

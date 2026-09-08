@@ -1019,6 +1019,15 @@ export type AuditProgrammeRecordStatus =
   // Legacy alias:
   | 'Report Issued';
 
+export interface AuditStateHistoryEntry {
+  from: AuditProgrammeRecordStatus;
+  to: AuditProgrammeRecordStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
+}
+
 export interface AuditProgrammeRecord extends BaseEntity, ApprovalMetadata {
   ref?: string;
   sc?: string;
@@ -1035,6 +1044,7 @@ export interface AuditProgrammeRecord extends BaseEntity, ApprovalMetadata {
   ncrIds?: string[];
   completedDate?: string;
   followUpDate?: string;
+  stateHistory?: AuditStateHistoryEntry[];
 }
 
 // ── Ancillary Modules: Actions & Evfile ────────────────────────────────────────

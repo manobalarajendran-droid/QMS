@@ -211,6 +211,28 @@ The store's own `updateStatus(id,status,notes)` (useAuditProgrammeStore.ts:298-3
 7. Add list-view filters (status, assignee/department, overdue) and sort controls.
 8. Wire the store's existing `archiveRecord`/`unarchiveRecord`/`toggleArchive` into the UI.
 
+### f. Status — Phase 3 (2026-09-08)
+
+**✅ DONE — reference-pattern replication complete.** `AuditProgramme.tsx` fully rewritten; `useAuditProgrammeStore.ts`'s `transitionStatus` (added this phase) is now the only path the UI uses for status changes — `updateStatus`/`updateRecord` remain for direct/legacy writes (e.g. accepting the legacy `Report Issued` value) but are no longer how the workflow bar drives state.
+
+| # | Item | Score (post-rewrite) | Evidence |
+|---|---|---|---|
+| 1 | Ownership | **Pass** | `aud` (Auditor) is a `useAuthStore().users` picker (with fallback option for legacy/custom values); `dep` via `PTA_DEPARTMENTS` `DeptSelect`; `dt`/`followUpDate` due-date fields + `isOverdueAudit()` overdue badge on card and detail header, state-aware (Follow-up checks `followUpDate`, Completed is never overdue, otherwise checks `dt`) |
+| 2 | Action plan | **Pass** (documented substitution) | An internal audit's "action" is the audit itself plus any linked NCRs it raises, not a CAPA-style 3-stage plan — captured via the state machine (Planned → In Progress → Completed → Follow-up) plus the "Linked NCRs" card, consistent with v12 and the module's actual purpose |
+| 3 | State machine | **Pass** | Canonical bar `Planned → In Progress → Completed → Follow-up` (legacy `Report Issued` normalized to `Completed` for display/navigation only, never mutated); every transition requires reason text and is recorded in `stateHistory` (`{from,to,by,at,reason,kind}`); `Follow-up` is terminal with a dedicated "Follow-up Verified" panel; reopen from terminal `Follow-up` returns to `In Progress` (skips the pre-terminal `Completed` gate, matching the NCR reopen precedent), restricted to `isMR` |
+| 4 | No orphan fields | **Pass** | `phase`, `completedDate`, `followUpDate`, `rpt` surfaced in the form and/or detail view; all `ApprovalMetadata` fields (`reviewedBy`, `reviewComments`, `approvedBy`, `approvalComments`, `rejectedBy`, `rejectionReason`, dates) surfaced conditionally in a "Review / Approval Trail" card when present |
+| 5 | Form validation | **Pass** | Native HTML5 `required` attributes on all mandatory fields (ref, scope, auditor, department, due date), blocking submit with inline browser messaging — matches the pattern established on NCR/DCR |
+| 6 | Evidence/comments/export/audit trail | **Pass** | `EvidencePanel entityType="audit"`, `CommentThread entityType="audit"`, `window.print()` export button, and every transition audit-logged via `useAuditStore` in the store layer |
+| 7 | List view | **Pass** | Search box, status/department/auditor/overdue filters, "Show Archived" toggle, sort by newest/oldest/due/ref |
+
+**Overall (post-rewrite): 7 of 7 items Pass.**
+
+Verification evidence (2026-09-08):
+- `npx tsc --noEmit` — clean, zero errors.
+- `npm run build` — clean production build, no errors (fixed one unused-import build error, `FileText`, along the way — build-mode `tsc -b` catches `noUnusedLocals` violations that the standalone typecheck run did not).
+- `npm test -- --run` — **159 passed (159) across 13 test files**, including 12 new tests in `src/store/__tests__/useAuditProgrammeStore.test.ts` covering `addRecord`, the full forward path (Planned→In Progress→Completed→Follow-up, with auto-set `completedDate`/`followUpDate`), reject, reopen-from-terminal, `updateRecord` (including direct legacy-status writes), `updateStatus`, `deleteRecord`, and archive/unarchive/toggleArchive.
+- Live browser verification against the running dev server: walked the full state machine end-to-end on a live record (Planned → In Progress → Completed → Follow-up → reopened to In Progress), confirming `stateHistory` accumulates correctly with `by`/`at`/`reason`/`kind` at each step; confirmed the legacy seed record `IA-2025-01` (`status: 'Report Issued'`) displays as "Completed" via `normalizeStatus` without mutating the stored value, and its transition bar correctly offers "Verify & Close" as the only forward option; confirmed the OVERDUE badge correctly appears/clears through every transition; confirmed Evidence and Comments panels open with no errors; created, edited, and deleted a test record (`IA-TEST-99`) via the New Audit / Edit / Delete flows, confirming required-field validation blocks empty submission and both modals correctly read/write all fields.
+
 ---
 
 ## TÜV Tracker
