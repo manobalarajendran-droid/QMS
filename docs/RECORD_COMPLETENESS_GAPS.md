@@ -841,6 +841,37 @@ Type: `SupplierEvalRecord extends BaseEntity, ApprovalMetadata` (types/index.ts:
 6. Add search, status filter, class filter, sort-by-due-date/status, and an overdue filter to the list.
 7. Reconcile or explicitly deprecate the parallel API-backed `SupplierScorecard`/`SupplierPortalView` implementation.
 
+### f. Status — Phase 3 (implemented)
+
+`SupplierDashboard.tsx` fully rewritten; `useSupplierEvalStore.ts` extended with `transitionStatus`, `approveSupplier`, `markConditional`, `rejectSupplier`, `reopenSupplier`. `EvidenceAttachment.entityType` and `EvidencePanel`'s `entityType` union both extended with `'supplier'`.
+
+| # | Item | Score | Evidence |
+|---|---|---|---|
+| 1 | Ownership | **Pass** | `assignedTo` (`UserSelect`, populated from `useAuthStore().users`) and `assignedDept` (`DeptSelect`, from `PTA_DEPARTMENTS`) added to the create/edit form and shown read-only in the detail ownership grid; overdue badge computed by `isOverdueSupplier()` (true when `nextEvalDate` has passed and status isn't `Rejected`) and shown next to the status badge and as a list-view filter. |
+| 2 | Action plan | **Pass** | Corrective-action block (`correctiveAction`/`correctiveOwner` via `UserSelect`/`correctiveTargetDate`/`correctiveCompletionDate`) shown and editable whenever status is `Conditional`/`Rejected` or the fields already hold data; evidence attachment via the shared `EvidencePanel`. Not built on the shared `ActionPlanTable` — that component models a list of NCR/DCR-style multi-row action items, while a supplier's corrective action is a single, one-shot re-evaluation gate (approve/reject again), so a bespoke single-row block matches the domain rather than forcing an ill-fitting list abstraction. |
+| 3 | State machine | **Pass** | `StatusSelect`'s free-jump behavior is gone. `Under Evaluation` renders a reason-gated three-way "Evaluation Gate" (Approve / Mark Conditional / Reject), each restricted to `admin`/`qa_manager` (`isMR`) and calling a dedicated store action. `Conditional`/`Rejected` are hidden terminal states with a mandatory-reason "Reopen for Re-Evaluation" action. `Approved` renders the shared `StateTransitionBar` (terminal stepper + `canReopen`-gated reopen). Every transition appends a typed `{from,to,by,at,reason,kind}` entry to `stateHistory`, rendered as a "Transition History" list in the detail view — verified live (see below). The **`rejectSupplier` semantic bug identified in Phase 1 is fixed**: it now writes `rejectedBy`/`rejectionDate`/`rejectionReason`, not `approvedBy`/`approvalDate`/`approvalComments` (locked in by `useSupplierEvalStore.test.ts`). |
+| 4 | No orphan fields | **Pass** | All former orphans now surfaced: `approvalComments`/`rejectionReason`/`rejectedBy` shown in a new "Evaluation Trail" detail section; `contactPerson`/`email`/`lastEvalDate`/`category` shown (category read-only by design, matching NCR's category-immutable-after-creation pattern; the rest editable) in "Supplier Details"; `isArchived` wired to `archiveRecord`/`unarchiveRecord`/`toggleArchive` via an Archive action-icon and a "Show Archived" list filter. `reviewedBy`/`reviewDate`/`reviewComments` (unused `ApprovalMetadata` fields not written by any supplier action) remain legitimately unused, consistent with NCR/DCR/CSI's own non-use of those same shared fields — not supplier-specific orphans. The dropped v12 `scope`/classification fields are restored as `scope` (Scope of Supply) and `classification` (A/B/C, shown as a badge). |
+| 5 | Form validation | **Pass** | `name`, `category`, `contactPerson`, `email` required at submit with inline messages; reason text required (via disabled Confirm button) before any gate/reject/reopen transition fires. |
+| 6 | Evidence/comments/export/audit trail | **Pass** | `EvidencePanel entityType="supplier"` and `CommentThread entityType="supplier"` wired in; Print action added; every store mutation already logged to `useAuditStore` (create/update/delete/archive/unarchive/status_change/approve/reject), now including a reasoned entry for every state transition. |
+| 7 | List view | **Pass** | Search (name/category/contact/email/scope), status filter, classification filter, department filter, sort (newest/oldest/score/next-eval), "Overdue only" and "Show Archived" checkboxes all added to the list panel. |
+
+**Overall: 7 Pass.**
+
+**Design decisions / notes:**
+- **Classification restoration**: v12's dropped A/B/C field is back as `classification?: 'A'|'B'|'C'` (optional, so existing localStorage records without it still load) and shown as a colored badge in both the list and detail views.
+- **Bar hide/show design vs. DCR**: DCR always renders `StateTransitionBar` and narrows its `statuses` array to exclude a terminal branch. Approved Vendors instead hides the bar entirely outside the `Approved` terminal state, because unlike DCR's linear reject path, a supplier's `Under Evaluation` state has **three** independent outgoing branches (Approve/Conditional/Reject) that don't fit the bar's single forward/reject/reopen model — a custom gate is clearer than overloading the bar's semantics.
+- **`EvidencePanel`/`useEvidenceStore` dual-union fix**: both `EvidenceAttachment.entityType` (store) and `EvidencePanel`'s own `Props.entityType` (component) needed `'supplier'` added; both were confirmed already present going into this session's UI work.
+- **Cross-cutting note (unchanged from Phase 1, not addressed by this module's scope)**: `SupplierScorecard.tsx`/`SupplierPortalView.tsx`/`ShareSupplierLink.tsx` remain a parallel, REST-backed, disconnected supplier implementation with their own `Supplier` type — reconciling or deprecating them is out of scope for the Record Completeness Standard (no new modules/redesign) and is flagged here for a separate decision.
+- **Pre-existing literal-text preservation**: `src/test/qms_smoke.test.tsx` asserts `screen.getByText('AVL')` and hardcodes the old empty-state copy. The rewrite keeps the heading text node as exactly `AVL` (with a separate `<p>Approved Vendor List</p>` subtitle for clarity) and keeps the empty-state message as exactly `No suppliers in AVL.`, so both pre-existing tests still pass unmodified.
+- **`tsc --noEmit` vs. `npm run build` divergence**: `SupplierFormModal`'s `onSubmit` was initially typed with `Partial<SupplierEvalRecord>`, which passed `tsc --noEmit` but failed `npm run build` (`tsc -b` project-references mode) at the `addRecord` call site, which requires all base fields non-optional. Fixed with a precise `SupplierFormSubmitData` type derived from the form's own state shape.
+- **Live browser verification** (`http://localhost:5174`): list view with stats/filters; detail panel with Ownership/Supplier Details/Evaluation Trail; `StateTransitionBar` reopen from `Approved`; the three-way Evaluation Gate from `Under Evaluation`; `markConditional` end-to-end with corrective-action block; `EvidencePanel` scoped correctly to `entityType="supplier"`; reopen from a `Conditional` terminal state; and finally re-approving back to a clean `Approved` state — full transition history rendered correctly at every step, no console errors introduced.
+
+```
+Test Files  16 passed (16)
+     Tests  194 passed (194)
+```
+(`npx tsc --noEmit` and `npm run build` also re-run clean — see closing evidence set below.)
+
 ---
 
 ## Calibration Register

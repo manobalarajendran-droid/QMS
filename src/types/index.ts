@@ -990,6 +990,25 @@ export interface SupplierEvalRecord extends BaseEntity, ApprovalMetadata {
   contactPerson: string;
   email: string;
   findings: string;
+  // Record Completeness Standard additions:
+  scope?: string;
+  classification?: 'A' | 'B' | 'C';
+  assignedTo?: string;
+  assignedDept?: string;
+  correctiveAction?: string;
+  correctiveOwner?: string;
+  correctiveTargetDate?: string;
+  correctiveCompletionDate?: string;
+  stateHistory?: SupplierStateHistoryEntry[];
+}
+
+export interface SupplierStateHistoryEntry {
+  from: SupplierStatus;
+  to: SupplierStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
 }
 
 // ── Calibration Register ──────────────────────────────────────────────────────

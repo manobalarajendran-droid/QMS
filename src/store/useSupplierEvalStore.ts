@@ -2,21 +2,24 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId } from '../lib/idGenerator';
-import type { SupplierStatus, SupplierEvalRecord } from '../types';
+import type { SupplierStatus, SupplierEvalRecord, SupplierStateHistoryEntry } from '../types';
 
-export type { SupplierStatus, SupplierEvalRecord } from '../types';
+export type { SupplierStatus, SupplierEvalRecord, SupplierStateHistoryEntry } from '../types';
 
 export interface SupplierEvalStoreState {
   records: SupplierEvalRecord[];
   addRecord: (data: Omit<SupplierEvalRecord, 'id' | 'createdAt' | 'updatedAt'>) => SupplierEvalRecord;
   updateRecord: (id: string, data: Partial<Omit<SupplierEvalRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: SupplierStatus, notes?: string) => void;
+  transitionStatus: (id: string, to: SupplierStatus, by: string, reason: string, kind: SupplierStateHistoryEntry['kind']) => void;
   deleteRecord: (id: string) => void;
   archiveRecord: (id: string) => void;
   unarchiveRecord: (id: string) => void;
   toggleArchive: (id: string) => void;
   approveSupplier: (id: string, approverName: string, comments?: string) => void;
+  markConditional: (id: string, actorName: string, comments?: string) => void;
   rejectSupplier: (id: string, rejectorName: string, comments?: string) => void;
+  reopenSupplier: (id: string, actorName: string, reason: string) => void;
   setRecords: (records: SupplierEvalRecord[]) => void;
 }
 
@@ -93,6 +96,22 @@ export const useSupplierEvalStore = create<SupplierEvalStoreState>()(
         useAuditStore.getState().log('status_change', 'supplier', id, existing.status, status, notes);
       },
 
+      /** Generic state-machine mover: records a typed, reasoned entry in stateHistory for every transition. */
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: SupplierStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+        set((s) => ({
+          records: s.records.map((r) =>
+            r.id === id
+              ? { ...r, status: to, stateHistory: [...(r.stateHistory ?? []), historyEntry], updatedAt: now }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'supplier', id, existing.status, to, reason);
+      },
+
       deleteRecord: (id) => {
         const existing = get().records.find((r) => r.id === id);
         if (!existing) return;
@@ -149,11 +168,20 @@ export const useSupplierEvalStore = create<SupplierEvalStoreState>()(
         if (!existing) return;
         const now = new Date().toISOString();
         const dateStr = now.split('T')[0];
+        const historyEntry: SupplierStateHistoryEntry = {
+          from: existing.status,
+          to: 'Approved',
+          by: approverName,
+          at: now,
+          reason: comments || 'Approved by authorized evaluator',
+          kind: 'verify',
+        };
         const updateData: Partial<SupplierEvalRecord> = {
           status: 'Approved',
           approvedBy: approverName,
           approvalDate: dateStr,
           approvalComments: comments || existing.approvalComments || 'Approved by authorized evaluator',
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
           updatedAt: now,
         };
         set((s) => ({
@@ -169,16 +197,55 @@ export const useSupplierEvalStore = create<SupplierEvalStoreState>()(
         );
       },
 
+      markConditional: (id, actorName, comments) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: SupplierStateHistoryEntry = {
+          from: existing.status,
+          to: 'Conditional',
+          by: actorName,
+          at: now,
+          reason: comments || 'Approved with conditions pending corrective action',
+          kind: 'forward',
+        };
+        const updateData: Partial<SupplierEvalRecord> = {
+          status: 'Conditional',
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
+          updatedAt: now,
+        };
+        set((s) => ({
+          records: s.records.map((r) => (r.id === id ? { ...r, ...updateData } : r)),
+        }));
+        useAuditStore.getState().log(
+          'status_change',
+          'supplier',
+          id,
+          existing.status,
+          'Conditional',
+          comments || 'Supplier conditionally approved pending corrective action'
+        );
+      },
+
       rejectSupplier: (id, rejectorName, comments) => {
         const existing = get().records.find((r) => r.id === id);
         if (!existing) return;
         const now = new Date().toISOString();
         const dateStr = now.split('T')[0];
+        const historyEntry: SupplierStateHistoryEntry = {
+          from: existing.status,
+          to: 'Rejected',
+          by: rejectorName,
+          at: now,
+          reason: comments || 'Supplier failed evaluation criteria',
+          kind: 'reject',
+        };
         const updateData: Partial<SupplierEvalRecord> = {
           status: 'Rejected',
-          approvedBy: rejectorName,
-          approvalDate: dateStr,
-          approvalComments: comments || 'Supplier failed evaluation criteria',
+          rejectedBy: rejectorName,
+          rejectionDate: dateStr,
+          rejectionReason: comments || 'Supplier failed evaluation criteria',
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
           updatedAt: now,
         };
         set((s) => ({
@@ -191,6 +258,36 @@ export const useSupplierEvalStore = create<SupplierEvalStoreState>()(
           JSON.stringify(existing),
           JSON.stringify(updateData),
           comments || 'Supplier evaluation rejected'
+        );
+      },
+
+      reopenSupplier: (id, actorName, reason) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: SupplierStateHistoryEntry = {
+          from: existing.status,
+          to: 'Under Evaluation',
+          by: actorName,
+          at: now,
+          reason,
+          kind: 'reopen',
+        };
+        const updateData: Partial<SupplierEvalRecord> = {
+          status: 'Under Evaluation',
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
+          updatedAt: now,
+        };
+        set((s) => ({
+          records: s.records.map((r) => (r.id === id ? { ...r, ...updateData } : r)),
+        }));
+        useAuditStore.getState().log(
+          'status_change',
+          'supplier',
+          id,
+          existing.status,
+          'Under Evaluation',
+          reason
         );
       },
 
