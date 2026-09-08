@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId, generateDocNo } from '../lib/idGenerator';
-import type { MRMRecord, MRMStatus, MRMActionItem } from '../types';
+import type { MRMRecord, MRMStatus, MRMActionItem, MRMStateHistoryEntry } from '../types';
 
-export type { MRMRecord, MRMStatus, MRMActionItem } from '../types';
+export type { MRMRecord, MRMStatus, MRMActionItem, MRMStateHistoryEntry } from '../types';
 
 // ── Store ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +13,13 @@ export interface MRMStoreState {
   addRecord: (data: Omit<MRMRecord, 'id' | 'createdAt' | 'updatedAt'>) => MRMRecord;
   updateRecord: (id: string, data: Partial<Omit<MRMRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: MRMStatus, reason?: string) => void;
+  transitionStatus: (
+    id: string,
+    to: MRMStatus,
+    by: string,
+    reason: string,
+    kind: MRMStateHistoryEntry['kind']
+  ) => void;
   reviewMinutes: (id: string, reviewer: string, comments?: string) => void;
   approveMinutes: (id: string, approver: string, comments?: string) => void;
   archiveRecord: (id: string) => void;
@@ -128,6 +135,40 @@ export const useMRMStore = create<MRMStoreState>()(
           records: state.records.map((r) => (r.id === id ? { ...r, status, updatedAt: now } : r)),
         }));
         useAuditStore.getState().log('status_change', 'mrm', id, existing.status, status, reason);
+      },
+
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const todayStr = now.split('T')[0];
+        const historyEntry: MRMStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+
+        const reviewFields: Partial<MRMRecord> =
+          to === 'Reviewed'
+            ? { reviewedBy: by, reviewDate: existing.reviewDate || todayStr, reviewComments: reason }
+            : {};
+        const approvalFields: Partial<MRMRecord> =
+          to === 'Approved'
+            ? { approvedBy: by, approvalDate: existing.approvalDate || todayStr, approvalComments: reason }
+            : {};
+
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  status: to,
+                  ...reviewFields,
+                  ...approvalFields,
+                  stateHistory: [...(r.stateHistory ?? []), historyEntry],
+                  updatedAt: now,
+                }
+              : r
+          ),
+        }));
+
+        useAuditStore.getState().log('status_change', 'mrm', id, existing.status, to, reason);
       },
 
       reviewMinutes: (id, reviewer, comments) => {
@@ -255,7 +296,7 @@ export const useMRMStore = create<MRMStoreState>()(
 
         useAuditStore.getState().log(
           'create',
-          'mrm',
+          'mrm_action',
           mrmId,
           undefined,
           JSON.stringify(newItem),
@@ -284,7 +325,7 @@ export const useMRMStore = create<MRMStoreState>()(
 
         useAuditStore.getState().log(
           'update',
-          'mrm',
+          'mrm_action',
           mrmId,
           JSON.stringify(existingItem),
           JSON.stringify(data),
@@ -311,7 +352,7 @@ export const useMRMStore = create<MRMStoreState>()(
 
         useAuditStore.getState().log(
           'delete',
-          'mrm',
+          'mrm_action',
           mrmId,
           JSON.stringify(existingItem),
           undefined,

@@ -872,6 +872,15 @@ export interface MRMActionItem {
   evidence?: string;
 }
 
+export interface MRMStateHistoryEntry {
+  from: MRMStatus;
+  to: MRMStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
+}
+
 export interface MRMRecord extends BaseEntity, ApprovalMetadata {
   meetingDate: string;
   meetingNo: string;
@@ -895,6 +904,8 @@ export interface MRMRecord extends BaseEntity, ApprovalMetadata {
   actionItems: MRMActionItem[];
   flaggedObjectiveMisses: string[];
   flaggedSLABreaches: string[];
+  minutesRef?: string;
+  stateHistory?: MRMStateHistoryEntry[];
   // V12 backup mappings:
   ref?: string;
   mr?: string;
