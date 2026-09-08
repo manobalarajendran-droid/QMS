@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId } from '../lib/idGenerator';
-import type { TUVRecord, TUVRecordStatus } from '../types';
+import type { TUVRecord, TUVRecordStatus, TUVStateHistoryEntry } from '../types';
 
-export type { TUVRecord, TUVRecordStatus } from '../types';
+export type { TUVRecord, TUVRecordStatus, TUVStateHistoryEntry } from '../types';
 
 // ── Overdue & Date Helpers ───────────────────────────────────────────────────
 
@@ -30,6 +30,13 @@ export interface TUVStoreState {
   addRecord: (data: Omit<TUVRecord, 'id' | 'createdAt' | 'updatedAt'>) => TUVRecord;
   updateRecord: (id: string, data: Partial<Omit<TUVRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: TUVRecordStatus, notes?: string) => void;
+  transitionStatus: (
+    id: string,
+    to: TUVRecordStatus,
+    by: string,
+    reason: string,
+    kind: 'forward' | 'reject' | 'reopen' | 'verify'
+  ) => void;
   deleteRecord: (id: string) => void;
   archiveRecord: (id: string) => void;
   unarchiveRecord: (id: string) => void;
@@ -203,6 +210,39 @@ export const useTUVStore = create<TUVStoreState>()(
           status,
           notes
         );
+      },
+
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const today = now.split('T')[0];
+        const historyEntry: TUVStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+
+        const approvalFields: Partial<TUVRecord> =
+          kind === 'reject'
+            ? { reviewedBy: by, reviewDate: now, reviewComments: reason }
+            : kind === 'verify'
+            ? { approvedBy: by, approvalDate: now, approvalComments: reason, verifiedBy: by, verifiedDate: now }
+            : {};
+
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  ...approvalFields,
+                  status: to,
+                  actionTakenDate: to === 'Action Taken' && !r.actionTakenDate ? today : r.actionTakenDate,
+                  closed: to === 'Closed' ? r.closed || today : r.closed,
+                  stateHistory: [...(r.stateHistory ?? []), historyEntry],
+                  updatedAt: now,
+                }
+              : r
+          ),
+        }));
+
+        useAuditStore.getState().log('status_change', 'tuv', id, existing.status, to, reason);
       },
 
       deleteRecord: (id) => {

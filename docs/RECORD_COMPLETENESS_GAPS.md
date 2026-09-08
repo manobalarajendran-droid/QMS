@@ -306,6 +306,41 @@ No role gate exists anywhere in `TUVTracker.tsx`. The store's `updateStatus(id,s
 8. Add status/overdue filter and sort controls to the list.
 9. **Confirm with the QMS owner** whether creating new TÜV recommendations should be allowed at all — v12 deliberately restricts this to the fixed seeded list of 7, while the rewrite's "+ Add Recommendation" button (TUVTracker.tsx:64-70) silently diverges from that.
 
+### f. Status — Phase 3 (implemented)
+
+`TUVTracker.tsx` was rewritten in full against the Objectives Dashboard template (list+filters+single-modal architecture, unchanged from the pre-existing navigation shape). `useTUVStore.ts` gained a `transitionStatus(id, to, by, reason, kind)` method alongside the untouched legacy `updateStatus`; `TUVRecord` gained `assignedDept?` and `stateHistory?: TUVStateHistoryEntry[]` (both optional — no persist migration needed, key `qatrial:useTUVStore` unchanged).
+
+| # | Item | Score | Evidence |
+|---|---|---|---|
+| 1 | Ownership | **Pass** | `owner` is now a `UserSelect` person-picker sourced from `useAuthStore`; new optional `assignedDept` field with a local `DeptSelect`; `due` date required at submit; overdue badge shown in both list and modal header via `isTUVOverdue`/`getTUVDaysRemaining` (store-exported helpers, replacing the old duplicated local function) |
+| 2 | Action plan | **Pass** | Dedicated Action Plan block surfaces the previously orphaned `actionTaken`/`actionTakenDate` (editable) and `verifiedBy`/`verifiedDate` (read-only, populated by the verify transition) |
+| 3 | State machine | **Pass** | Full 4-state machine: `Open` → `Action Taken` (forward, ungated) → `Verified` (isMR-gated, reason required, `kind='verify'`) → `Closed` (isMR-gated forward); `Action Taken` → `Open` reject (isMR-gated, reason required); `Closed` → `Action Taken` reopen (isMR-gated, reason required, approval/verification fields left untouched); every transition appends a `{from,to,by,at,reason,kind}` entry to `stateHistory`, rendered newest-first in the modal |
+| 4 | No orphan fields | **Pass** | `actionTaken`/`actionTakenDate`/`verifiedBy`/`verifiedDate` now wired into the UI; `approvedBy/approvalDate/approvalComments` (verify) and `reviewedBy/reviewDate/reviewComments` (reject) from `ApprovalMetadata` are populated by `transitionStatus` and displayed; `isArchived` wired via Archive/Unarchive button (was present in the store but never called from the UI) |
+| 5 | Form validation | **Pass** | Required-field validation (`num`, `desc`, `owner`, `due`) blocks submit with inline messages, mirroring the Objectives `formErrors` pattern |
+| 6 | Evidence/comments/export/audit trail | **Pass** | `EvidencePanel`/`CommentThread` wired with `entityType="tuv"`; print via `window.print()`; every `addRecord`/`updateRecord`/`transitionStatus`/`archiveRecord` call already logged to `useAuditStore` |
+| 7 | List view | **Pass** | Filters for status, department, owner, overdue-only, archived-visibility, search, and sort-by-due-date added to the list header; stat cards for total/closed/action-taken/overdue counts |
+
+**Overall: 7 Pass.**
+
+**Design decisions / notes:**
+- **Ownership field reuse:** `owner` was converted in place to a `UserSelect`; no new `assignedTo` field was added, since (unlike Calibration's competing `calibratedBy`) TÜV's `owner` had no competing field to disambiguate against — following the Objectives precedent instead.
+- **`assignedDept` added as a new optional field** (TÜV had no pre-existing department-like field, unlike DML/ClientIntake/Objectives which each reused their own native field).
+- **Live-record binding:** the rewrite replaced the old captured-snapshot `editingRecord`/`formData` `useState` pattern with the same IIFE `liveRecord = records.find(...)` fix used on Objectives, so the modal never mutates a stale record if `records` changes underneath it while open.
+- **State-machine UI:** implemented as custom inline quick-action buttons + a reason-required `gate` confirm box (Objectives-style), not the generic shared `StateTransitionBar.tsx` — consistent with the fact that neither Calibration nor Objectives use that shared component either.
+- **v12 parity (item 9, open question, not blocking):** v12 restricts TÜV recommendations to a fixed seeded list of 7 and has no create-new path. The rewrite keeps the existing "+ Add Recommendation" capability rather than removing it, since removing a working capability is outside the "only make changes required by the standard" constraint. This divergence from v12 remains open for the QMS owner to confirm/reject.
+
+```
+$ npx tsc -b
+(no output — clean)
+
+$ npm test -- --run
+ Test Files  21 passed (21)
+      Tests  256 passed (256)
+
+$ npm run build
+✓ built in 1.27s
+```
+
 ---
 
 ## DML (Document Master List)

@@ -981,6 +981,18 @@ export interface TUVRecord extends BaseEntity, ApprovalMetadata {
   actionTakenDate?: string;
   verifiedBy?: string;
   verifiedDate?: string;
+  // Record Completeness Standard additions:
+  assignedDept?: string;
+  stateHistory?: TUVStateHistoryEntry[];
+}
+
+export interface TUVStateHistoryEntry {
+  from: TUVRecordStatus;
+  to: TUVRecordStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
 }
 
 // ── Supplier Evaluation & AVL ─────────────────────────────────────────────────
