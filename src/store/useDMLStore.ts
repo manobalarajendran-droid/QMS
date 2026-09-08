@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
 import { generateRecordId } from '../lib/idGenerator';
-import type { DMLRecord, DMLRecordStatus } from '../types';
+import type { DMLRecord, DMLRecordStatus, DMLStateHistoryEntry } from '../types';
 
-export type { DMLRecord, DMLRecordStatus } from '../types';
+export type { DMLRecord, DMLRecordStatus, DMLStateHistoryEntry } from '../types';
 
 // ── Store ────────────────────────────────────────────────────────────────────
 
@@ -13,6 +13,8 @@ export interface DMLStoreState {
   addRecord: (data: Omit<DMLRecord, 'id' | 'createdAt' | 'updatedAt'>) => DMLRecord;
   updateRecord: (id: string, data: Partial<Omit<DMLRecord, 'id' | 'createdAt'>>) => void;
   updateStatus: (id: string, status: DMLRecordStatus, reason?: string) => void;
+  /** Generic state-machine mover: records a typed, reasoned entry in stateHistory for every transition. */
+  transitionStatus: (id: string, to: DMLRecordStatus, by: string, reason: string, kind: DMLStateHistoryEntry['kind']) => void;
   reviseDocument: (
     id: string,
     newDocData?: Partial<DMLRecord>,
@@ -3226,6 +3228,21 @@ export const useDMLStore = create<DMLStoreState>()(
         );
       },
 
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: DMLStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+        set((state) => ({
+          records: state.records.map((r) =>
+            r.id === id
+              ? { ...r, status: to, stateHistory: [...(r.stateHistory ?? []), historyEntry], updatedAt: now }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'dml', id, existing.status, to, reason);
+      },
+
       reviseDocument: (id, newDocData, reviewedBy, approvedBy) => {
         const existing = get().records.find((r) => r.id === id);
         if (!existing) return null;
@@ -3234,27 +3251,38 @@ export const useDMLStore = create<DMLStoreState>()(
         const todayStr = now.split('T')[0];
         const nextRev = newDocData?.rv || computeNextRevision(existing.rv);
         const newId = generateRecordId('dml');
+        const revisionReason = newDocData?.nt || `Superseded by revision ${nextRev}`;
 
         // 1. Mark existing document as Obsolete and archived
+        const obsoleteHistoryEntry: DMLStateHistoryEntry = {
+          from: existing.status,
+          to: 'Obsolete',
+          by: reviewedBy || 'System',
+          at: now,
+          reason: revisionReason,
+          kind: 'forward',
+        };
         const obsoleteExisting: DMLRecord = {
           ...existing,
           status: 'Obsolete',
           isArchived: true,
+          stateHistory: [...(existing.stateHistory ?? []), obsoleteHistoryEntry],
           updatedAt: now,
         };
 
-        // 2. Build new revised document
+        // 2. Build new revised document, restarting the approval workflow at Draft
         const newRecord: DMLRecord = {
           ...existing,
           ...newDocData,
           id: newId,
           rv: nextRev,
-          status: newDocData?.status || 'Active',
+          status: newDocData?.status || 'Draft',
           isArchived: false,
           reviewDate: newDocData?.reviewDate || todayStr,
           reviewedBy: reviewedBy || newDocData?.reviewedBy,
           approvedBy: approvedBy || newDocData?.approvedBy,
-          approvalDate: todayStr,
+          approvalDate: approvedBy ? todayStr : undefined,
+          stateHistory: [],
           nt: newDocData?.nt || `Revised to ${nextRev}. Supersedes previous version.`,
           createdAt: now,
           updatedAt: now,

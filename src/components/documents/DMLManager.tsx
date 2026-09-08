@@ -1,10 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import { useDMLStore } from '../../store/useDMLStore';
-import type { DMLRecord, DMLRecordStatus } from '../../store/useDMLStore';
-import { FileText, ChevronDown, ChevronRight, Search, Edit, Trash, Archive, Plus } from 'lucide-react';
-import { useAuditStore } from '../../store/useAuditStore';
-
+import type { DMLRecord, DMLRecordStatus, DMLStateHistoryEntry } from '../../store/useDMLStore';
+import { useAuth } from '../../hooks/useAuth';
+import { useAuthStore } from '../../store/useAuthStore';
+import { PTA_DEPARTMENTS } from '../../types';
+import { FileText, ChevronDown, ChevronRight, Search, Trash, Archive, Plus, Paperclip, MessageSquare, Printer, X, User as UserIcon } from 'lucide-react';
 import { StatusBadge } from '../shared/StatusBadge';
+import { StateTransitionBar } from '../shared/StateTransitionBar';
+import { EvidencePanel } from '../evidence/EvidencePanel';
+import { CommentThread } from '../shared/CommentThread';
 
 const LEVEL_COLOR: Record<string, string> = {
   'L1': 'text-purple-700 bg-purple-100 dark:bg-purple-900/30 dark:text-purple-300',
@@ -20,6 +24,49 @@ const LEVEL_LABEL: Record<string, string> = {
   'L4': 'Forms & Records',
 };
 
+// Only the 5 live statuses drive the forward path; legacy 'Active'/'Under Review'
+// aliases are never produced by the form or seed data but may still exist on old
+// persisted records, so they're normalized for display rather than removed from the type.
+const STATUSES: DMLRecordStatus[] = ['Draft', 'UnderReview', 'Approved', 'Published', 'Obsolete'];
+
+const STATUS_LABELS: Record<DMLRecordStatus, string> = {
+  Draft: 'Draft',
+  UnderReview: 'Under Review',
+  Approved: 'Approved',
+  Published: 'Published',
+  Obsolete: 'Obsolete',
+  Active: 'Published',
+  'Under Review': 'Under Review',
+};
+
+const LEGACY_STATUS_MAP: Partial<Record<DMLRecordStatus, DMLRecordStatus>> = {
+  Active: 'Published',
+  'Under Review': 'UnderReview',
+};
+
+function normalizeStatus(status: DMLRecordStatus): DMLRecordStatus {
+  return LEGACY_STATUS_MAP[status] ?? status;
+}
+
+function getNextStatus(current: DMLRecordStatus): DMLRecordStatus | null {
+  const idx = STATUSES.indexOf(normalizeStatus(current));
+  if (idx === -1 || idx === STATUSES.length - 1) return null;
+  return STATUSES[idx + 1];
+}
+
+function getPrevStatus(current: DMLRecordStatus): DMLRecordStatus | null {
+  const idx = STATUSES.indexOf(normalizeStatus(current));
+  if (idx <= 0) return null;
+  return STATUSES[idx - 1];
+}
+
+function isOverdueDML(record: DMLRecord): boolean {
+  if (!record.dueDate) return false;
+  const status = normalizeStatus(record.status);
+  if (status === 'Published' || status === 'Obsolete') return false;
+  return new Date(record.dueDate) < new Date(new Date().toDateString());
+}
+
 /** Seed reviewDate values are DD-MM-YYYY, which `new Date(string)` misparses as MM-DD-YYYY (or Invalid Date when day > 12). */
 function parseDDMMYYYY(value: string): Date | null {
   const match = value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
@@ -27,6 +74,38 @@ function parseDDMMYYYY(value: string): Date | null {
   const [, day, month, year] = match;
   const date = new Date(Number(year), Number(month) - 1, Number(day));
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+const inputCls = 'w-full border border-border bg-surface p-2 rounded-lg focus:ring-2 focus:ring-accent outline-none text-sm';
+
+function InfoField({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <h4 className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-1">{label}</h4>
+      <p className="text-sm text-text-primary whitespace-pre-wrap">{value || '—'}</p>
+    </div>
+  );
+}
+
+function Labeled({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="block">
+      <span className="block text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-1">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function DeptSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <select className={inputCls} value={value} onChange={(e) => onChange(e.target.value)}>
+      <option value="">— Select —</option>
+      {PTA_DEPARTMENTS.map((d) => (
+        <option key={d} value={d}>{d}</option>
+      ))}
+      {value && !(PTA_DEPARTMENTS as readonly string[]).includes(value) && <option value={value}>{value}</option>}
+    </select>
+  );
 }
 
 export function DMLManager() {
@@ -39,31 +118,54 @@ export function DMLManager() {
   const [search, setSearch] = useState('');
   const [filterLevel, setFilterLevel] = useState<string>('All');
   const [filterStatus, setFilterStatus] = useState<string>('All');
+  const [filterDept, setFilterDept] = useState<string>('All');
+  const [filterAssignee, setFilterAssignee] = useState<string>('All');
+  const [overdueOnly, setOverdueOnly] = useState(false);
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'due' | 'no'>('newest');
   const [expandedLevels, setExpandedLevels] = useState<Record<string, boolean>>({ L1: true, L2: true, L3: false, L4: false });
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  
+
   const [showForm, setShowForm] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<any>(null);
+  const [editingRecord, setEditingRecord] = useState<DMLRecord | null>(null);
+
+  const assigneeOptions = useMemo(
+    () => Array.from(new Set(records.map((r) => r.assignedTo).filter(Boolean))) as string[],
+    [records]
+  );
 
   const filtered = useMemo(() => {
-    return records.filter((r) => {
+    let list = records.filter((r) => {
       if (!showArchived && r.isArchived) return false;
-      const lvl = r.hierarchyLevel || (r as any).lv || '';
+      const lvl = r.hierarchyLevel || 'L4';
       if (filterLevel !== 'All' && lvl !== filterLevel) return false;
-      const st = r.status as string;
-      if (filterStatus !== 'All' && st !== filterStatus) return false;
+      if (filterStatus !== 'All' && r.status !== filterStatus) return false;
+      if (filterDept !== 'All' && r.dept !== filterDept) return false;
+      if (filterAssignee !== 'All' && r.assignedTo !== filterAssignee) return false;
+      if (overdueOnly && !isOverdueDML(r)) return false;
       if (search) {
         const q = search.toLowerCase();
         return (r.tt || '').toLowerCase().includes(q) || (r.no || '').toLowerCase().includes(q);
       }
       return true;
     });
-  }, [records, showArchived, filterLevel, filterStatus, search]);
+    list = [...list].sort((a, b) => {
+      if (sortBy === 'newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortBy === 'oldest') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sortBy === 'no') return (a.no || '').localeCompare(b.no || '');
+      if (sortBy === 'due') {
+        const da = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+        const db = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+        return da - db;
+      }
+      return 0;
+    });
+    return list;
+  }, [records, showArchived, filterLevel, filterStatus, filterDept, filterAssignee, overdueOnly, search, sortBy]);
 
   const byLevel = useMemo(() => {
     const groups: Record<string, DMLRecord[]> = { L1: [], L2: [], L3: [], L4: [] };
     filtered.forEach((r) => {
-      const lvl = r.hierarchyLevel || (r as any).lv || 'L4';
+      const lvl = r.hierarchyLevel || 'L4';
       if (lvl in groups) groups[lvl].push(r);
       else groups['L4'].push(r);
     });
@@ -76,23 +178,21 @@ export function DMLManager() {
 
   const needsReview = records.filter((r) => {
     if (!r.reviewDate) return false;
-    const rd = parseDDMMYYYY(r.reviewDate);
-    if (!rd) return false;
+    const rd = parseDDMMYYYY(r.reviewDate) ?? new Date(r.reviewDate);
+    if (Number.isNaN(rd.getTime())) return false;
     const soon = new Date(); soon.setMonth(soon.getMonth() + 2);
-    return rd < soon && r.status === 'Published';
+    return rd < soon && normalizeStatus(r.status) === 'Published';
   });
 
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this document?')) {
       deleteRecord(id);
-      useAuditStore.getState().log('delete', 'DML', id, 'Deleted document');
       if (selectedId === id) setSelectedId(null);
     }
   };
 
   const handleArchive = (id: string, isArchived: boolean) => {
     updateRecord(id, { isArchived: !isArchived });
-    useAuditStore.getState().log('update', 'DML', id, isArchived ? 'Unarchived document' : 'Archived document');
   };
 
   return (
@@ -100,8 +200,8 @@ export function DMLManager() {
       {/* Left panel */}
       <div className="w-96 shrink-0 flex flex-col gap-3 overflow-hidden">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white">Document Manager</h2>
-          <button onClick={() => { setEditingRecord(null); setShowForm(true); }} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-1">
+          <h2 className="text-xl font-bold text-text-primary">Document Manager</h2>
+          <button onClick={() => { setEditingRecord(null); setShowForm(true); }} className="bg-accent text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-accent-hover transition-colors shadow-sm flex items-center gap-1">
             <Plus className="w-4 h-4"/> Add Doc
           </button>
         </div>
@@ -117,28 +217,52 @@ export function DMLManager() {
 
         <div className="flex flex-col gap-2">
           <div className="relative">
-            <Search className="absolute left-2.5 top-2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-2.5 top-2 w-4 h-4 text-text-tertiary" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search DML..."
-              className="w-full pl-8 pr-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+              className="w-full pl-8 pr-3 py-1.5 text-sm border border-border rounded-lg bg-surface text-text-primary"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <select value={filterLevel} onChange={(e) => setFilterLevel(e.target.value)}
-              className="flex-1 text-xs border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              className="flex-1 text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-text-secondary">
               <option>All</option><option>L1</option><option>L2</option><option>L3</option><option>L4</option>
             </select>
             <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
-              className="flex-1 text-xs border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-              <option>All</option><option>Draft</option><option>UnderReview</option><option>Approved</option><option>Published</option><option>Obsolete</option>
+              className="flex-1 text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-text-secondary">
+              <option>All</option>
+              {STATUSES.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
             </select>
             <button onClick={() => setShowArchived((v) => !v)}
-              className={`text-xs px-2 py-1.5 rounded-lg border transition-colors ${showArchived ? 'bg-slate-100 dark:bg-slate-700' : 'border-slate-200 dark:border-slate-600 text-slate-500'}`}>
+              className={`text-xs px-2 py-1.5 rounded-lg border transition-colors ${showArchived ? 'bg-surface-hover' : 'border-border text-text-tertiary'}`}>
               {showArchived ? 'Hide Archived' : 'Archived'}
             </button>
           </div>
+          <div className="flex flex-wrap gap-2">
+            <select value={filterDept} onChange={(e) => setFilterDept(e.target.value)}
+              className="flex-1 text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-text-secondary">
+              <option value="All">All Departments</option>
+              {PTA_DEPARTMENTS.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <select value={filterAssignee} onChange={(e) => setFilterAssignee(e.target.value)}
+              className="flex-1 text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-text-secondary">
+              <option value="All">All Owners</option>
+              {assigneeOptions.map((a) => <option key={a} value={a}>{a}</option>)}
+            </select>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="flex-1 text-xs border border-border rounded-lg px-2 py-1.5 bg-surface text-text-secondary">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="due">Due date soonest</option>
+              <option value="no">Doc No. A–Z</option>
+            </select>
+          </div>
+          <label className="flex items-center gap-1.5 text-xs text-text-secondary cursor-pointer">
+            <input type="checkbox" checked={overdueOnly} onChange={(e) => setOverdueOnly(e.target.checked)} className="rounded border-border" />
+            Overdue only
+          </label>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-2">
@@ -146,34 +270,41 @@ export function DMLManager() {
             <div key={lvl}>
               <button
                 onClick={() => toggleLevel(lvl)}
-                className="w-full flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300 py-1"
+                className="w-full flex items-center gap-2 text-xs font-semibold text-text-secondary py-1"
               >
                 {expandedLevels[lvl] ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
                 <span className={`px-1.5 py-0.5 rounded text-xs font-bold ${LEVEL_COLOR[lvl]}`}>{lvl}</span>
                 <span>{LEVEL_LABEL[lvl]}</span>
-                <span className="ml-auto text-slate-400">({byLevel[lvl].length})</span>
+                <span className="ml-auto text-text-tertiary">({byLevel[lvl].length})</span>
               </button>
               {expandedLevels[lvl] && (
                 <div className="ml-4 space-y-1">
-                  {byLevel[lvl].map((r) => (
-                    <button
-                      key={r.id}
-                      onClick={() => setSelectedId(r.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg border text-xs transition-colors ${
-                        selectedId === r.id
-                          ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20'
-                          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-1">
-                        <span className="font-medium text-slate-700 dark:text-slate-200 line-clamp-2">{r.tt || r.no}</span>
-                        <StatusBadge status={r.status} />
-                      </div>
-                      {r.no && <span className="text-slate-400 text-xs">{r.no} {r.isArchived ? '(Archived)' : ''}</span>}
-                    </button>
-                  ))}
+                  {byLevel[lvl].map((r) => {
+                    const overdue = isOverdueDML(r);
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => setSelectedId(r.id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg border text-xs transition-colors ${
+                          selectedId === r.id
+                            ? 'border-accent bg-accent-subtle'
+                            : 'border-border bg-surface hover:bg-surface-hover'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-1">
+                          <span className="font-medium text-text-primary line-clamp-2">{r.tt || r.no}</span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            {overdue && <span className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+                            <StatusBadge status={STATUS_LABELS[normalizeStatus(r.status)] ?? r.status} />
+                          </div>
+                        </div>
+                        {r.no && <span className="text-text-tertiary text-xs">{r.no} {r.isArchived ? '(Archived)' : ''}</span>}
+                        {r.assignedTo && <div className="text-text-tertiary text-xs mt-0.5 flex items-center gap-1"><UserIcon className="w-3 h-3" /> {r.assignedTo}</div>}
+                      </button>
+                    );
+                  })}
                   {byLevel[lvl].length === 0 && (
-                    <p className="text-xs text-slate-400 px-3 py-1">No documents.</p>
+                    <p className="text-xs text-text-tertiary px-3 py-1">No documents.</p>
                   )}
                 </div>
               )}
@@ -184,154 +315,31 @@ export function DMLManager() {
 
       <div className="flex-1 overflow-y-auto">
         {!selected ? (
-          <div className="flex flex-col items-center justify-center h-full text-slate-400">
+          <div className="flex flex-col items-center justify-center h-full text-text-tertiary">
             <FileText className="w-12 h-12 mb-3 opacity-30" />
             <p className="text-sm">Select a document to view details</p>
             <p className="text-xs mt-1 opacity-60">or use the filters to narrow the list</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-white">{selected.tt || selected.no}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${LEVEL_COLOR[selected.hierarchyLevel || (selected as any).lv || 'L4']}`}>
-                      {selected.hierarchyLevel || (selected as any).lv || 'L4'}
-                    </span>
-                    <span className="text-xs text-slate-500">{selected.no}</span>
-                    {selected.rv && <span className="text-xs text-slate-500">Rev. {selected.rv}</span>}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <select
-                    value={selected.status as string}
-                    onChange={(e) => updateRecord(selected.id, { status: e.target.value as DMLRecordStatus })}
-                    className="text-sm border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200"
-                  >
-                    {['Draft', 'UnderReview', 'Approved', 'Published', 'Obsolete'].map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                  <button onClick={() => { setEditingRecord(selected); setShowForm(true); }} className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full"><Edit className="w-4 h-4"/></button>
-                  <button onClick={() => handleArchive(selected.id, !!selected.isArchived)} className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-amber-600 rounded-full"><Archive className="w-4 h-4"/></button>
-                  <button onClick={() => handleDelete(selected.id)} className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-red-600 rounded-full"><Trash className="w-4 h-4"/></button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Department</span>
-                  <p className="text-slate-700 dark:text-slate-300 mt-0.5">{selected.dept || '—'}</p>
-                </div>
-                <div>
-                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">ISO Clause</span>
-                  <p className="text-slate-700 dark:text-slate-300 mt-0.5">{selected.cl || '—'}</p>
-                </div>
-                <div>
-                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Review Date</span>
-                  <input
-                    type="date"
-                    value={selected.reviewDate || ''}
-                    onChange={(e) => updateRecord(selected.id, { reviewDate: e.target.value })}
-                    className="mt-0.5 text-sm border border-slate-200 dark:border-slate-600 rounded px-2 py-0.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200"
-                  />
-                </div>
-                <div>
-                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Document Owner</span>
-                  <p className="text-slate-700 dark:text-slate-300 mt-0.5">{(selected as any).owner || (selected as any).docOwner || '—'}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
-              <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Lifecycle Actions</h4>
-              <div className="flex gap-2 flex-wrap">
-                {(selected.status as string) === 'Draft' && (
-                  <button
-                    onClick={() => updateRecord(selected.id, { status: 'UnderReview' as DMLRecordStatus })}
-                    className="text-xs bg-yellow-500 text-white px-3 py-1.5 rounded-lg hover:bg-yellow-600 transition-colors"
-                  >
-                    Submit for Review →
-                  </button>
-                )}
-                {(selected.status as string) === 'UnderReview' && (
-                  <>
-                    <button
-                      onClick={() => updateRecord(selected.id, { status: 'Approved' as DMLRecordStatus })}
-                      className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Approve →
-                    </button>
-                    <button
-                      onClick={() => updateRecord(selected.id, { status: 'Draft' as DMLRecordStatus })}
-                      className="text-xs bg-red-100 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-200 transition-colors"
-                    >
-                      ← Reject
-                    </button>
-                  </>
-                )}
-                {(selected.status as string) === 'Approved' && (
-                  <button
-                    onClick={() => updateRecord(selected.id, { status: 'Published' as DMLRecordStatus })}
-                    className="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Publish →
-                  </button>
-                )}
-                {(selected.status as string) === 'Published' && (
-                  <>
-                    <button
-                      onClick={() => updateRecord(selected.id, { status: 'UnderReview' as DMLRecordStatus })}
-                      className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg hover:bg-yellow-200 transition-colors"
-                    >
-                      Trigger Periodic Review
-                    </button>
-                    <button
-                      onClick={() => {
-                        // Create a new revision
-                        const newRevMatch = selected.rv ? selected.rv.match(/\d+/) : null;
-                        const newRev = newRevMatch ? `Rev ${String(parseInt(newRevMatch[0], 10) + 1).padStart(2, '0')}` : 'Rev 01';
-                        addRecord({
-                          ...selected,
-                          id: undefined,
-                          rv: newRev,
-                          status: 'Draft',
-                          reviewDate: new Date().toISOString().split('T')[0],
-                        } as any);
-                        updateRecord(selected.id, { status: 'Obsolete', isArchived: true });
-                        useAuditStore.getState().log('create', 'DML', 'new', 'Created new revision for ' + selected.no);
-                        setShowForm(false);
-                      }}
-                      className="text-xs bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-200 transition-colors"
-                    >
-                      Create New Revision
-                    </button>
-                    <button
-                      onClick={() => updateRecord(selected.id, { status: 'Obsolete' as DMLRecordStatus })}
-                      className="text-xs bg-red-100 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-200 transition-colors"
-                    >
-                      Mark Obsolete
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+          <DMLDetailPanel
+            record={selected}
+            onClose={() => setSelectedId(null)}
+            onEdit={() => { setEditingRecord(selected); setShowForm(true); }}
+            onDelete={() => handleDelete(selected.id)}
+            onArchive={() => handleArchive(selected.id, !!selected.isArchived)}
+          />
         )}
       </div>
-      
+
       {showForm && (
-        <DMLFormModal 
+        <DMLFormModal
           record={editingRecord}
           onClose={() => { setShowForm(false); setEditingRecord(null); }}
           onSubmit={(data) => {
             if (editingRecord) {
               updateRecord(editingRecord.id, data);
-              useAuditStore.getState().log('update', 'DML', editingRecord.id, 'Updated document');
             } else {
-              const newRecord = addRecord({...data, status: 'Draft'} as any);
-              useAuditStore.getState().log('create', 'DML', newRecord.id, 'Created document');
+              addRecord({ ...data, status: 'Draft', isArchived: false } as Omit<DMLRecord, 'id' | 'createdAt' | 'updatedAt'>);
             }
             setShowForm(false);
             setEditingRecord(null);
@@ -342,11 +350,231 @@ export function DMLManager() {
   );
 }
 
-function DMLFormModal({ record, onClose, onSubmit }: { record: any, onClose: () => void, onSubmit: (data: any) => void }) {
-  const [formData, setFormData] = useState({
+function DMLDetailPanel({
+  record,
+  onClose,
+  onEdit,
+  onDelete,
+  onArchive,
+}: {
+  record: DMLRecord;
+  onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onArchive: () => void;
+}) {
+  const { user } = useAuth();
+  const isMR = user?.role === 'admin' || user?.role === 'qa_manager';
+
+  const [showEvidence, setShowEvidence] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [periodicReviewReason, setPeriodicReviewReason] = useState('');
+  const [revisionReason, setRevisionReason] = useState('');
+  const [showRevisionPrompt, setShowRevisionPrompt] = useState(false);
+  const [showPeriodicReviewPrompt, setShowPeriodicReviewPrompt] = useState(false);
+
+  const projectId = record.no || record.id;
+  const overdue = isOverdueDML(record);
+  const normalized = normalizeStatus(record.status);
+  const hasApprovalTrail = !!(record.reviewedBy || record.approvedBy || record.rejectedBy);
+
+  return (
+    <div className="space-y-4 print:space-y-4">
+      <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="flex items-start justify-between mb-1">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-xl font-bold text-text-primary">{record.tt || record.no}</h2>
+            <StatusBadge status={STATUS_LABELS[normalized] ?? record.status} />
+            {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+          </div>
+          <div className="flex items-center gap-1 print:hidden">
+            <button onClick={onEdit} className="px-3 py-1.5 text-sm font-medium bg-surface border border-border rounded-lg hover:bg-surface-hover transition-colors mr-1">
+              Edit
+            </button>
+            <button onClick={() => setShowEvidence(true)} title="Evidence" className="p-2 text-text-secondary hover:bg-surface-hover rounded-full transition-colors">
+              <Paperclip className="w-5 h-5" />
+            </button>
+            <button onClick={() => setShowComments((v) => !v)} title="Comments" className="p-2 text-text-secondary hover:bg-surface-hover rounded-full transition-colors">
+              <MessageSquare className="w-5 h-5" />
+            </button>
+            <button onClick={() => window.print()} title="Print / Export" className="p-2 text-text-secondary hover:bg-surface-hover rounded-full transition-colors">
+              <Printer className="w-5 h-5" />
+            </button>
+            <button onClick={onArchive} className="p-2 text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-full transition-colors">
+              <Archive className="w-5 h-5" />
+            </button>
+            <button onClick={onDelete} className="p-2 text-danger hover:bg-danger-subtle rounded-full transition-colors">
+              <Trash className="w-5 h-5" />
+            </button>
+            <button onClick={onClose} className="p-2 hover:bg-surface-hover rounded-full transition-colors text-text-tertiary hover:text-text-primary">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 mt-1 mb-4">
+          <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${LEVEL_COLOR[record.hierarchyLevel || 'L4']}`}>
+            {record.hierarchyLevel || 'L4'}
+          </span>
+          <span className="text-xs text-text-tertiary">{record.no}</span>
+          {record.rv && <span className="text-xs text-text-tertiary">Rev. {record.rv}</span>}
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <InfoField label="Department" value={record.dept} />
+          <InfoField label="ISO Clause" value={record.cl} />
+          <InfoField label="Review Date" value={record.reviewDate} />
+          <InfoField label="Retention Period" value={record.ret} />
+          <InfoField label="Document Owner" value={record.assignedTo} />
+          <InfoField label="Due Date" value={record.dueDate} />
+        </div>
+      </div>
+
+      <div className="bg-surface rounded-xl border border-border p-6">
+        <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-2">Notes</h3>
+        <p className="text-sm text-text-primary whitespace-pre-wrap bg-surface-secondary p-4 rounded-xl border border-border">{record.nt || 'No notes recorded.'}</p>
+        <p className="text-xs text-text-tertiary mt-3">
+          Action-plan substitution: a document's corrective action is its revision &amp; periodic-review cycle
+          (state history and approval trail below), not a CAPA-style containment/correction/prevention table —
+          consistent with v12 and this module's actual purpose as a document register.
+        </p>
+      </div>
+
+      {hasApprovalTrail && (
+        <div className="bg-surface rounded-xl border border-border p-6">
+          <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Review / Approval Trail</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {record.reviewedBy && <InfoField label="Reviewed By" value={`${record.reviewedBy}${record.reviewDate ? ` (${record.reviewDate})` : ''}`} />}
+            {record.approvedBy && <InfoField label="Approved By" value={`${record.approvedBy}${record.approvalDate ? ` (${record.approvalDate})` : ''}`} />}
+            {record.rejectedBy && <InfoField label="Rejected By" value={`${record.rejectedBy}${record.rejectionDate ? ` (${record.rejectionDate})` : ''}`} />}
+            {record.rejectionReason && <InfoField label="Rejection Reason" value={record.rejectionReason} />}
+          </div>
+        </div>
+      )}
+
+      <section className="bg-surface rounded-xl border border-border p-6">
+        <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Workflow State</h3>
+        <StateTransitionBar
+          statuses={STATUSES}
+          statusLabels={STATUS_LABELS}
+          current={normalized}
+          history={record.stateHistory as DMLStateHistoryEntry[] | undefined}
+          canAdvance={isMR}
+          canVerifyClose={isMR}
+          canReopen={isMR}
+          onForward={(reason) => {
+            const next = getNextStatus(record.status);
+            if (next) useDMLStore.getState().transitionStatus(record.id, next, user?.name || 'System', reason, 'forward');
+          }}
+          onReject={(reason) => {
+            const prev = getPrevStatus(record.status);
+            if (prev) useDMLStore.getState().transitionStatus(record.id, prev, user?.name || 'System', reason, 'reject');
+          }}
+          onReopen={(reason) => useDMLStore.getState().transitionStatus(record.id, 'Published', user?.name || 'System', reason, 'reopen')}
+        />
+        {!isMR && (
+          <p className="text-xs text-text-tertiary mt-2">Only Management Representative (Admin / QA Manager) can change this document's workflow stage.</p>
+        )}
+
+        {normalized === 'Published' && isMR && (
+          <div className="mt-4 pt-4 border-t border-border space-y-3">
+            <h4 className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">Document Control Actions</h4>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setShowPeriodicReviewPrompt((v) => !v)}
+                className="text-xs bg-surface border border-border px-3 py-1.5 rounded-lg hover:bg-surface-hover transition-colors"
+              >
+                Trigger Periodic Review
+              </button>
+              <button
+                onClick={() => setShowRevisionPrompt((v) => !v)}
+                className="text-xs bg-surface border border-border px-3 py-1.5 rounded-lg hover:bg-surface-hover transition-colors"
+              >
+                Create New Revision
+              </button>
+            </div>
+            {showPeriodicReviewPrompt && (
+              <div className="bg-surface-secondary border border-border rounded-lg p-3 space-y-2">
+                <label className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Reason for triggering periodic review (required)</label>
+                <textarea rows={2} value={periodicReviewReason} onChange={(e) => setPeriodicReviewReason(e.target.value)}
+                  className="w-full bg-surface border border-border rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
+                <div className="flex justify-end gap-2">
+                  <button onClick={() => { setShowPeriodicReviewPrompt(false); setPeriodicReviewReason(''); }} className="px-3 py-1.5 text-sm text-text-secondary bg-surface rounded-lg border border-border hover:bg-surface-hover transition-colors">Cancel</button>
+                  <button
+                    disabled={!periodicReviewReason.trim()}
+                    onClick={() => {
+                      useDMLStore.getState().transitionStatus(record.id, 'UnderReview', user?.name || 'System', periodicReviewReason.trim(), 'reopen');
+                      setShowPeriodicReviewPrompt(false);
+                      setPeriodicReviewReason('');
+                    }}
+                    className="px-3 py-1.5 text-sm text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            )}
+            {showRevisionPrompt && (
+              <div className="bg-surface-secondary border border-border rounded-lg p-3 space-y-2">
+                <label className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Revision notes / reason (required)</label>
+                <textarea rows={2} value={revisionReason} onChange={(e) => setRevisionReason(e.target.value)}
+                  className="w-full bg-surface border border-border rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="What changed in this revision?" />
+                <div className="flex justify-end gap-2">
+                  <button onClick={() => { setShowRevisionPrompt(false); setRevisionReason(''); }} className="px-3 py-1.5 text-sm text-text-secondary bg-surface rounded-lg border border-border hover:bg-surface-hover transition-colors">Cancel</button>
+                  <button
+                    disabled={!revisionReason.trim()}
+                    onClick={() => {
+                      useDMLStore.getState().reviseDocument(record.id, { nt: revisionReason.trim() }, user?.name || 'System');
+                      setShowRevisionPrompt(false);
+                      setRevisionReason('');
+                      onClose();
+                    }}
+                    className="px-3 py-1.5 text-sm text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      {showComments && (
+        <section className="bg-surface rounded-xl border border-border p-6 print:hidden">
+          <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Comments</h3>
+          <CommentThread entityType="dml" entityId={record.id} projectId={projectId} />
+        </section>
+      )}
+
+      {showEvidence && (
+        <EvidencePanel entityType="dml" entityId={record.id} projectId={projectId} open={showEvidence} onClose={() => setShowEvidence(false)} />
+      )}
+    </div>
+  );
+}
+
+interface DMLFormData {
+  no: string;
+  tt: string;
+  hierarchyLevel: 'L1' | 'L2' | 'L3' | 'L4';
+  cl: string;
+  rv: string;
+  reviewDate: string;
+  dept: string;
+  ret: string;
+  nt: string;
+  assignedTo: string;
+  dueDate: string;
+}
+
+function DMLFormModal({ record, onClose, onSubmit }: { record: DMLRecord | null; onClose: () => void; onSubmit: (data: DMLFormData) => void }) {
+  const authUsers = useAuthStore((s) => s.users);
+  const [formData, setFormData] = useState<DMLFormData>({
     no: record?.no || '', tt: record?.tt || '', hierarchyLevel: record?.hierarchyLevel || 'L4',
-    cl: record?.cl || '', rv: record?.rv || 'Rev 00', reviewDate: record?.reviewDate || '', 
-    dept: record?.dept || '', ret: record?.ret || '', nt: record?.nt || ''
+    cl: record?.cl || '', rv: record?.rv || 'Rev 00', reviewDate: record?.reviewDate || '',
+    dept: record?.dept || '', ret: record?.ret || '', nt: record?.nt || '',
+    assignedTo: record?.assignedTo || '', dueDate: record?.dueDate || '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -355,114 +583,70 @@ function DMLFormModal({ record, onClose, onSubmit }: { record: any, onClose: () 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-white dark:bg-slate-850 w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 animate-modal-enter">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-5">{record ? 'Edit' : 'New'} Document</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+      <div className="bg-surface w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-border my-8">
+        <h3 className="text-xl font-bold text-text-primary mb-5">{record ? 'Edit' : 'New'} Document</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Document No *</label>
-              <input
-                placeholder="e.g. DOC-001"
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.no}
-                onChange={e => setFormData({...formData, no: e.target.value})}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Title *</label>
-              <input
-                placeholder="e.g. Quality Manual"
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.tt}
-                onChange={e => setFormData({...formData, tt: e.target.value})}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Hierarchy Level *</label>
-              <select
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.hierarchyLevel}
-                onChange={e => setFormData({...formData, hierarchyLevel: e.target.value})}
-                required
-              >
+            <Labeled label="Document No *">
+              <input placeholder="e.g. DOC-001" className={inputCls} value={formData.no} onChange={e => setFormData({...formData, no: e.target.value})} required />
+            </Labeled>
+            <Labeled label="Title *">
+              <input placeholder="e.g. Quality Manual" className={inputCls} value={formData.tt} onChange={e => setFormData({...formData, tt: e.target.value})} required />
+            </Labeled>
+            <Labeled label="Hierarchy Level *">
+              <select className={inputCls} value={formData.hierarchyLevel} onChange={e => setFormData({...formData, hierarchyLevel: e.target.value as DMLFormData['hierarchyLevel']})} required>
                 <option value="L1">L1 - Quality Manual</option>
                 <option value="L2">L2 - Procedures</option>
                 <option value="L3">L3 - Work Instructions</option>
                 <option value="L4">L4 - Forms & Records</option>
               </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">ISO Clause</label>
-              <input
-                placeholder="e.g. 7.5"
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.cl}
-                onChange={e => setFormData({...formData, cl: e.target.value})}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Revision</label>
-              <input
-                placeholder="e.g. Rev 00"
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.rv}
-                onChange={e => setFormData({...formData, rv: e.target.value})}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Review Date</label>
-              <input
-                type="date"
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.reviewDate}
-                onChange={e => setFormData({...formData, reviewDate: e.target.value})}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Department</label>
-              <input
-                placeholder="e.g. Quality Assurance"
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.dept}
-                onChange={e => setFormData({...formData, dept: e.target.value})}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Retention Period</label>
-              <input
-                placeholder="e.g. 3 Years"
-                className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                value={formData.ret}
-                onChange={e => setFormData({...formData, ret: e.target.value})}
-              />
-            </div>
+            </Labeled>
+            <Labeled label="ISO Clause">
+              <input placeholder="e.g. 7.5" className={inputCls} value={formData.cl} onChange={e => setFormData({...formData, cl: e.target.value})} />
+            </Labeled>
+            <Labeled label="Revision">
+              <input placeholder="e.g. Rev 00" className={inputCls} value={formData.rv} onChange={e => setFormData({...formData, rv: e.target.value})} />
+            </Labeled>
+            <Labeled label="Review Date">
+              <input type="date" className={inputCls} value={formData.reviewDate} onChange={e => setFormData({...formData, reviewDate: e.target.value})} />
+            </Labeled>
+            <Labeled label="Department">
+              <DeptSelect value={formData.dept} onChange={(v) => setFormData({...formData, dept: v})} />
+            </Labeled>
+            <Labeled label="Retention Period">
+              <input placeholder="e.g. 3 Years" className={inputCls} value={formData.ret} onChange={e => setFormData({...formData, ret: e.target.value})} />
+            </Labeled>
+            <Labeled label="Document Owner (Assigned To)">
+              <select className={inputCls} value={formData.assignedTo} onChange={e => setFormData({...formData, assignedTo: e.target.value})}>
+                <option value="">— Select —</option>
+                {authUsers.map((u) => (
+                  <option key={u.id} value={u.displayName}>{u.displayName}</option>
+                ))}
+                {formData.assignedTo && !authUsers.some((u) => u.displayName === formData.assignedTo) && (
+                  <option value={formData.assignedTo}>{formData.assignedTo}</option>
+                )}
+              </select>
+            </Labeled>
+            <Labeled label="Due Date">
+              <input type="date" className={inputCls} value={formData.dueDate} onChange={e => setFormData({...formData, dueDate: e.target.value})} />
+            </Labeled>
           </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Notes</label>
+          <Labeled label="Notes">
             <textarea
               placeholder="Additional remarks or change description..."
-              className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+              className={inputCls}
               rows={3}
               value={formData.nt}
               onChange={e => setFormData({...formData, nt: e.target.value})}
             />
-          </div>
-          
-          <div className="flex justify-end gap-3 mt-6 pt-2 border-t border-slate-100 dark:border-slate-750">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
+          </Labeled>
+
+          <div className="flex justify-end gap-3 mt-6 pt-2 border-t border-border">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium border border-border rounded-lg text-text-primary hover:bg-surface-hover transition-colors">
               Cancel
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition-colors"
-            >
+            <button type="submit" className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-white rounded-lg shadow-sm transition-colors">
               {record ? 'Save Changes' : 'Create Document'}
             </button>
           </div>

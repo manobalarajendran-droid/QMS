@@ -830,6 +830,19 @@ export interface DMLRecord extends BaseEntity, ApprovalMetadata {
   cl?: string;
   status: DMLRecordStatus;
   nt?: string;
+  // Record Completeness Standard additions:
+  assignedTo?: string;
+  dueDate?: string;
+  stateHistory?: DMLStateHistoryEntry[];
+}
+
+export interface DMLStateHistoryEntry {
+  from: DMLRecordStatus;
+  to: DMLRecordStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
 }
 
 // ── Document Change Request (DCR) ─────────────────────────────────────────────
