@@ -833,6 +833,19 @@ export interface DCRRecord extends BaseEntity, ApprovalMetadata {
   summary?: string;
   comments?: string;
   docTitle?: string;
+  // Record Completeness Standard additions:
+  assignedTo?: string;
+  dueDate?: string;
+  stateHistory?: DCRStateHistoryEntry[];
+}
+
+export interface DCRStateHistoryEntry {
+  from: DCRStatus;
+  to: DCRStatus;
+  by: string;
+  at: string;
+  reason: string;
+  kind: 'forward' | 'reject' | 'reopen' | 'verify';
 }
 
 // ── Management Review Meetings (MRM) ──────────────────────────────────────────

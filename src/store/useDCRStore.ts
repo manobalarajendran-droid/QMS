@@ -1,16 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
+import { useDMLStore } from './useDMLStore';
 import { generateRecordId, generateDocNo } from '../lib/idGenerator';
-import type { DCRRecord, DCRStatus } from '../types';
+import type { DCRRecord, DCRStatus, DCRStateHistoryEntry } from '../types';
 
-export type { DCRRecord, DCRStatus } from '../types';
+export type { DCRRecord, DCRStatus, DCRStateHistoryEntry } from '../types';
 
 export interface DCRStore {
   records: DCRRecord[];
   addRecord: (data: Omit<DCRRecord, 'id' | 'dcrNo' | 'createdAt' | 'updatedAt'>) => DCRRecord;
   updateRecord: (id: string, data: Partial<DCRRecord>) => void;
   updateStatus: (id: string, status: DCRStatus, reason?: string) => void;
+  transitionStatus: (id: string, to: DCRStatus, by: string, reason: string, kind: DCRStateHistoryEntry['kind']) => void;
   reviewDCR: (id: string, reviewer: string, comments?: string) => void;
   approveDCR: (id: string, approver: string, comments?: string) => void;
   rejectDCR: (id: string, actor: string, comments?: string) => void;
@@ -96,17 +98,42 @@ export const useDCRStore = create<DCRStore>()(
         useAuditStore.getState().log('status_change', 'dcr', id, existing.status, status, reason);
       },
 
+      /** Generic state-machine mover: records a typed, reasoned entry in stateHistory for every transition. */
+      transitionStatus: (id, to, by, reason, kind) => {
+        const existing = get().records.find((r) => r.id === id);
+        if (!existing) return;
+        const now = new Date().toISOString();
+        const historyEntry: DCRStateHistoryEntry = { from: existing.status, to, by, at: now, reason, kind };
+        set((s) => ({
+          records: s.records.map((r) =>
+            r.id === id
+              ? { ...r, status: to, stateHistory: [...(r.stateHistory ?? []), historyEntry], updatedAt: now }
+              : r
+          ),
+        }));
+        useAuditStore.getState().log('status_change', 'dcr', id, existing.status, to, reason);
+      },
+
       reviewDCR: (id, reviewer, comments) => {
         const existing = get().records.find((r) => r.id === id);
         if (!existing) return;
         const now = new Date().toISOString();
         const todayStr = now.split('T')[0];
+        const historyEntry: DCRStateHistoryEntry = {
+          from: existing.status,
+          to: 'Pending QA Approval',
+          by: reviewer,
+          at: now,
+          reason: comments || 'Reviewed',
+          kind: 'forward',
+        };
 
         const updatedFields: Partial<DCRRecord> = {
-          status: 'Reviewed',
+          status: 'Pending QA Approval',
           reviewedBy: reviewer,
           reviewDate: todayStr,
           reviewComments: comments ?? '',
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
           updatedAt: now,
         };
 
@@ -129,12 +156,21 @@ export const useDCRStore = create<DCRStore>()(
         if (!existing) return;
         const now = new Date().toISOString();
         const todayStr = now.split('T')[0];
+        const historyEntry: DCRStateHistoryEntry = {
+          from: existing.status,
+          to: 'Approved',
+          by: approver,
+          at: now,
+          reason: comments || 'Approved',
+          kind: 'verify',
+        };
 
         const updatedFields: Partial<DCRRecord> = {
           status: 'Approved',
           approvedBy: approver,
           approvalDate: todayStr,
           approvalComments: comments ?? '',
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
           updatedAt: now,
         };
 
@@ -150,6 +186,18 @@ export const useDCRStore = create<DCRStore>()(
           JSON.stringify(updatedFields),
           comments || 'DCR approved by General Manager'
         );
+
+        // v12 parity fix: approving a DCR propagates its revision into the matching DML record
+        // (matched by document number), setting that document Active. See saveDCR() in v12.
+        const dmlStore = useDMLStore.getState();
+        const match = dmlStore.records.find((d) => (d.no ?? '').trim() === (existing.docNo ?? '').trim());
+        if (match) {
+          dmlStore.updateRecord(match.id, {
+            rv: existing.revNo || match.rv,
+            reviewDate: todayStr,
+            status: 'Active',
+          });
+        }
       },
 
       rejectDCR: (id, actor, comments) => {
@@ -157,12 +205,21 @@ export const useDCRStore = create<DCRStore>()(
         if (!existing) return;
         const now = new Date().toISOString();
         const todayStr = now.split('T')[0];
+        const historyEntry: DCRStateHistoryEntry = {
+          from: existing.status,
+          to: 'Rejected',
+          by: actor,
+          at: now,
+          reason: comments || 'Rejected',
+          kind: 'reject',
+        };
 
         const updatedFields: Partial<DCRRecord> = {
           status: 'Rejected',
           rejectedBy: actor,
           rejectionDate: todayStr,
           rejectionReason: comments ?? '',
+          stateHistory: [...(existing.stateHistory ?? []), historyEntry],
           updatedAt: now,
         };
 

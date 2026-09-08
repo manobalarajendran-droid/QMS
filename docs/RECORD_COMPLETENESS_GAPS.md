@@ -416,7 +416,7 @@ Store: `useDCRStore.ts`. `advanceStatus()` (:30-36) walks a **hardcoded 5-state 
 
 ### d. 7-item score
 
-| # | Item | Score | Justification |
+| # | Item | Score (pre-rewrite) | Justification |
 |---|---|---|---|
 | 1 | Ownership | **Missing** | `requestor` hardcoded to `'Current User'`; `department` free text; `DCRRecord` has no due-date/SLA field at all |
 | 2 | Action plan | **Missing** (un-noted substitution) | `changeDescription`/`reason` have no owner/date/evidence structure; no substitution note in code |
@@ -426,7 +426,7 @@ Store: `useDCRStore.ts`. `advanceStatus()` (:30-36) walks a **hardcoded 5-state 
 | 6 | Evidence/comments/export/audit trail | **Missing** | No `EvidencePanel`/`CommentThread`/export; richer `'review'`/`'approve'`/`'reject'` audit types never actually produced since the UI bypasses those functions |
 | 7 | List view | **Missing** | No status/year/department/assignee/overdue filter, no sort, **no search box at all** — the weakest list view among DML/DCR/MRM |
 
-**Overall: 7 of 7 items Missing — the worst score of all 11 modules.**
+**Overall (pre-rewrite): 7 of 7 items Missing — the worst score of all 11 modules.**
 
 ### e. Ordered work list
 
@@ -439,6 +439,28 @@ Store: `useDCRStore.ts`. `advanceStatus()` (:30-36) walks a **hardcoded 5-state 
 7. Replace the silent no-op validation with real required-field validation and inline error messaging.
 8. Add status/department/assignee/overdue filters, sort, and a search box to the list panel.
 9. Add evidence attachment, comment thread, and print/export.
+
+### f. Status — Phase 3 (2026-09-08)
+
+**✅ DONE — reference-pattern replication complete.** `DCRWorkflow.tsx` fully rewritten; `useDCRStore.ts`'s pre-existing `reviewDCR`/`approveDCR`/`rejectDCR`/`transitionStatus` (including the DCR→DML sync in `approveDCR`) are now the only paths the UI uses.
+
+| # | Item | Score (post-rewrite) | Evidence |
+|---|---|---|---|
+| 1 | Ownership | **Pass** | `requestor`/`assignedTo` are `useAuthStore().users` pickers (with fallback option for out-of-list values); `department`/dept-assignment via `PTA_DEPARTMENTS` `DeptSelect`; `dueDate` field + `isOverdueDCR()` overdue badge on card and detail header |
+| 2 | Action plan | **Pass** (documented substitution) | DCR's "action" is the change itself (`changeDescription`/`reason`) plus its approval trail, not a CAPA-style 3-stage plan — captured via the state machine + Review/Approval Trail card, consistent with v12 and the module's actual purpose |
+| 3 | State machine | **Pass** | Canonical bar `Draft → Pending Review → Pending QA Approval → Approved`; dedicated hard-reject to out-of-band `Rejected` with its own reopen-to-Draft panel; generic bar's reject returns to the previous state; every transition requires reason text and is recorded in `stateHistory` (`{from,to,by,at,reason,kind}`); `Approved` is terminal via `onReopen`; Pending QA Approval → Approved is gated behind a dedicated "QA Approval Gate" panel restricted to `isMR` |
+| 4 | No orphan fields | **Pass** | `summary`, `comments`, `revNo`, `dt`, `ref`, `reqBy`, `docTitle` surfaced in the form and/or the "Imported Record Data" detail card; all 9 `ApprovalMetadata` fields surfaced in the "Review / Approval Trail" card |
+| 5 | Form validation | **Pass** | Native HTML5 `required` attributes on all mandatory fields (docNo, title, requestor, department, changeDescription, reason), blocking submit with inline browser messaging — matches the pattern established on NCR |
+| 6 | Evidence/comments/export/audit trail | **Pass** | `EvidencePanel entityType="dcr"`, `CommentThread entityType="dcr"`, `window.print()` export button, and every transition already audit-logged via `useAuditStore` in the store layer |
+| 7 | List view | **Pass** | Search box, status/department/assignee/overdue filters, sort by newest/oldest/due/dcrNo |
+
+**Overall (post-rewrite): 7 of 7 items Pass.**
+
+Verification evidence (2026-09-08):
+- `npx tsc --noEmit` — clean, zero errors.
+- `npm test -- --run` — **147 passed (147) across 12 test files**, including 14 new tests in `src/store/__tests__/useDCRStore.test.ts` covering every forward/reject/reopen transition and both branches (match/no-match) of the DCR→DML sync, plus the pre-existing `qms_smoke.test.tsx` DCR smoke test.
+- `npm run build` — clean production build, no errors.
+- Live browser verification against the running dev server: approved a seeded DCR (`docNo: 'PT/QSP/MR/05'`, `revNo: 'Rev 07'`) via the QA Approval Gate and confirmed the matching DML record ("Corrective Action") transitioned `UnderReview` → `Active` and `Rev 06` → `Rev 07` in the live UI, confirming the DCR→DML sync (item in Ordered work list #1) works end-to-end, not just at the unit-test level.
 
 ---
 

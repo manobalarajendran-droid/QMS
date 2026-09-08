@@ -7,7 +7,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { apiFetch, getApiBase } from '../../lib/apiClient';
 
 interface Props {
-  entityType: 'requirement' | 'test' | 'capa' | 'ncr';
+  entityType: 'requirement' | 'test' | 'capa' | 'ncr' | 'dcr';
   entityId: string;
   projectId: string;
   open: boolean;
@@ -17,7 +17,7 @@ interface Props {
 interface ServerEvidenceAttachment {
   id: string;
   entityId: string;
-  entityType: 'requirement' | 'test' | 'capa' | 'ncr';
+  entityType: 'requirement' | 'test' | 'capa' | 'ncr' | 'dcr';
   fileName: string;
   fileSize: number;
   mimeType: string;
