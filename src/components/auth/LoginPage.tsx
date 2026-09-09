@@ -141,7 +141,7 @@ export function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-surface rounded-xl border border-border shadow-lg p-6">
+        <div className="bg-surface rounded-xl border border-border shadow-lg p-4">
           {/* SSO Button */}
           {!ssoLoading && ssoEnabled && mode === 'login' && (
             <>
@@ -242,7 +242,7 @@ export function LoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+              <div className="text-sm text-danger-text bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
                 {error}
               </div>
             )}

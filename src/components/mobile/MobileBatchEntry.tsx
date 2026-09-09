@@ -89,7 +89,7 @@ export function MobileBatchEntry({
       </div>
 
       {/* Step Content */}
-      <div className="flex-1 px-4 py-6 space-y-6">
+      <div className="flex-1 px-4 py-4 space-y-4">
         {/* Instruction */}
         <div className="p-4 bg-surface rounded-xl border border-border">
           <p className="text-xs text-text-tertiary uppercase tracking-wider mb-1">{t('mobile.instruction')}</p>
@@ -121,7 +121,7 @@ export function MobileBatchEntry({
             onClick={() => { setDeviation(!deviation); setSaved(false); }}
             className={`w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl border-2 text-base font-medium transition-all ${
               deviation
-                ? 'border-danger bg-danger/10 text-danger'
+                ? 'border-danger bg-danger/10 text-danger-text'
                 : 'border-border bg-surface text-text-secondary hover:border-warning'
             }`}
           >
@@ -157,7 +157,7 @@ export function MobileBatchEntry({
           className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-base font-medium transition-all ${
             saved
               ? 'bg-green-500 text-white'
-              : 'bg-accent text-white hover:bg-accent-hover'
+              : 'bg-accent text-accent-fg hover:bg-accent-hover'
           }`}
         >
           <Check className="w-5 h-5" />

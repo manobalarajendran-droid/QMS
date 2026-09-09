@@ -18,7 +18,7 @@ export function StepCompliancePack({ onSelectPack, onSkip }: StepCompliancePackP
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-text-primary">{t('packs.title')}</h2>
         <p className="text-sm text-text-secondary mt-1">{t('packs.description')}</p>

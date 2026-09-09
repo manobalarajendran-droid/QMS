@@ -26,15 +26,15 @@ export function DMLView() {
     <div className="space-y-4 animate-fade-in">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <FileText className="w-6 h-6 text-indigo-600" />
+          <h2 className="text-xl font-bold text-text-primary dark:text-white flex items-center gap-2">
+            <FileText className="w-6 h-6 text-accent-text" />
             Document Master List (DML)
           </h2>
-          <p className="text-sm text-slate-500 mt-1">PT-QSP-MR-02 Cl.7.5 · FM/DML/01 · All QMS procedures</p>
+          <p className="text-sm text-text-tertiary mt-1">PT-QSP-MR-02 Cl.7.5 · FM/DML/01 · All QMS procedures</p>
         </div>
         <div className="flex gap-2">
           <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-text-secondary bg-surface border border-border rounded-lg hover:bg-surface-hover transition-colors"><Download className="w-4 h-4"/> Export Excel</button>
-          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"><Plus className="w-4 h-4"/> Add Document</button>
+          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"><Plus className="w-4 h-4"/> Add Document</button>
         </div>
       </div>
 
@@ -64,10 +64,10 @@ export function DMLView() {
         <button className="inline-flex items-center px-3 py-1.5 text-sm text-text-secondary bg-surface border border-border rounded-lg hover:bg-surface-hover transition-colors" onClick={() => { setSearch(''); setLevel(''); setDept(''); }}>Clear</button>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-surface rounded-lg shadow-sm border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-semibold">
+            <thead className="bg-surface-secondary border-b border-border text-text-secondary font-semibold">
               <tr>
                 <th className="px-4 py-3">Doc No</th>
                 <th className="px-4 py-3">Title</th>
@@ -77,17 +77,17 @@ export function DMLView() {
                 <th className="px-4 py-3">Rev</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+            <tbody className="divide-y divide-border">
               {filteredDocs.map((d, i) => (
-                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                  <td className="px-4 py-3 font-mono text-indigo-600 dark:text-indigo-400">{d.no}</td>
-                  <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">{d.title}</td>
+                <tr key={i} className="hover:bg-surface-hover">
+                  <td className="px-4 py-3 font-mono text-accent-text">{d.no}</td>
+                  <td className="px-4 py-3 font-medium text-text-primary">{d.title}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded text-xs font-bold ${
                       d.lv === 'L1' ? 'bg-amber-100 text-amber-800' :
                       d.lv === 'L2' ? 'bg-blue-100 text-blue-800' :
                       d.lv === 'L3' ? 'bg-green-100 text-green-800' :
-                      'bg-slate-100 text-slate-800'
+                      'bg-surface-tertiary text-text-primary'
                     }`}>
                       {d.lv}
                     </span>
@@ -101,7 +101,7 @@ export function DMLView() {
               ))}
               {filteredDocs.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-500">No documents found.</td>
+                  <td colSpan={6} className="px-4 py-5 text-center text-text-tertiary">No documents found.</td>
                 </tr>
               )}
             </tbody>

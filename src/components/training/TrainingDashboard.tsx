@@ -110,7 +110,7 @@ export function TrainingDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export function TrainingDashboard() {
         {canEdit && (
           <button
             onClick={() => setShowAssignForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('training.assignTraining')}
@@ -138,11 +138,11 @@ export function TrainingDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface rounded-xl border border-border p-4">
           <div className="flex items-center gap-2 mb-2">
-            <CheckCircle2 className="w-4 h-4 text-green-500" />
+            <CheckCircle2 className="w-4 h-4 text-success-text" />
             <p className="text-xs text-text-tertiary font-medium uppercase">{t('training.overallCompliance')}</p>
           </div>
           <div className="flex items-end gap-2">
-            <p className={`text-3xl font-bold ${overallCompliance >= 80 ? 'text-green-600' : overallCompliance >= 50 ? 'text-yellow-600' : 'text-red-600'}`}>
+            <p className={`text-3xl font-bold ${overallCompliance >= 80 ? 'text-success-text' : overallCompliance >= 50 ? 'text-warning-text' : 'text-danger-text'}`}>
               {overallCompliance}%
             </p>
           </div>
@@ -156,10 +156,10 @@ export function TrainingDashboard() {
 
         <div className="bg-surface rounded-xl border border-border p-4">
           <div className="flex items-center gap-2 mb-2">
-            <AlertCircle className="w-4 h-4 text-orange-500" />
+            <AlertCircle className="w-4 h-4 text-warning-text" />
             <p className="text-xs text-text-tertiary font-medium uppercase">{t('training.overdueTrainings')}</p>
           </div>
-          <p className={`text-3xl font-bold ${totalOverdue > 0 ? 'text-orange-500' : 'text-green-600'}`}>
+          <p className={`text-3xl font-bold ${totalOverdue > 0 ? 'text-warning-text' : 'text-success-text'}`}>
             {totalOverdue}
           </p>
         </div>
@@ -253,7 +253,7 @@ export function TrainingDashboard() {
 
       {/* Empty State */}
       {matrix.length === 0 && compliance.length === 0 && (
-        <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <div className="bg-surface rounded-xl border border-border p-5 text-center">
           <GraduationCap className="w-10 h-10 text-text-tertiary mx-auto mb-2" />
           <p className="text-text-tertiary">{t('training.noData')}</p>
           <p className="text-xs text-text-tertiary mt-1">{t('training.noDataDesc')}</p>
@@ -264,7 +264,7 @@ export function TrainingDashboard() {
       {showAssignForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={() => setShowAssignForm(false)}>
           <div
-            className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-md mx-4 border border-border p-6 space-y-4"
+            className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-md mx-4 border border-border p-4 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-base font-semibold text-text-primary">{t('training.assignTraining')}</h3>
@@ -307,7 +307,7 @@ export function TrainingDashboard() {
               </button>
               <button
                 onClick={handleAssign}
-                className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90"
+                className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90"
               >
                 {t('training.assign')}
               </button>

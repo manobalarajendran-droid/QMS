@@ -123,7 +123,7 @@ export function KPIDashboardView({ dashboardId, onBack }: Props) {
     && (dashboard.createdBy === user.id || roleHasPermission(user.role, 'canAdmin'));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -164,7 +164,7 @@ export function KPIDashboardView({ dashboardId, onBack }: Props) {
           {editMode && canManage && (
             <button
               onClick={() => setAddingWidget(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
             >
               <Plus className="w-4 h-4" />
               {t('kpi.addWidget')}
@@ -230,7 +230,7 @@ export function KPIDashboardView({ dashboardId, onBack }: Props) {
                   </button>
                   <button
                     onClick={() => deleteWidget(widget.id)}
-                    className="p-1 rounded bg-surface/80 backdrop-blur-sm text-text-tertiary hover:text-red-500 transition-colors border border-border"
+                    className="p-1 rounded bg-surface/80 backdrop-blur-sm text-text-tertiary hover:text-danger-text transition-colors border border-border"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

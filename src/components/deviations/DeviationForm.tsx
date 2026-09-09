@@ -71,7 +71,7 @@ export function DeviationForm({ deviation, onSaved, onCancel }: Props) {
   };
 
   return (
-    <div className="bg-surface rounded-xl border border-border p-6 space-y-5">
+    <div className="bg-surface rounded-xl border border-border p-4 space-y-5">
       <h3 className="text-lg font-semibold text-text-primary">
         {isEdit ? t('deviations.edit') : t('deviations.create')}
       </h3>
@@ -103,7 +103,7 @@ export function DeviationForm({ deviation, onSaved, onCancel }: Props) {
       )}
 
       {error && (
-        <div className="bg-red-500/10 text-red-600 rounded-lg px-4 py-2 text-sm">{error}</div>
+        <div className="bg-red-500/10 text-danger-text rounded-lg px-4 py-2 text-sm">{error}</div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -159,7 +159,7 @@ export function DeviationForm({ deviation, onSaved, onCancel }: Props) {
         <button
           onClick={handleSave}
           disabled={saving || !canEdit}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm font-medium disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors text-sm font-medium disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
           {saving ? t('common.saving') : t('common.save')}

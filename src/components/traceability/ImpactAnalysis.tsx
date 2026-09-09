@@ -108,7 +108,7 @@ export function ImpactAnalysis() {
   const rootNode = nodes.find((n) => n.id === entityId);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center gap-2">
         <GitBranch className="w-5 h-5 text-accent" />
         <h2 className="text-lg font-semibold text-text-primary">{t('impact.title')}</h2>
@@ -141,13 +141,13 @@ export function ImpactAnalysis() {
           <button
             onClick={fetchImpact}
             disabled={!entityId || loading}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             <Search className="w-4 h-4" />
             {t('impact.analyze')}
           </button>
         </div>
-        {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+        {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
       </div>
 
       {loading && (
@@ -160,25 +160,25 @@ export function ImpactAnalysis() {
       {whatIf && (
         <div className="bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-800 p-4">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <AlertTriangle className="w-4 h-4 text-warning-text" />
             <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200">{t('impact.whatIfTitle')}</h3>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="text-center">
               <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{whatIf.impact.summary.totalAffected}</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400">{t('impact.totalAffected')}</p>
+              <p className="text-xs text-warning-text dark:text-amber-400">{t('impact.totalAffected')}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{whatIf.impact.summary.testsCount}</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400">{t('impact.testsAffected')}</p>
+              <p className="text-xs text-warning-text dark:text-amber-400">{t('impact.testsAffected')}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{whatIf.impact.summary.risksCount}</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400">{t('impact.risksAffected')}</p>
+              <p className="text-xs text-warning-text dark:text-amber-400">{t('impact.risksAffected')}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{whatIf.impact.summary.capasCount}</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400">{t('impact.capasAffected')}</p>
+              <p className="text-xs text-warning-text dark:text-amber-400">{t('impact.capasAffected')}</p>
             </div>
           </div>
           {(whatIf.impact.summary.revalidationNeeded || whatIf.impact.summary.retestingNeeded) && (
@@ -201,7 +201,7 @@ export function ImpactAnalysis() {
 
           {/* Root node */}
           {rootNode && (
-            <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border ${TYPE_COLORS[rootNode.type] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+            <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border ${TYPE_COLORS[rootNode.type] || 'bg-surface-tertiary text-text-secondary border-gray-200'}`}>
               <span className="text-xs font-bold uppercase">{rootNode.type}</span>
               <span className="text-sm">{rootNode.label}</span>
               {rootNode.status && (
@@ -223,7 +223,7 @@ export function ImpactAnalysis() {
                   {typeNodes.map((node) => (
                     <div
                       key={node.id}
-                      className={`inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-sm mr-2 mb-1 ${TYPE_COLORS[node.type] || 'bg-gray-100 text-gray-700 border-gray-200'}`}
+                      className={`inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-sm mr-2 mb-1 ${TYPE_COLORS[node.type] || 'bg-surface-tertiary text-text-secondary border-gray-200'}`}
                     >
                       <span>{node.label}</span>
                       {node.status && (

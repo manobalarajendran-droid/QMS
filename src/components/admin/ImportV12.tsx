@@ -217,27 +217,27 @@ export function ImportV12() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+    <div className="max-w-3xl mx-auto space-y-4 animate-fade-in">
+      <div className="bg-surface rounded-xl border border-border shadow-sm p-4">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <Upload className="text-indigo-600" />
+          <Upload className="text-accent-text" />
           V12 Data Import Bridge
         </h2>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Upload v12 HTML File or JSON Backup</label>
-            <input type="file" accept=".html,.json" onChange={handleFileChange} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+            <input type="file" accept=".html,.json" onChange={handleFileChange} className="block w-full text-sm text-text-tertiary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent-subtle file:text-accent-text hover:file:bg-accent-subtle" />
           </div>
-          <button onClick={handleScan} disabled={!file || loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg disabled:opacity-50">
+          <button onClick={handleScan} disabled={!file || loading} className="px-4 py-2 bg-accent text-accent-fg rounded-lg disabled:opacity-50">
             {loading ? 'Scanning...' : 'Scan File'}
           </button>
         </div>
       </div>
 
       {preview && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+        <div className="bg-surface rounded-xl border border-border shadow-sm p-4">
           <h3 className="text-lg font-bold mb-4">Preview</h3>
-          <ul className="space-y-2 mb-6">
+          <ul className="space-y-2 mb-4">
             <li className="flex justify-between border-b pb-2"><span>NCR Records:</span> <span className="font-semibold">{preview.ncr}</span></li>
             <li className="flex justify-between border-b pb-2"><span>Objectives:</span> <span className="font-semibold">{preview.obj}</span></li>
             <li className="flex justify-between border-b pb-2"><span>CSI Records:</span> <span className="font-semibold">{preview.cs}</span></li>
@@ -257,15 +257,15 @@ export function ImportV12() {
       )}
 
       {Object.keys(status).length > 0 && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+        <div className="bg-surface rounded-xl border border-border shadow-sm p-4">
           <h3 className="text-lg font-bold mb-4">Import Status</h3>
           <ul className="space-y-2">
             {Object.entries(status).map(([key, val]: [string, any]) => (
               <li key={key} className="flex justify-between items-center py-2 border-b last:border-0">
-                <span className="uppercase font-medium text-slate-700 dark:text-slate-200">{key}</span>
+                <span className="uppercase font-medium text-text-secondary">{key}</span>
                 <span className="flex items-center gap-2">
-                  <span className="text-sm text-slate-500 dark:text-slate-400">{val.count} imported</span>
-                  {val.error ? <XCircle className="text-red-500 w-5 h-5" /> : <CheckCircle className="text-green-500 w-5 h-5" />}
+                  <span className="text-sm text-text-tertiary">{val.count} imported</span>
+                  {val.error ? <XCircle className="text-danger-text w-5 h-5" /> : <CheckCircle className="text-success-text w-5 h-5" />}
                 </span>
               </li>
             ))}

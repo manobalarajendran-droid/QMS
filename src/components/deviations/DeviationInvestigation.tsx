@@ -10,9 +10,9 @@ import { DeviationTrending } from './DeviationTrending';
 import { getProjectId } from '../../lib/projectUtils';
 
 const CLASSIFICATION_COLORS: Record<string, string> = {
-  minor: 'bg-yellow-500/10 text-yellow-600',
-  major: 'bg-orange-500/10 text-orange-600',
-  critical: 'bg-red-500/10 text-red-600',
+  minor: 'bg-yellow-500/10 text-warning-text',
+  major: 'bg-orange-500/10 text-warning-text',
+  critical: 'bg-red-500/10 text-danger-text',
 };
 
 const INVESTIGATION_METHODS = ['fishbone', 'five_why', 'ishikawa', 'other'];
@@ -218,7 +218,7 @@ export function DeviationInvestigation() {
                   {canDelete && (
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(dev.id); }}
-                      className="p-1 text-text-tertiary hover:text-red-500 transition-colors"
+                      className="p-1 text-text-tertiary hover:text-danger-text transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -263,7 +263,7 @@ export function DeviationInvestigation() {
                       </div>
                       <button
                         onClick={() => handleInvestigate(dev.id)}
-                        className="text-sm px-3 py-1.5 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+                        className="text-sm px-3 py-1.5 bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors"
                       >
                         {dev.status === 'detected' ? t('deviations.startInvestigation') : t('deviations.updateInvestigation')}
                       </button>
@@ -283,7 +283,7 @@ export function DeviationInvestigation() {
                       />
                       <button
                         onClick={() => handleRootCause(dev.id)}
-                        className="text-sm px-3 py-1.5 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+                        className="text-sm px-3 py-1.5 bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors"
                       >
                         {t('deviations.recordRootCause')}
                       </button>
@@ -302,7 +302,7 @@ export function DeviationInvestigation() {
                   {canEdit && dev.status === 'root_cause_identified' && !dev.capaId && (
                     <button
                       onClick={() => handleCreateCapa(dev.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors"
                     >
                       <Zap className="w-4 h-4" />
                       {t('deviations.createCapa')}

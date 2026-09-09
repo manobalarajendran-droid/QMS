@@ -44,12 +44,12 @@ function SsoStatusPanel() {
   return (
     <div className="space-y-4">
       <h3 className="text-base font-semibold text-text-primary">{t('settings.sso')}</h3>
-      <div className="bg-surface border border-border rounded-lg p-6">
+      <div className="bg-surface border border-border rounded-lg p-4">
         <div className="flex items-center gap-3">
           <div
             className={`w-10 h-10 rounded-lg flex items-center justify-center ${
               ssoConfig?.enabled
-                ? 'bg-green-500/10 text-green-600'
+                ? 'bg-green-500/10 text-success-text'
                 : 'bg-surface-secondary text-text-tertiary'
             }`}
           >
@@ -89,12 +89,12 @@ export function SettingsPage() {
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-4">
         <h2 className="text-lg font-bold text-text-primary">{t('settings.title')}</h2>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 border-b border-border">
+      <div className="flex gap-1 mb-4 border-b border-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}

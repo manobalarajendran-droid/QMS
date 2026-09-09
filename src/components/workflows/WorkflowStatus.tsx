@@ -75,13 +75,13 @@ export function WorkflowStatus({ steps, currentStep, status, actions, restartCou
   const statusBadge = () => {
     switch (status) {
       case 'completed':
-        return <span className="inline-flex items-center gap-1 text-xs bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full"><CheckCircle2 className="w-3 h-3" /> {t('workflows.statusCompleted')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs bg-green-500/10 text-success-text px-2 py-0.5 rounded-full"><CheckCircle2 className="w-3 h-3" /> {t('workflows.statusCompleted')}</span>;
       case 'cancelled':
-        return <span className="inline-flex items-center gap-1 text-xs bg-red-500/10 text-red-600 px-2 py-0.5 rounded-full"><XCircle className="w-3 h-3" /> {t('workflows.statusCancelled')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs bg-red-500/10 text-danger-text px-2 py-0.5 rounded-full"><XCircle className="w-3 h-3" /> {t('workflows.statusCancelled')}</span>;
       case 'escalated':
-        return <span className="inline-flex items-center gap-1 text-xs bg-orange-500/10 text-orange-600 px-2 py-0.5 rounded-full"><AlertTriangle className="w-3 h-3" /> {t('workflows.statusEscalated')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs bg-orange-500/10 text-warning-text px-2 py-0.5 rounded-full"><AlertTriangle className="w-3 h-3" /> {t('workflows.statusEscalated')}</span>;
       case 'on_hold':
-        return <span className="inline-flex items-center gap-1 text-xs bg-yellow-500/10 text-yellow-600 px-2 py-0.5 rounded-full"><Clock className="w-3 h-3" /> {t('workflows.statusOnHold')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs bg-yellow-500/10 text-warning-text px-2 py-0.5 rounded-full"><Clock className="w-3 h-3" /> {t('workflows.statusOnHold')}</span>;
       default:
         return <span className="inline-flex items-center gap-1 text-xs bg-accent-subtle text-accent px-2 py-0.5 rounded-full"><Clock className="w-3 h-3" /> {t('workflows.statusActive')}</span>;
     }
@@ -93,7 +93,7 @@ export function WorkflowStatus({ steps, currentStep, status, actions, restartCou
         <span className="text-sm font-medium text-text-primary">{t('workflows.progress')}</span>
         {statusBadge()}
         {restartCount != null && restartCount > 0 && (
-          <span className="inline-flex items-center gap-1 text-xs bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1 text-xs bg-amber-500/10 text-warning-text px-2 py-0.5 rounded-full">
             <RotateCcw className="w-3 h-3" />
             {t('workflows.restartCount', { count: restartCount })}
           </span>
@@ -111,9 +111,9 @@ export function WorkflowStatus({ steps, currentStep, status, actions, restartCou
               <div className="flex flex-col items-center min-w-[80px]">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   stepStatus === 'completed' ? 'bg-green-500 text-white' :
-                  stepStatus === 'active' ? 'bg-accent text-white' :
+                  stepStatus === 'active' ? 'bg-accent text-accent-fg' :
                   stepStatus === 'rejected' ? 'bg-red-500 text-white' :
-                  stepStatus === 'skipped' ? 'bg-gray-300 text-gray-500 border-2 border-dashed border-gray-400' :
+                  stepStatus === 'skipped' ? 'bg-border text-text-tertiary border-2 border-dashed border-border' :
                   'bg-surface-secondary border-2 border-border text-text-tertiary'
                 }`}>
                   {stepStatus === 'completed' ? <CheckCircle2 className="w-4 h-4" /> :
@@ -124,9 +124,9 @@ export function WorkflowStatus({ steps, currentStep, status, actions, restartCou
                 </div>
                 <span className={`text-xs mt-1 text-center leading-tight ${
                   stepStatus === 'active' ? 'text-accent font-medium' :
-                  stepStatus === 'completed' ? 'text-green-600' :
-                  stepStatus === 'rejected' ? 'text-red-600' :
-                  stepStatus === 'skipped' ? 'text-gray-400 line-through' :
+                  stepStatus === 'completed' ? 'text-success-text' :
+                  stepStatus === 'rejected' ? 'text-danger-text' :
+                  stepStatus === 'skipped' ? 'text-text-tertiary line-through' :
                   'text-text-tertiary'
                 }`}>
                   {step.name || `Step ${i + 1}`}
@@ -138,7 +138,7 @@ export function WorkflowStatus({ steps, currentStep, status, actions, restartCou
                 )}
                 {/* Show skipped label */}
                 {stepStatus === 'skipped' && (
-                  <span className="text-[9px] text-gray-400 italic">{t('workflows.skipped')}</span>
+                  <span className="text-[9px] text-text-tertiary italic">{t('workflows.skipped')}</span>
                 )}
                 {/* Show who acted */}
                 {stepActions.length > 0 && (
@@ -158,7 +158,7 @@ export function WorkflowStatus({ steps, currentStep, status, actions, restartCou
                 <div className={`w-8 h-0.5 mx-1 ${
                   getStepStatus(i) === 'completed' ? 'bg-green-500' :
                   getStepStatus(i) === 'rejected' ? 'bg-red-500' :
-                  getStepStatus(i) === 'skipped' ? 'bg-gray-300 border-t border-dashed border-gray-400' :
+                  getStepStatus(i) === 'skipped' ? 'bg-border border-t border-dashed border-border' :
                   'bg-border'
                 }`} />
               )}

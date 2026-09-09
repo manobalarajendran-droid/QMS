@@ -39,8 +39,8 @@ export function AnomalyCard({ anomaly, onInvestigate }: { anomaly: Anomaly; onIn
     : 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
 
   const iconColor = isCritical
-    ? 'text-red-500'
-    : 'text-amber-500';
+    ? 'text-danger-text'
+    : 'text-warning-text';
 
   return (
     <div className={`bg-surface rounded-xl border border-border border-l-4 ${borderColor} p-4 space-y-3`}>
@@ -69,7 +69,7 @@ export function AnomalyCard({ anomaly, onInvestigate }: { anomaly: Anomaly; onIn
         <div className="flex items-center gap-4 text-xs">
           <div>
             <span className="text-text-tertiary">{t('analytics.current')}: </span>
-            <span className={`font-bold ${isCritical ? 'text-red-600' : 'text-amber-600'}`}>{anomaly.value}</span>
+            <span className={`font-bold ${isCritical ? 'text-danger-text' : 'text-warning-text'}`}>{anomaly.value}</span>
           </div>
           <div>
             <span className="text-text-tertiary">{t('analytics.threshold')}: </span>

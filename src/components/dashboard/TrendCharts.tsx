@@ -109,8 +109,8 @@ export function TrendCharts() {
   const hasData = requirements.length > 0 || tests.length > 0;
 
   return (
-    <div className="space-y-6">
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+    <div className="space-y-4">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         <h3 className="text-lg font-semibold text-text-primary mb-2">
           {t('dashboard.trends')}
         </h3>
@@ -120,13 +120,13 @@ export function TrendCharts() {
       </div>
 
       {!hasData ? (
-        <div className="bg-surface rounded-xl border border-border p-6 shadow-sm flex items-center justify-center h-40">
+        <div className="bg-surface rounded-xl border border-border p-4 shadow-sm flex items-center justify-center h-40">
           <span className="text-sm text-text-tertiary">{t('common.noData')}</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Requirements by Status */}
-          <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+          <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
             <h4 className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-4">
               {t('dashboard.trendReqByStatus')}
             </h4>
@@ -155,7 +155,7 @@ export function TrendCharts() {
           </div>
 
           {/* Tests by Status */}
-          <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+          <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
             <h4 className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-4">
               {t('dashboard.trendTestByStatus')}
             </h4>
@@ -184,7 +184,7 @@ export function TrendCharts() {
           </div>
 
           {/* Risk Distribution (Pie) */}
-          <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+          <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
             <h4 className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-4">
               {t('dashboard.trendRiskDistribution')}
             </h4>
@@ -218,7 +218,7 @@ export function TrendCharts() {
           </div>
 
           {/* Coverage by Category */}
-          <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+          <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
             <h4 className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-4">
               {t('dashboard.trendCoverageByCategory')}
             </h4>

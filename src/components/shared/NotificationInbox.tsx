@@ -23,13 +23,13 @@ import { apiFetch } from '../../lib/apiClient';
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   approval_needed: <CheckCircle2 className="w-4 h-4 text-accent" />,
-  task_overdue: <Clock className="w-4 h-4 text-danger" />,
-  capa_deadline: <AlertTriangle className="w-4 h-4 text-warning" />,
-  deviation_opened: <TriangleAlert className="w-4 h-4 text-danger" />,
-  workflow_escalation: <ArrowUpCircle className="w-4 h-4 text-danger" />,
+  task_overdue: <Clock className="w-4 h-4 text-danger-text" />,
+  capa_deadline: <AlertTriangle className="w-4 h-4 text-warning-text" />,
+  deviation_opened: <TriangleAlert className="w-4 h-4 text-danger-text" />,
+  workflow_escalation: <ArrowUpCircle className="w-4 h-4 text-danger-text" />,
   comment_mention: <AtSign className="w-4 h-4 text-accent" />,
   document_review: <FileText className="w-4 h-4 text-accent" />,
-  training_due: <GraduationCap className="w-4 h-4 text-warning" />,
+  training_due: <GraduationCap className="w-4 h-4 text-warning-text" />,
   audit_reminder: <Calendar className="w-4 h-4 text-text-secondary" />,
   status_change: <ClipboardList className="w-4 h-4 text-accent" />,
   mention: <AtSign className="w-4 h-4 text-accent" />,
@@ -173,7 +173,7 @@ export function NotificationInbox() {
       >
         <Bell className="w-4 h-4" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center text-[10px] font-bold text-white bg-danger rounded-full px-1">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center text-[10px] font-bold text-danger-fg bg-danger rounded-full px-1">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -206,7 +206,7 @@ export function NotificationInbox() {
           {/* Notification List */}
           <div className="flex-1 overflow-y-auto">
             {recent.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-text-tertiary">
+              <div className="px-4 py-5 text-center text-sm text-text-tertiary">
                 {t('notifications.empty')}
               </div>
             ) : (
@@ -246,7 +246,7 @@ export function NotificationInbox() {
                   {isServer && (
                     <button
                       onClick={() => handleDelete(n.id)}
-                      className="shrink-0 mt-0.5 p-1 rounded text-text-tertiary hover:text-danger hover:bg-danger/10 transition-colors"
+                      className="shrink-0 mt-0.5 p-1 rounded text-text-tertiary hover:text-danger-text hover:bg-danger/10 transition-colors"
                       title={t('common.delete')}
                     >
                       <Trash2 className="w-3.5 h-3.5" />

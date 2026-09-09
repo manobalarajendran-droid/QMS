@@ -93,7 +93,7 @@ export function PeriodicReviewWizard({ systemId, reviewId, onComplete, onCancel 
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-2xl mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
         {/* Progress */}
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary mb-3">{t('systems.periodicReview')}</h3>
           <div className="flex gap-1">
             {STEPS.map((s, i) => (
@@ -128,7 +128,7 @@ export function PeriodicReviewWizard({ systemId, reviewId, onComplete, onCancel 
         )}
 
         {/* Step content */}
-        <div className="px-6 py-6 min-h-[200px]">
+        <div className="px-4 py-4 min-h-[200px]">
           {step === 0 && (
             <div className="space-y-4">
               <h4 className="font-medium text-text-primary">{t('systems.reviewStillInUse')}</h4>
@@ -245,7 +245,7 @@ export function PeriodicReviewWizard({ systemId, reviewId, onComplete, onCancel 
         </div>
 
         {/* Navigation */}
-        <div className="px-6 py-4 border-t border-border flex justify-between">
+        <div className="px-4 py-4 border-t border-border flex justify-between">
           <button
             onClick={() => (step === 0 ? onCancel() : setStep(step - 1))}
             className="inline-flex items-center gap-1 px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover"
@@ -257,7 +257,7 @@ export function PeriodicReviewWizard({ systemId, reviewId, onComplete, onCancel 
             <button
               onClick={() => setStep(step + 1)}
               disabled={!canNext()}
-              className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+              className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
             >
               {t('common.next')}
               <ChevronRight className="w-4 h-4" />

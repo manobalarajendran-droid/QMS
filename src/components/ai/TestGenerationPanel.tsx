@@ -16,9 +16,9 @@ interface Props {
 }
 
 function confidenceColor(c: number): string {
-  if (c >= 0.9) return 'text-success';
-  if (c >= 0.7) return 'text-warning';
-  return 'text-danger';
+  if (c >= 0.9) return 'text-success-text';
+  if (c >= 0.7) return 'text-warning-text';
+  return 'text-danger-text';
 }
 
 function confidenceBg(c: number): string {
@@ -132,7 +132,7 @@ export function TestGenerationPanel({ requirementId, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div>
             <h3 className="text-sm font-semibold text-text-primary">
               {t('ai.generatedTests', { reqId: requirementId })}
@@ -148,10 +148,10 @@ export function TestGenerationPanel({ requirementId, onClose }: Props) {
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4">
           {!hasProvider ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <AlertTriangle className="w-8 h-8 text-warning mb-3" />
+              <AlertTriangle className="w-8 h-8 text-warning-text mb-3" />
               <p className="text-sm text-text-secondary">{t('ai.noProvider')}</p>
             </div>
           ) : loading ? (
@@ -161,8 +161,8 @@ export function TestGenerationPanel({ requirementId, onClose }: Props) {
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <AlertTriangle className="w-8 h-8 text-danger mb-3" />
-              <p className="text-sm text-danger">{error}</p>
+              <AlertTriangle className="w-8 h-8 text-danger-text mb-3" />
+              <p className="text-sm text-danger-text">{error}</p>
               <button
                 onClick={generate}
                 className="mt-3 px-4 py-1.5 text-sm text-accent bg-accent-subtle rounded-lg hover:bg-accent-subtle/80 transition-colors"
@@ -198,7 +198,7 @@ export function TestGenerationPanel({ requirementId, onClose }: Props) {
                       </h4>
                     </div>
                     {tc.accepted && (
-                      <span className="text-xs text-success font-medium shrink-0">
+                      <span className="text-xs text-success-text font-medium shrink-0">
                         {t('ai.accept')}ed
                       </span>
                     )}
@@ -235,7 +235,7 @@ export function TestGenerationPanel({ requirementId, onClose }: Props) {
                     <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border-subtle">
                       <button
                         onClick={() => acceptTest(index)}
-                        className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-success bg-success/10 rounded-lg hover:bg-success/20 transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-success-text bg-success/10 rounded-lg hover:bg-success/20 transition-colors"
                       >
                         <Check className="w-3 h-3" />
                         {t('ai.accept')}
@@ -249,7 +249,7 @@ export function TestGenerationPanel({ requirementId, onClose }: Props) {
                       </button>
                       <button
                         onClick={() => rejectTest(index)}
-                        className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-danger bg-danger/10 rounded-lg hover:bg-danger/20 transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-danger-text bg-danger/10 rounded-lg hover:bg-danger/20 transition-colors"
                       >
                         <Trash2 className="w-3 h-3" />
                         {t('ai.reject')}
@@ -264,7 +264,7 @@ export function TestGenerationPanel({ requirementId, onClose }: Props) {
 
         {/* Footer */}
         {generatedTests.length > 0 && !loading && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-border shrink-0">
+          <div className="flex items-center justify-between px-4 py-4 border-t border-border shrink-0">
             <button
               onClick={onClose}
               className="px-3 py-1.5 text-sm text-text-secondary bg-surface-tertiary rounded-lg hover:bg-surface-hover transition-colors"

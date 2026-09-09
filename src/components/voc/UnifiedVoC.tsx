@@ -21,9 +21,9 @@ import {
 } from "lucide-react";
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
-  Emergency: <AlertTriangle className="w-4 h-4 text-red-500" />,
-  Complaint: <MessageSquare className="w-4 h-4 text-amber-500" />,
-  Inquiry: <Phone className="w-4 h-4 text-blue-500" />,
+  Emergency: <AlertTriangle className="w-4 h-4 text-danger-text" />,
+  Complaint: <MessageSquare className="w-4 h-4 text-warning-text" />,
+  Inquiry: <Phone className="w-4 h-4 text-info-text" />,
 };
 
 const DEPTS = ["Operations", "Planning", "HSE", "Inspection/QC", "Management", "Maintenance", "Fabrication"];
@@ -167,27 +167,27 @@ export function UnifiedVoC() {
       {/* KPI strip */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-red-600">{active.length}</div>
+          <div className="text-2xl font-bold text-danger-text">{active.length}</div>
           <div className="text-xs text-text-tertiary mt-1">Active Issues</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{closed.length}</div>
+          <div className="text-2xl font-bold text-success-text">{closed.length}</div>
           <div className="text-xs text-text-tertiary mt-1">Resolved</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className={"text-2xl font-bold " + (avgReaction !== null && avgReaction > 240 ? "text-danger" : "text-amber-600")}>
+          <div className={"text-2xl font-bold " + (avgReaction !== null && avgReaction > 240 ? "text-danger-text" : "text-warning-text")}>
             {avgReaction !== null ? avgReaction + "m" : "—"}
           </div>
           <div className="text-xs text-text-tertiary mt-1">Avg Reaction Time</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className={"text-2xl font-bold " + (avgMobilization !== null && avgMobilization > 240 ? "text-danger" : "text-cyan-600")}>
+          <div className={"text-2xl font-bold " + (avgMobilization !== null && avgMobilization > 240 ? "text-danger-text" : "text-info-text")}>
             {avgMobilization !== null ? avgMobilization + "m" : "—"}
           </div>
           <div className="text-xs text-text-tertiary mt-1">Avg Mobilization</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className={`text-2xl font-bold ${overdueCount > 0 ? "text-danger" : "text-text-tertiary"}`}>{overdueCount}</div>
+          <div className={`text-2xl font-bold ${overdueCount > 0 ? "text-danger-text" : "text-text-tertiary"}`}>{overdueCount}</div>
           <div className="text-xs text-text-tertiary mt-1">Overdue</div>
         </div>
       </div>
@@ -198,7 +198,7 @@ export function UnifiedVoC() {
           <Phone className="w-4 h-4 text-accent" /> Unified Client Intake
         </h2>
         <button onClick={() => setShowForm((v) => !v)}
-          className="flex items-center gap-1 text-sm bg-accent text-white px-3 py-1.5 rounded-lg hover:bg-accent-hover">
+          className="flex items-center gap-1 text-sm bg-accent text-accent-fg px-3 py-1.5 rounded-lg hover:bg-accent-hover">
           <Plus className="w-4 h-4" /> Log New
         </button>
       </div>
@@ -220,7 +220,7 @@ export function UnifiedVoC() {
             <div>
               <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5">Route to Department *</label>
               <DeptSelect value={form.routedToDept} onChange={(v) => setForm((f) => ({ ...f, routedToDept: v }))} />
-              {formErrors.routedToDept && <p className="text-xs text-danger mt-1">{formErrors.routedToDept}</p>}
+              {formErrors.routedToDept && <p className="text-xs text-danger-text mt-1">{formErrors.routedToDept}</p>}
             </div>
           </div>
           <div>
@@ -231,7 +231,7 @@ export function UnifiedVoC() {
               placeholder="Issue Title *"
               className={inputCls}
             />
-            {formErrors.title && <p className="text-xs text-danger mt-1">{formErrors.title}</p>}
+            {formErrors.title && <p className="text-xs text-danger-text mt-1">{formErrors.title}</p>}
           </div>
           <div>
             <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5">Description</label>
@@ -251,7 +251,7 @@ export function UnifiedVoC() {
               placeholder="Received by (your name)"
               className={inputCls}
             />
-            {formErrors.receivedBy && <p className="text-xs text-danger mt-1">{formErrors.receivedBy}</p>}
+            {formErrors.receivedBy && <p className="text-xs text-danger-text mt-1">{formErrors.receivedBy}</p>}
           </div>
           <div className="flex justify-end gap-3 pt-2 border-t border-border">
             <button
@@ -262,7 +262,7 @@ export function UnifiedVoC() {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-white rounded-lg shadow-sm transition-colors"
+              className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-accent-fg rounded-lg shadow-sm transition-colors"
             >
               Submit
             </button>
@@ -313,7 +313,7 @@ export function UnifiedVoC() {
 
       {/* Records list */}
       <div className="space-y-2">
-        {filteredRecords.length === 0 && <p className="text-sm text-text-tertiary text-center py-8">No records match the current filters.</p>}
+        {filteredRecords.length === 0 && <p className="text-sm text-text-tertiary text-center py-5">No records match the current filters.</p>}
         {filteredRecords.map((r) => (
           <VoCRecordCard
             key={r.id}
@@ -387,7 +387,7 @@ function VoCRecordCard({
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
-          {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+          {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
           <StatusBadge status={r.status} />
         </div>
       </div>
@@ -415,12 +415,12 @@ function VoCRecordCard({
       {/* Timing KPIs */}
       <div className="flex gap-4 mt-2 text-xs text-text-tertiary">
         {reactionMins !== null && (
-          <span className={"flex items-center gap-1 " + (reactionMins > 240 ? "text-danger" : "text-green-600")}>
+          <span className={"flex items-center gap-1 " + (reactionMins > 240 ? "text-danger-text" : "text-success-text")}>
             <Clock className="w-3 h-3" /> Reaction: {reactionMins}m
           </span>
         )}
         {mobilizationMins !== null && (
-          <span className={"flex items-center gap-1 " + (mobilizationMins > 240 ? "text-danger" : "text-green-600")}>
+          <span className={"flex items-center gap-1 " + (mobilizationMins > 240 ? "text-danger-text" : "text-success-text")}>
             <Clock className="w-3 h-3" /> Mobilization: {mobilizationMins}m
           </span>
         )}
@@ -505,7 +505,7 @@ function VoCRecordCard({
             <button
               onClick={confirmGate}
               disabled={!gateReason.trim()}
-              className="px-3 py-1.5 text-xs text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
+              className="px-3 py-1.5 text-xs text-accent-fg bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
             >
               Confirm
             </button>

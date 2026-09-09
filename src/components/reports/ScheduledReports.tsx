@@ -174,7 +174,7 @@ export function ScheduledReports() {
               setFormData({ reportType: 'validation_summary', schedule: '0 8 * * 1', recipients: '', format: 'html' });
               setShowForm(true);
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent/90"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
           >
             <Plus className="w-4 h-4" />
             {t('scheduledReports.new')}
@@ -188,12 +188,12 @@ export function ScheduledReports() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={() => setShowForm(false)}>
           <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-border">
+            <div className="px-4 py-4 border-b border-border">
               <h3 className="text-base font-semibold text-text-primary">
                 {editId ? t('scheduledReports.edit') : t('scheduledReports.new')}
               </h3>
             </div>
-            <div className="px-6 py-4 space-y-4">
+            <div className="px-4 py-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-1">{t('scheduledReports.reportType')}</label>
                 <select
@@ -240,11 +240,11 @@ export function ScheduledReports() {
                 </select>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+            <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
               <button onClick={() => setShowForm(false)} className="px-4 py-2 text-sm border border-border rounded-lg">
                 {t('common.cancel')}
               </button>
-              <button onClick={handleSave} className="px-4 py-2 text-sm bg-accent text-white rounded-lg">
+              <button onClick={handleSave} className="px-4 py-2 text-sm bg-accent text-accent-fg rounded-lg">
                 {t('common.save')}
               </button>
             </div>
@@ -287,7 +287,7 @@ export function ScheduledReports() {
                   <td className="py-2 px-3">
                     <button onClick={() => handleToggle(report)}>
                       {report.enabled ? (
-                        <ToggleRight className="w-5 h-5 text-green-500" />
+                        <ToggleRight className="w-5 h-5 text-success-text" />
                       ) : (
                         <ToggleLeft className="w-5 h-5 text-text-tertiary" />
                       )}
@@ -313,7 +313,7 @@ export function ScheduledReports() {
                           </button>
                           <button
                             onClick={() => handleDelete(report.id)}
-                            className="p-1 text-text-tertiary hover:text-red-500"
+                            className="p-1 text-text-tertiary hover:text-danger-text"
                             title={t('common.delete')}
                           >
                             <Trash2 className="w-4 h-4" />

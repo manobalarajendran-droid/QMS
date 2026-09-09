@@ -102,7 +102,7 @@ export function KPIDashboardManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-text-primary">{t('kpi.title')}</h2>
@@ -111,7 +111,7 @@ export function KPIDashboardManager() {
         {canEdit && (
           <button
             onClick={() => setCreating(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors font-medium"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors font-medium"
           >
             <Plus className="w-4 h-4" />
             {t('kpi.createDashboard')}
@@ -127,10 +127,10 @@ export function KPIDashboardManager() {
 
       {/* Create Form */}
       {creating && (
-        <div className="bg-surface rounded-xl border border-border p-6 space-y-4">
+        <div className="bg-surface rounded-xl border border-border p-4 space-y-4">
           <h3 className="text-lg font-semibold text-text-primary">{t('kpi.createDashboard')}</h3>
           {error && (
-            <div className="bg-red-500/10 text-red-600 rounded-lg px-4 py-2 text-sm">{error}</div>
+            <div className="bg-red-500/10 text-danger-text rounded-lg px-4 py-2 text-sm">{error}</div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -166,7 +166,7 @@ export function KPIDashboardManager() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleCreate}
-              className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors text-sm font-medium"
             >
               {t('kpi.create')}
             </button>
@@ -207,7 +207,7 @@ export function KPIDashboardManager() {
                 </div>
                 <div className="flex items-center gap-1 ml-2 shrink-0">
                   {dash.isPublic ? (
-                    <Globe className="w-3.5 h-3.5 text-green-500" aria-label={t('kpi.public')} />
+                    <Globe className="w-3.5 h-3.5 text-success-text" aria-label={t('kpi.public')} />
                   ) : (
                     <Lock className="w-3.5 h-3.5 text-text-tertiary" aria-label={t('kpi.private')} />
                   )}
@@ -229,7 +229,7 @@ export function KPIDashboardManager() {
               {(dash.createdBy === user?.id || canAdmin) && (
                 <button
                   onClick={(e) => { e.stopPropagation(); handleDelete(dash.id); }}
-                  className="absolute top-2 right-2 p-1 rounded opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-red-500 transition-all"
+                  className="absolute top-2 right-2 p-1 rounded opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-danger-text transition-all"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

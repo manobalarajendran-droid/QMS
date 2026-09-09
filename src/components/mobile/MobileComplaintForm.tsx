@@ -39,7 +39,7 @@ export function MobileComplaintForm({ products, onSubmit, onBack }: MobileCompla
       <div className="min-h-screen bg-surface-secondary flex items-center justify-center px-4">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
-            <Check className="w-8 h-8 text-green-500" />
+            <Check className="w-8 h-8 text-success-text" />
           </div>
           <h2 className="text-lg font-semibold text-text-primary">{t('mobile.complaintSubmitted')}</h2>
           <p className="text-sm text-text-tertiary">{t('mobile.complaintSubmittedDesc')}</p>
@@ -51,7 +51,7 @@ export function MobileComplaintForm({ products, onSubmit, onBack }: MobileCompla
               setDescription('');
               setPatientImpact(false);
             }}
-            className="px-6 py-3 bg-accent text-white rounded-xl text-base font-medium hover:bg-accent-hover transition-colors"
+            className="px-4 py-3 bg-accent text-accent-fg rounded-xl text-base font-medium hover:bg-accent-hover transition-colors"
           >
             {t('mobile.newComplaint')}
           </button>
@@ -65,7 +65,7 @@ export function MobileComplaintForm({ products, onSubmit, onBack }: MobileCompla
       <div className="bg-surface border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-warning" />
+            <AlertTriangle className="w-5 h-5 text-warning-text" />
             <h2 className="text-base font-semibold text-text-primary">{t('mobile.complaintTitle')}</h2>
           </div>
           {onBack && (
@@ -76,7 +76,7 @@ export function MobileComplaintForm({ products, onSubmit, onBack }: MobileCompla
         </div>
       </div>
 
-      <div className="flex-1 px-4 py-6 space-y-6">
+      <div className="flex-1 px-4 py-4 space-y-4">
         {/* Product Selection */}
         <div>
           <label className="text-sm font-medium text-text-secondary block mb-2">{t('mobile.product')}</label>
@@ -133,7 +133,7 @@ export function MobileComplaintForm({ products, onSubmit, onBack }: MobileCompla
           onClick={() => setPatientImpact(!patientImpact)}
           className={`w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl border-2 text-base font-medium transition-all ${
             patientImpact
-              ? 'border-danger bg-danger/10 text-danger'
+              ? 'border-danger bg-danger/10 text-danger-text'
               : 'border-border bg-surface text-text-secondary hover:border-warning'
           }`}
         >
@@ -147,7 +147,7 @@ export function MobileComplaintForm({ products, onSubmit, onBack }: MobileCompla
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-accent text-white text-lg font-medium hover:bg-accent-hover disabled:opacity-50 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-accent text-accent-fg text-lg font-medium hover:bg-accent-hover disabled:opacity-50 transition-all"
         >
           <Send className="w-5 h-5" />
           {t('mobile.submitComplaint')}

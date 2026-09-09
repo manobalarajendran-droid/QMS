@@ -40,7 +40,7 @@ function RequirementModalContent({ requirement, onSave, onClose }: Omit<Props, '
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onClose}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border">
           <h2 className="text-lg font-semibold text-text-primary">
             {requirement ? t('requirements.editRequirement') : t('requirements.newRequirement')}
           </h2>
@@ -48,7 +48,7 @@ function RequirementModalContent({ requirement, onSave, onClose }: Omit<Props, '
             <X className="w-5 h-5" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-1">{t('requirements.title')} *</label>
             <input

@@ -69,7 +69,7 @@ export function DeviationTrending() {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h3 className="text-lg font-semibold text-text-primary">{t('deviations.trendingTitle')}</h3>
 
       {/* Summary cards */}
@@ -79,16 +79,16 @@ export function DeviationTrending() {
           <div className="text-xs text-text-tertiary">{t('deviations.totalDeviations')}</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-orange-500">{trending.openCount}</div>
+          <div className="text-2xl font-bold text-warning-text">{trending.openCount}</div>
           <div className="text-xs text-text-tertiary">{t('deviations.open')}</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-green-500">{trending.closedCount}</div>
+          <div className="text-2xl font-bold text-success-text">{trending.closedCount}</div>
           <div className="text-xs text-text-tertiary">{t('deviations.closed')}</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Deviations by month (line) */}
         <div className="bg-surface rounded-xl border border-border p-4">
           <h4 className="text-sm font-semibold text-text-primary mb-3">{t('deviations.byMonth')}</h4>
@@ -141,7 +141,7 @@ export function DeviationTrending() {
         <div className="bg-surface rounded-xl border border-border p-4">
           <h4 className="text-sm font-semibold text-text-primary mb-3">{t('deviations.rootCauseCategories')}</h4>
           {trending.byRootCause.length === 0 ? (
-            <p className="text-xs text-text-tertiary text-center py-8">{t('deviations.noRootCauses')}</p>
+            <p className="text-xs text-text-tertiary text-center py-5">{t('deviations.noRootCauses')}</p>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={trending.byRootCause} layout="vertical">

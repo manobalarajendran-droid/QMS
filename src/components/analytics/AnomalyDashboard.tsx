@@ -94,7 +94,7 @@ export function AnomalyDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
@@ -115,20 +115,20 @@ export function AnomalyDashboard() {
 
         <div className="bg-surface rounded-xl border border-border p-4 flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900 flex items-center justify-center">
-            <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <AlertTriangle className="w-5 h-5 text-danger-text dark:text-red-400" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-red-600">{criticalCount}</div>
+            <div className="text-2xl font-bold text-danger-text">{criticalCount}</div>
             <div className="text-xs text-text-tertiary">{t('analytics.critical')}</div>
           </div>
         </div>
 
         <div className="bg-surface rounded-xl border border-border p-4 flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
-            <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <AlertTriangle className="w-5 h-5 text-warning-text dark:text-amber-400" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-amber-600">{warningCount}</div>
+            <div className="text-2xl font-bold text-warning-text">{warningCount}</div>
             <div className="text-xs text-text-tertiary">{t('analytics.warning')}</div>
           </div>
         </div>
@@ -187,7 +187,7 @@ export function AnomalyDashboard() {
       {/* Anomaly List */}
       {filtered.length === 0 ? (
         <div className="bg-surface rounded-xl border border-border p-12 text-center">
-          <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+          <CheckCircle className="w-12 h-12 text-success-text mx-auto mb-3" />
           <h3 className="text-sm font-semibold text-text-primary mb-1">{t('analytics.noAnomalies')}</h3>
           <p className="text-xs text-text-tertiary">{t('analytics.noAnomaliesDesc')}</p>
         </div>

@@ -272,11 +272,11 @@ export function EConsentManager() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-md"><Check className="w-3 h-3" />{t('econsent.active')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-success-text bg-green-500/10 px-1.5 py-0.5 rounded-md"><Check className="w-3 h-3" />{t('econsent.active')}</span>;
       case 'superseded':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-500/10 px-1.5 py-0.5 rounded-md">{t('econsent.superseded')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-warning-text bg-amber-500/10 px-1.5 py-0.5 rounded-md">{t('econsent.superseded')}</span>;
       case 'withdrawn':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded-md"><XCircle className="w-3 h-3" />{t('econsent.withdrawn')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-text bg-red-500/10 px-1.5 py-0.5 rounded-md"><XCircle className="w-3 h-3" />{t('econsent.withdrawn')}</span>;
       default:
         return <span className="inline-flex items-center gap-1 text-xs font-medium text-text-tertiary bg-surface-secondary px-1.5 py-0.5 rounded-md">{t('econsent.draft')}</span>;
     }
@@ -295,7 +295,7 @@ export function EConsentManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-text-primary">{t('econsent.title')}</h2>
         <button
@@ -310,20 +310,20 @@ export function EConsentManager() {
       {/* Re-consent Needed Banner */}
       {reconsentNeeded.length > 0 && (
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <AlertTriangle className="w-5 h-5 text-warning-text shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-semibold text-amber-700">{t('econsent.reconsentNeeded')}</h4>
-            <p className="text-xs text-amber-600 mt-1">
+            <p className="text-xs text-warning-text mt-1">
               {reconsentNeeded.length} {t('econsent.subjectsNeedReconsent')}
             </p>
             <ul className="mt-2 space-y-1">
               {reconsentNeeded.slice(0, 5).map((item, i) => (
-                <li key={i} className="text-xs text-amber-600">
+                <li key={i} className="text-xs text-warning-text">
                   {item.subjectId}: {item.formTitle} (v{item.signedVersion} → v{item.currentVersion})
                 </li>
               ))}
               {reconsentNeeded.length > 5 && (
-                <li className="text-xs text-amber-600 italic">...{t('common.and')} {reconsentNeeded.length - 5} {t('econsent.more')}</li>
+                <li className="text-xs text-warning-text italic">...{t('common.and')} {reconsentNeeded.length - 5} {t('econsent.more')}</li>
               )}
             </ul>
           </div>
@@ -356,7 +356,7 @@ export function EConsentManager() {
                       <span><Users className="w-3 h-3 inline mr-1" />{form.signatureCount} {t('econsent.signatures')}</span>
                       <span>{t('econsent.passRate')}: {form.comprehensionPassRate}%</span>
                       {form.withdrawalCount > 0 && (
-                        <span className="text-red-500">{form.withdrawalCount} {t('econsent.withdrawals')}</span>
+                        <span className="text-danger-text">{form.withdrawalCount} {t('econsent.withdrawals')}</span>
                       )}
                     </div>
                   </div>
@@ -372,7 +372,7 @@ export function EConsentManager() {
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); activateForm(form.id); }}
-                        className="px-2 py-1 text-xs font-medium text-green-600 bg-green-500/10 rounded hover:opacity-80 transition-opacity"
+                        className="px-2 py-1 text-xs font-medium text-success-text bg-green-500/10 rounded hover:opacity-80 transition-opacity"
                       >
                         {t('econsent.activate')}
                       </button>
@@ -388,7 +388,7 @@ export function EConsentManager() {
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); supersedeForm(form.id); }}
-                        className="px-2 py-1 text-xs font-medium text-amber-600 bg-amber-500/10 rounded hover:opacity-80 transition-opacity"
+                        className="px-2 py-1 text-xs font-medium text-warning-text bg-amber-500/10 rounded hover:opacity-80 transition-opacity"
                       >
                         {t('econsent.supersede')}
                       </button>
@@ -408,7 +408,7 @@ export function EConsentManager() {
                         <div className="text-xs text-text-secondary">{t('econsent.consentRate')}</div>
                       </div>
                       <div className="bg-surface-secondary rounded-lg p-3 text-center">
-                        <div className="text-xl font-bold text-red-500">{statistics.withdrawalRate}%</div>
+                        <div className="text-xl font-bold text-danger-text">{statistics.withdrawalRate}%</div>
                         <div className="text-xs text-text-secondary">{t('econsent.withdrawalRate')}</div>
                       </div>
                       <div className="bg-surface-secondary rounded-lg p-3 text-center">
@@ -446,7 +446,7 @@ export function EConsentManager() {
                               <td className="py-2 text-text-secondary text-xs">{new Date(sig.signedAt).toLocaleDateString()}</td>
                               <td className="py-2">
                                 {sig.comprehensionScore !== null ? (
-                                  <span className={`text-xs font-medium ${sig.comprehensionPassed ? 'text-green-600' : 'text-red-500'}`}>
+                                  <span className={`text-xs font-medium ${sig.comprehensionPassed ? 'text-success-text' : 'text-danger-text'}`}>
                                     {sig.comprehensionScore}%
                                   </span>
                                 ) : (
@@ -456,11 +456,11 @@ export function EConsentManager() {
                               <td className="py-2 text-xs text-text-secondary">{sig.method}</td>
                               <td className="py-2">
                                 {sig.withdrawnAt ? (
-                                  <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded-md">
+                                  <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-text bg-red-500/10 px-1.5 py-0.5 rounded-md">
                                     <XCircle className="w-3 h-3" />{t('econsent.withdrawn')}
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-md">
+                                  <span className="inline-flex items-center gap-1 text-xs font-medium text-success-text bg-green-500/10 px-1.5 py-0.5 rounded-md">
                                     <Check className="w-3 h-3" />{t('econsent.active')}
                                   </span>
                                 )}
@@ -469,7 +469,7 @@ export function EConsentManager() {
                                 {!sig.withdrawnAt && (
                                   <button
                                     onClick={() => withdrawConsent(sig.id)}
-                                    className="text-xs text-red-500 hover:underline"
+                                    className="text-xs text-danger-text hover:underline"
                                   >
                                     {t('econsent.withdraw')}
                                   </button>
@@ -492,10 +492,10 @@ export function EConsentManager() {
       {showSignForm && selectedFormId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={() => setShowSignForm(false)}>
           <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-md mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-border">
+            <div className="px-4 py-4 border-b border-border">
               <h3 className="text-base font-semibold text-text-primary">{t('econsent.recordSignature')}</h3>
             </div>
-            <div className="px-6 py-4 space-y-4">
+            <div className="px-4 py-4 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-text-secondary mb-1">{t('econsent.subjectId')}</label>
                 <input
@@ -541,7 +541,7 @@ export function EConsentManager() {
                 />
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+            <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
               <button onClick={() => setShowSignForm(false)} className="px-4 py-1.5 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover transition-colors">
                 {t('common.cancel')}
               </button>
@@ -562,12 +562,12 @@ export function EConsentManager() {
       {showEditor && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={() => setShowEditor(false)}>
           <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col border border-border" onClick={(e) => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-border shrink-0">
+            <div className="px-4 py-4 border-b border-border shrink-0">
               <h3 className="text-base font-semibold text-text-primary">
                 {editingId ? t('econsent.editForm') : t('econsent.newForm')}
               </h3>
             </div>
-            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-text-secondary mb-1">{t('econsent.formTitle')}</label>
                 <input
@@ -632,7 +632,7 @@ export function EConsentManager() {
                           className="flex-1 px-2 py-1 text-sm bg-surface text-text-primary border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
                           placeholder={`Question ${qIdx + 1}`}
                         />
-                        <button onClick={() => removeQuestion(qIdx)} className="text-red-500 hover:opacity-70">
+                        <button onClick={() => removeQuestion(qIdx)} className="text-danger-text hover:opacity-70">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -665,7 +665,7 @@ export function EConsentManager() {
                 </div>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-border flex justify-end gap-2 shrink-0">
+            <div className="px-4 py-4 border-t border-border flex justify-end gap-2 shrink-0">
               <button onClick={() => setShowEditor(false)} className="px-4 py-1.5 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover transition-colors">
                 {t('common.cancel')}
               </button>

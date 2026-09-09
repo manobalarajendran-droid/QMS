@@ -88,9 +88,9 @@ export function PortfolioDashboard() {
   }, [project, requirements, tests]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         <h3 className="text-lg font-semibold text-text-primary mb-2">
           {t('dashboard.portfolio')}
         </h3>
@@ -191,7 +191,7 @@ export function PortfolioDashboard() {
       </div>
 
       {/* Enterprise upsell */}
-      <div className="bg-primary/5 border border-primary/20 rounded-xl p-6">
+      <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
         <div className="flex items-start gap-4">
           <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <svg

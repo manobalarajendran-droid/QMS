@@ -96,11 +96,11 @@ export function FormSubmissions({ templateId }: FormSubmissionsProps) {
   const statusIcon = (status: string) => {
     switch (status) {
       case 'approved':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-success-text" />;
       case 'reviewed':
-        return <ThumbsUp className="w-4 h-4 text-blue-500" />;
+        return <ThumbsUp className="w-4 h-4 text-info-text" />;
       default:
-        return <Clock className="w-4 h-4 text-yellow-500" />;
+        return <Clock className="w-4 h-4 text-warning-text" />;
     }
   };
 
@@ -136,7 +136,7 @@ export function FormSubmissions({ templateId }: FormSubmissionsProps) {
       </div>
 
       {filtered.length === 0 && (
-        <p className="text-sm text-text-tertiary text-center py-8">{t('forms.noSubmissions')}</p>
+        <p className="text-sm text-text-tertiary text-center py-5">{t('forms.noSubmissions')}</p>
       )}
 
       <div className="space-y-2">

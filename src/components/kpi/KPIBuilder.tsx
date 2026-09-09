@@ -136,13 +136,13 @@ export function KPIBuilder({ dashboardId, widgetId, existingWidget, onSaved, onC
   };
 
   return (
-    <div className="bg-surface rounded-xl border border-border p-6 space-y-6">
+    <div className="bg-surface rounded-xl border border-border p-4 space-y-4">
       <h3 className="text-lg font-semibold text-text-primary">
         {widgetId ? t('kpi.editWidget') : t('kpi.addWidget')}
       </h3>
 
       {error && (
-        <div className="bg-red-500/10 text-red-600 rounded-lg px-4 py-2 text-sm">{error}</div>
+        <div className="bg-red-500/10 text-danger-text rounded-lg px-4 py-2 text-sm">{error}</div>
       )}
 
       {/* Step indicators */}
@@ -153,7 +153,7 @@ export function KPIBuilder({ dashboardId, widgetId, existingWidget, onSaved, onC
             onClick={() => setStep(s)}
             className={`w-7 h-7 rounded-full flex items-center justify-center font-medium transition-colors ${
               step === s
-                ? 'bg-accent text-white'
+                ? 'bg-accent text-accent-fg'
                 : step > s
                 ? 'bg-green-500 text-white'
                 : 'bg-surface-secondary text-text-tertiary border border-border'
@@ -422,7 +422,7 @@ export function KPIBuilder({ dashboardId, widgetId, existingWidget, onSaved, onC
           <button
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm font-medium disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors text-sm font-medium disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             {saving ? t('common.saving') : t('common.save')}

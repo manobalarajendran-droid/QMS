@@ -10,10 +10,10 @@ import { WorkflowStatus } from '../workflows/WorkflowStatus';
 import { getProjectId } from '../../lib/projectUtils';
 
 const RISK_COLORS: Record<string, string> = {
-  low: 'bg-green-500/10 text-green-600',
-  medium: 'bg-yellow-500/10 text-yellow-600',
-  high: 'bg-orange-500/10 text-orange-600',
-  critical: 'bg-red-500/10 text-red-600',
+  low: 'bg-green-500/10 text-success-text',
+  medium: 'bg-yellow-500/10 text-warning-text',
+  high: 'bg-orange-500/10 text-warning-text',
+  critical: 'bg-red-500/10 text-danger-text',
 };
 
 export function ChangeControlTracker() {
@@ -206,7 +206,7 @@ export function ChangeControlTracker() {
                   {canDelete && (
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(cc.id); }}
-                      className="p-1 text-text-tertiary hover:text-red-500 transition-colors"
+                      className="p-1 text-text-tertiary hover:text-danger-text transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -221,8 +221,8 @@ export function ChangeControlTracker() {
                     {['initiated', 'assessment', 'approval', 'implementation', 'verification', 'closed'].map((s, i, arr) => (
                       <div key={s} className="flex items-center">
                         <div className={`text-xs px-2 py-1 rounded ${
-                          s === cc.status ? 'bg-accent text-white font-medium' :
-                          arr.indexOf(cc.status) > i ? 'bg-green-500/10 text-green-600' :
+                          s === cc.status ? 'bg-accent text-accent-fg font-medium' :
+                          arr.indexOf(cc.status) > i ? 'bg-green-500/10 text-success-text' :
                           'bg-surface-secondary text-text-tertiary'
                         }`}>
                           {s}
@@ -276,9 +276,9 @@ export function ChangeControlTracker() {
                               </td>
                               <td className="py-1.5">
                                 <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                  task.status === 'completed' ? 'bg-green-500/10 text-green-600' :
-                                  task.status === 'overdue' ? 'bg-red-500/10 text-red-600' :
-                                  'bg-yellow-500/10 text-yellow-600'
+                                  task.status === 'completed' ? 'bg-green-500/10 text-success-text' :
+                                  task.status === 'overdue' ? 'bg-red-500/10 text-danger-text' :
+                                  'bg-yellow-500/10 text-warning-text'
                                 }`}>
                                   {task.status}
                                 </span>
@@ -324,7 +324,7 @@ export function ChangeControlTracker() {
                         />
                         <button
                           onClick={() => handleAddTask(cc.id)}
-                          className="inline-flex items-center gap-1 px-2 py-1.5 text-xs bg-accent text-white rounded hover:bg-accent/90 transition-colors"
+                          className="inline-flex items-center gap-1 px-2 py-1.5 text-xs bg-accent text-accent-fg rounded hover:bg-accent/90 transition-colors"
                         >
                           <Plus className="w-3 h-3" />
                           {t('changeControl.addTask')}
@@ -338,7 +338,7 @@ export function ChangeControlTracker() {
                     <div className="bg-surface-secondary rounded-lg p-4">
                       <h4 className="text-sm font-semibold text-text-primary mb-2">{t('changeControl.effectivenessVerification')}</h4>
                       {cc.effectivenessVerified ? (
-                        <div className="flex items-center gap-2 text-green-600 text-sm">
+                        <div className="flex items-center gap-2 text-success-text text-sm">
                           <CheckCircle2 className="w-4 h-4" />
                           {t('changeControl.effectivenessVerified')}
                           {cc.effectivenessCheckDate && (

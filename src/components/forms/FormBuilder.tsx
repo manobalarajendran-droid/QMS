@@ -178,7 +178,7 @@ export function FormBuilder({ templateName, templateDescription, entityType, fie
                   <>
                     <label className="text-sm font-medium text-text-primary">
                       {field.label}
-                      {field.required && <span className="text-red-500 ml-1">*</span>}
+                      {field.required && <span className="text-danger-text ml-1">*</span>}
                     </label>
                     <div className="mt-1 text-xs text-text-tertiary capitalize">{field.type.replace('_', ' ')}</div>
                     {field.helpText && (
@@ -204,7 +204,7 @@ export function FormBuilder({ templateName, templateDescription, entityType, fie
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); removeField(field.id); }}
-                  className="p-0.5 text-red-400 hover:text-red-600"
+                  className="p-0.5 text-red-400 hover:text-danger-text"
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -224,7 +224,7 @@ export function FormBuilder({ templateName, templateDescription, entityType, fie
           <button
             onClick={handleSave}
             disabled={saving || !name.trim()}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             {saving ? t('common.saving') : t('forms.saveTemplate')}
@@ -311,7 +311,7 @@ export function FormBuilder({ templateName, templateDescription, entityType, fie
                           const newOpts = (selectedField.options || []).filter((_, j) => j !== i);
                           updateField(selectedField.id, { options: newOpts });
                         }}
-                        className="p-1 text-red-400 hover:text-red-600"
+                        className="p-1 text-red-400 hover:text-danger-text"
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>

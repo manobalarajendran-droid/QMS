@@ -199,7 +199,7 @@ export function BatchRecordForm() {
   };
 
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-700',
+    draft: 'bg-surface-tertiary text-text-secondary',
     in_progress: 'bg-blue-100 text-blue-700',
     review: 'bg-purple-100 text-purple-700',
     released: 'bg-green-100 text-green-700',
@@ -225,7 +225,7 @@ export function BatchRecordForm() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -235,7 +235,7 @@ export function BatchRecordForm() {
         {canEdit && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('batches.createBatch')}
@@ -283,7 +283,7 @@ export function BatchRecordForm() {
             />
           </div>
           <div className="flex gap-2">
-            <button onClick={handleCreateBatch} className="px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90">
+            <button onClick={handleCreateBatch} className="px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90">
               {t('common.save')}
             </button>
             <button onClick={() => setShowCreateForm(false)} className="px-3 py-1.5 text-sm font-medium text-text-secondary bg-surface border border-border rounded-lg hover:bg-surface-hover">
@@ -295,7 +295,7 @@ export function BatchRecordForm() {
 
       {/* Batch List */}
       {batches.length === 0 ? (
-        <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <div className="bg-surface rounded-xl border border-border p-5 text-center">
           <FlaskConical className="w-10 h-10 text-text-tertiary mx-auto mb-2" />
           <p className="text-text-tertiary">{t('batches.noBatches')}</p>
         </div>
@@ -357,7 +357,7 @@ export function BatchRecordForm() {
               {canApprove && releasingId === batch.id && (
                 <div className="px-4 py-3 border-t border-border bg-green-50">
                   <div className="flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-green-600" />
+                    <Lock className="w-4 h-4 text-success-text" />
                     <span className="text-sm font-medium text-green-800">{t('batches.releaseSignature')}</span>
                   </div>
                   <div className="flex gap-2 mt-2">
@@ -409,7 +409,7 @@ export function BatchRecordForm() {
                             {step.expectedValue && <span>{t('batches.expected')}: {step.expectedValue} {step.unit || ''}</span>}
                             {step.actualValue && <span>{t('batches.actual')}: {step.actualValue} {step.unit || ''}</span>}
                             {step.inSpec !== null && (
-                              <span className={step.inSpec ? 'text-green-600' : 'text-red-600'}>
+                              <span className={step.inSpec ? 'text-success-text' : 'text-danger-text'}>
                                 {step.inSpec ? t('batches.inSpec') : t('batches.outOfSpec')}
                               </span>
                             )}
@@ -468,7 +468,7 @@ export function BatchRecordForm() {
                       </div>
                       <button
                         onClick={() => handleAddStep(batch.id)}
-                        className="px-2 py-1 text-xs font-medium text-white bg-accent rounded-lg hover:bg-accent/90"
+                        className="px-2 py-1 text-xs font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90"
                       >
                         {t('batches.addStep')}
                       </button>

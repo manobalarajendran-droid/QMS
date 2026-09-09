@@ -237,7 +237,7 @@ export function IntegrationSettings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h3 className="text-base font-semibold text-text-primary">{t('integrations.title')}</h3>
 
       {/* Jira Card */}
@@ -248,12 +248,12 @@ export function IntegrationSettings() {
             {jiraLoading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin text-text-tertiary" />
             ) : jiraStatus.connected ? (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-success-text bg-green-500/10 px-1.5 py-0.5 rounded-md">
                 <Check className="w-3 h-3" />
                 {t('integrations.connected')}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-text bg-red-500/10 px-1.5 py-0.5 rounded-md">
                 <XCircle className="w-3 h-3" />
                 {t('integrations.disconnected')}
               </span>
@@ -328,7 +328,7 @@ export function IntegrationSettings() {
                 />
               </div>
               {jiraError && (
-                <div className="text-xs text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                <div className="text-xs text-danger-text bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
                   {jiraError}
                 </div>
               )}
@@ -353,12 +353,12 @@ export function IntegrationSettings() {
             {githubLoading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin text-text-tertiary" />
             ) : githubStatus.connected ? (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-success-text bg-green-500/10 px-1.5 py-0.5 rounded-md">
                 <Check className="w-3 h-3" />
                 {t('integrations.connected')}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-text bg-red-500/10 px-1.5 py-0.5 rounded-md">
                 <XCircle className="w-3 h-3" />
                 {t('integrations.disconnected')}
               </span>
@@ -413,7 +413,7 @@ export function IntegrationSettings() {
                 />
               </div>
               {githubError && (
-                <div className="text-xs text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                <div className="text-xs text-danger-text bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
                   {githubError}
                 </div>
               )}
@@ -438,12 +438,12 @@ export function IntegrationSettings() {
             {sapLoading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin text-text-tertiary" />
             ) : sapStatus.connected ? (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-success-text bg-green-500/10 px-1.5 py-0.5 rounded-md">
                 <Check className="w-3 h-3" />
                 {t('integrations.connected')}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-text bg-red-500/10 px-1.5 py-0.5 rounded-md">
                 <XCircle className="w-3 h-3" />
                 {t('integrations.disconnected')}
               </span>
@@ -519,7 +519,7 @@ export function IntegrationSettings() {
                 </div>
               </div>
               {sapError && (
-                <div className="text-xs text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                <div className="text-xs text-danger-text bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
                   {sapError}
                 </div>
               )}
@@ -544,12 +544,12 @@ export function IntegrationSettings() {
             {limsLoading ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin text-text-tertiary" />
             ) : limsStatus.connected ? (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-success-text bg-green-500/10 px-1.5 py-0.5 rounded-md">
                 <Check className="w-3 h-3" />
                 {t('integrations.connected')}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-text bg-red-500/10 px-1.5 py-0.5 rounded-md">
                 <XCircle className="w-3 h-3" />
                 {t('integrations.disconnected')}
               </span>
@@ -600,7 +600,7 @@ export function IntegrationSettings() {
                 </div>
               </div>
               {limsError && (
-                <div className="text-xs text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                <div className="text-xs text-danger-text bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
                   {limsError}
                 </div>
               )}

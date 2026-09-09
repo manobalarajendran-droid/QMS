@@ -121,7 +121,7 @@ export function RequirementsTable() {
         cell: (info) => {
           const count = info.getValue();
           return (
-            <span className={`text-sm font-medium ${count === 0 ? 'text-danger' : 'text-success'}`}>
+            <span className={`text-sm font-medium ${count === 0 ? 'text-danger-text' : 'text-success-text'}`}>
               {count}
             </span>
           );
@@ -143,7 +143,7 @@ export function RequirementsTable() {
               >
                 <Paperclip className="w-3.5 h-3.5" />
                 {evCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-accent text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-accent text-accent-fg text-[9px] font-bold flex items-center justify-center">
                     {evCount}
                   </span>
                 )}
@@ -172,7 +172,7 @@ export function RequirementsTable() {
                 <>
                   <button
                     onClick={() => setQualityCheckReq(row.original)}
-                    className="p-1.5 text-text-tertiary hover:text-emerald-500 rounded-lg hover:bg-emerald-500/10 transition-colors"
+                    className="p-1.5 text-text-tertiary hover:text-success-text rounded-lg hover:bg-emerald-500/10 transition-colors"
                     title={t('quality.checkQuality')}
                   >
                     <Sparkles className="w-3.5 h-3.5" />
@@ -201,7 +201,7 @@ export function RequirementsTable() {
               </button>
               <button
                 onClick={() => setDeleteId(row.original.id)}
-                className="p-1.5 text-text-tertiary hover:text-danger rounded-lg hover:bg-danger-subtle transition-colors"
+                className="p-1.5 text-text-tertiary hover:text-danger-text rounded-lg hover:bg-danger-subtle transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

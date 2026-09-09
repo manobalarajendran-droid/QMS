@@ -108,39 +108,39 @@ export function CSIDashboard() {
       {/* Left panel */}
       <div className="w-96 shrink-0 flex flex-col gap-3">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white">CSI Surveys</h2>
-          <button onClick={() => { setEditingRecord(null); setShowForm(true); }} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm">+ New Survey</button>
+          <h2 className="text-xl font-bold text-text-primary dark:text-white">CSI Surveys</h2>
+          <button onClick={() => { setEditingRecord(null); setShowForm(true); }} className="bg-accent text-accent-fg px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-accent-hover transition-colors shadow-sm">+ New Survey</button>
         </div>
         <div className="flex gap-2 items-center">
-          <label className="text-sm flex items-center gap-2 text-slate-600 dark:text-slate-300"><input type="checkbox" checked={showArchived} onChange={e => setShowArchived(e.target.checked)}/> Show Archived</label>
+          <label className="text-sm flex items-center gap-2 text-text-secondary"><input type="checkbox" checked={showArchived} onChange={e => setShowArchived(e.target.checked)}/> Show Archived</label>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3 text-center">
-            <div className={`text-2xl font-bold ${isTargetMet ? 'text-green-600' : 'text-amber-600'}`}>{avgScore}%</div>
-            <div className="text-xs text-slate-500 mt-1">Avg CSI Score</div>
+          <div className="bg-surface rounded-lg border border-border p-3 text-center">
+            <div className={`text-2xl font-bold ${isTargetMet ? 'text-success-text' : 'text-warning-text'}`}>{avgScore}%</div>
+            <div className="text-xs text-text-tertiary mt-1">Avg CSI Score</div>
           </div>
-          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-3 text-center">
-            <div className="text-2xl font-bold text-indigo-600">{active.length}</div>
-            <div className="text-xs text-slate-500 mt-1">Surveys Received</div>
+          <div className="bg-surface rounded-lg border border-border p-3 text-center">
+            <div className="text-2xl font-bold text-accent-text">{active.length}</div>
+            <div className="text-xs text-text-tertiary mt-1">Surveys Received</div>
           </div>
         </div>
 
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-2.5 top-2 w-4 h-4 text-text-tertiary" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search client/project/comments..."
-              className="w-full pl-8 pr-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full pl-8 pr-3 py-1.5 text-sm border border-border rounded-lg bg-surface text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
-          <select value={filterYear} onChange={e => setFilterYear(e.target.value)} className="w-20 text-sm border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+          <select value={filterYear} onChange={e => setFilterYear(e.target.value)} className="w-20 text-sm border border-border rounded-lg px-2 py-1.5 bg-surface text-text-secondary">
             {years.map(y => <option key={y}>{y}</option>)}
           </select>
         </div>
-        <select value={filterRating} onChange={e => setFilterRating(e.target.value)} className="w-full text-sm border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+        <select value={filterRating} onChange={e => setFilterRating(e.target.value)} className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-surface text-text-secondary">
           {RATING_BUCKETS.map(b => <option key={b} value={b}>{b === 'All' ? 'All Ratings' : b}</option>)}
         </select>
 
@@ -154,15 +154,15 @@ export function CSIDashboard() {
                 onClick={() => setSelectedId(r.id)}
                 className={`w-full text-left p-3 rounded-lg border transition-all ${
                   selectedId === r.id
-                    ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 shadow-sm'
-                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                    ? 'border-accent bg-accent-subtle shadow-sm'
+                    : 'border-border bg-surface hover:bg-surface-hover'
                 }`}
               >
                 <div className="flex justify-between items-start">
-                  <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm truncate">{r.cl} {r.isArchived ? '(Archived)' : ''}</span>
+                  <span className="font-semibold text-text-primary text-sm truncate">{r.cl} {r.isArchived ? '(Archived)' : ''}</span>
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${score >= 85 ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60' : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/60'}`}>{score}%</span>
                 </div>
-                <div className="text-xs text-slate-500 mt-1 truncate">{r.proj}</div>
+                <div className="text-xs text-text-tertiary mt-1 truncate">{r.proj}</div>
                 {r.followUp && (
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60">
@@ -184,9 +184,9 @@ export function CSIDashboard() {
       {/* Right panel */}
       <div className="flex-1 overflow-y-auto flex flex-col gap-4">
         {/* Overall Satisfaction Distribution Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shrink-0">
-          <h3 className="text-base font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-            <Target className="w-4 h-4 text-indigo-500" />
+        <div className="bg-surface rounded-xl border border-border p-5 shrink-0">
+          <h3 className="text-base font-bold text-text-primary dark:text-white mb-3 flex items-center gap-2">
+            <Target className="w-4 h-4 text-accent" />
             Overall Satisfaction Distribution
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -218,79 +218,79 @@ export function CSIDashboard() {
         </div>
 
         {selected ? (
-          <div id="csi-print-area" className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 flex-1 space-y-6">
+          <div id="csi-print-area" className="bg-surface rounded-xl border border-border p-5 flex-1 space-y-4">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1">{selected.cl}</h3>
-                <p className="text-sm text-slate-500">{selected.proj}</p>
+                <h3 className="text-xl font-bold text-text-primary dark:text-white mb-1">{selected.cl}</h3>
+                <p className="text-sm text-text-tertiary">{selected.proj}</p>
               </div>
               <div className="flex gap-2 print:hidden">
-                <button onClick={() => window.print()} className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full transition-colors" title="Print / Export"><Printer className="w-4 h-4"/></button>
-                <button onClick={() => setShowEvidence(true)} title="Evidence" className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full transition-colors"><Paperclip className="w-4 h-4"/></button>
-                <button onClick={() => { setEditingRecord(selected); setShowForm(true); }} className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full transition-colors"><Edit className="w-4 h-4"/></button>
-                <button onClick={() => handleArchive(selected.id, !!selected.isArchived)} className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-amber-600 rounded-full transition-colors"><Archive className="w-4 h-4"/></button>
-                <button onClick={() => handleDelete(selected.id)} className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-red-600 rounded-full transition-colors"><Trash className="w-4 h-4"/></button>
+                <button onClick={() => window.print()} className="p-2 bg-surface-tertiary hover:bg-surface-hover text-text-secondary rounded-full transition-colors" title="Print / Export"><Printer className="w-4 h-4"/></button>
+                <button onClick={() => setShowEvidence(true)} title="Evidence" className="p-2 bg-surface-tertiary hover:bg-surface-hover text-text-secondary rounded-full transition-colors"><Paperclip className="w-4 h-4"/></button>
+                <button onClick={() => { setEditingRecord(selected); setShowForm(true); }} className="p-2 bg-surface-tertiary hover:bg-surface-hover text-text-secondary rounded-full transition-colors"><Edit className="w-4 h-4"/></button>
+                <button onClick={() => handleArchive(selected.id, !!selected.isArchived)} className="p-2 bg-surface-tertiary hover:bg-surface-hover text-warning-text rounded-full transition-colors"><Archive className="w-4 h-4"/></button>
+                <button onClick={() => handleDelete(selected.id)} className="p-2 bg-surface-tertiary hover:bg-surface-hover text-danger-text rounded-full transition-colors"><Trash className="w-4 h-4"/></button>
               </div>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium">Overall Score</div>
-                <div className="text-xl font-bold mt-1 text-slate-800 dark:text-white">{normalizeScore(selected.score)}%{typeof selected.totalScore === 'number' && <span className="text-xs text-slate-400 font-normal ml-1">({selected.totalScore.toFixed(1)} raw)</span>}</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium">Overall Score</div>
+                <div className="text-xl font-bold mt-1 text-text-primary dark:text-white">{normalizeScore(selected.score)}%{typeof selected.totalScore === 'number' && <span className="text-xs text-text-tertiary font-normal ml-1">({selected.totalScore.toFixed(1)} raw)</span>}</div>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium mb-1">Rating</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium mb-1">Rating</div>
                 <div className="flex items-center gap-1.5">
                   {selected.icon && <span className="text-base">{selected.icon}</span>}
                   <StatusBadge status={selected.rating} />
                 </div>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium">Date</div>
-                <div className="text-sm font-medium mt-1 text-slate-800 dark:text-white">{selected.dt || selected.yr}</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium">Date</div>
+                <div className="text-sm font-medium mt-1 text-text-primary dark:text-white">{selected.dt || selected.yr}</div>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium">Survey Status</div>
-                <div className="text-sm font-medium mt-1 text-slate-800 dark:text-white capitalize">{(selected.status || 'closed').replace('_', ' ')}</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium">Survey Status</div>
+                <div className="text-sm font-medium mt-1 text-text-primary dark:text-white capitalize">{(selected.status || 'closed').replace('_', ' ')}</div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium">Project Code</div>
-                <div className="text-sm font-medium mt-1 text-slate-800 dark:text-white">{selected.projCode || '—'}</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium">Project Code</div>
+                <div className="text-sm font-medium mt-1 text-text-primary dark:text-white">{selected.projCode || '—'}</div>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium">PO Number</div>
-                <div className="text-sm font-medium mt-1 text-slate-800 dark:text-white">{selected.po || '—'}</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium">PO Number</div>
+                <div className="text-sm font-medium mt-1 text-text-primary dark:text-white">{selected.po || '—'}</div>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium">Client Contact</div>
-                <div className="text-sm font-medium mt-1 text-slate-800 dark:text-white">{selected.clientName || '—'}</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium">Client Contact</div>
+                <div className="text-sm font-medium mt-1 text-text-primary dark:text-white">{selected.clientName || '—'}</div>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div className="text-xs text-slate-400 font-medium">Client Designation</div>
-                <div className="text-sm font-medium mt-1 text-slate-800 dark:text-white">{selected.clientDesig || '—'}</div>
+              <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+                <div className="text-xs text-text-tertiary font-medium">Client Designation</div>
+                <div className="text-sm font-medium mt-1 text-text-primary dark:text-white">{selected.clientDesig || '—'}</div>
               </div>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
-              <div className="text-xs text-slate-400 font-medium">Surveyed / Evaluated By</div>
-              <div className="text-sm font-medium mt-1 text-slate-800 dark:text-white">{selected.evaluatorName || '—'}</div>
+            <div className="bg-surface-secondary p-3 rounded-lg border border-border-subtle">
+              <div className="text-xs text-text-tertiary font-medium">Surveyed / Evaluated By</div>
+              <div className="text-sm font-medium mt-1 text-text-primary dark:text-white">{selected.evaluatorName || '—'}</div>
             </div>
 
             {selected.scores && Object.keys(selected.scores).length > 0 && (
               <div>
-                <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Category Breakdown (FM-CSS-01, ISO Cl.9.1.2)</h4>
+                <h4 className="text-sm font-semibold text-text-secondary mb-2">Category Breakdown (FM-CSS-01, ISO Cl.9.1.2)</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {CSI_QUESTIONS.map(cat => {
                     const answered = cat.questions.filter(q => typeof selected.scores?.[q.code] === 'number');
                     if (answered.length === 0) return null;
                     const avg = answered.reduce((sum, q) => sum + (selected.scores?.[q.code] ?? 0), 0) / answered.length;
                     return (
-                      <div key={cat.category} className="flex justify-between text-xs border-b border-slate-100 dark:border-slate-700 py-1.5">
-                        <span className="text-slate-600 dark:text-slate-400">{cat.category}</span>
-                        <span className="font-semibold text-slate-800 dark:text-slate-200">{avg.toFixed(1)}/10</span>
+                      <div key={cat.category} className="flex justify-between text-xs border-b border-border-subtle py-1.5">
+                        <span className="text-text-secondary">{cat.category}</span>
+                        <span className="font-semibold text-text-primary">{avg.toFixed(1)}/10</span>
                       </div>
                     );
                   })}
@@ -299,21 +299,21 @@ export function CSIDashboard() {
             )}
 
             {selected.suggestions && (
-              <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-indigo-800 dark:text-indigo-300 mb-2">Suggestions</h4>
-                <p className="text-sm text-indigo-700 dark:text-indigo-400 italic">"{selected.suggestions}"</p>
+              <div className="bg-accent-subtle rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-accent-text mb-2">Suggestions</h4>
+                <p className="text-sm text-accent-text italic">"{selected.suggestions}"</p>
               </div>
             )}
             {selected.obs && (
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Observations</h4>
-                <p className="text-sm text-slate-600 dark:text-slate-400">{selected.obs}</p>
+              <div className="bg-surface-secondary rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-text-secondary mb-2">Observations</h4>
+                <p className="text-sm text-text-secondary">{selected.obs}</p>
               </div>
             )}
             {selected.comments && (
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Internal QA Comments</h4>
-                <p className="text-sm text-slate-600 dark:text-slate-400">{selected.comments}</p>
+              <div className="bg-surface-secondary rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-text-secondary mb-2">Internal QA Comments</h4>
+                <p className="text-sm text-text-secondary">{selected.comments}</p>
               </div>
             )}
 
@@ -343,7 +343,7 @@ export function CSIDashboard() {
               </div>
             )}
 
-            <div className="print:hidden space-y-4 pt-2 border-t border-slate-100 dark:border-slate-700">
+            <div className="print:hidden space-y-4 pt-2 border-t border-border-subtle">
               <CommentThread entityType="csi" entityId={selected.id} projectId={selected.id} />
             </div>
             {showEvidence && (
@@ -351,9 +351,9 @@ export function CSIDashboard() {
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center flex-1 text-slate-400 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8">
-            <Target className="w-12 h-12 mb-3 opacity-30 text-indigo-500" />
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Select a survey from the list to inspect client feedback</p>
+          <div className="flex flex-col items-center justify-center flex-1 text-text-tertiary bg-surface rounded-xl border border-border p-5">
+            <Target className="w-12 h-12 mb-3 opacity-30 text-accent" />
+            <p className="text-sm font-medium text-text-secondary">Select a survey from the list to inspect client feedback</p>
           </div>
         )}
       </div>
@@ -410,9 +410,9 @@ function CSIFollowUpPanel({
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Owner</label>
+          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-1">Owner</label>
           <select
-            className="w-full text-sm border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 disabled:opacity-60"
+            className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-surface text-text-primary disabled:opacity-60"
             value={fu.owner || ''}
             disabled={!canManage}
             onChange={(e) => onUpdate({ owner: e.target.value })}
@@ -423,9 +423,9 @@ function CSIFollowUpPanel({
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Assigned Dept</label>
+          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-1">Assigned Dept</label>
           <select
-            className="w-full text-sm border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 disabled:opacity-60"
+            className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-surface text-text-primary disabled:opacity-60"
             value={fu.assignedDept || ''}
             disabled={!canManage}
             onChange={(e) => onUpdate({ assignedDept: e.target.value })}
@@ -435,10 +435,10 @@ function CSIFollowUpPanel({
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Due Date</label>
+          <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-1">Due Date</label>
           <input
             type="date"
-            className="w-full text-sm border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 disabled:opacity-60"
+            className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-surface text-text-primary disabled:opacity-60"
             value={fu.dueDate || ''}
             disabled={!canManage}
             onChange={(e) => onUpdate({ dueDate: e.target.value })}
@@ -447,10 +447,10 @@ function CSIFollowUpPanel({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Corrective Action</label>
+        <label className="block text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-1">Corrective Action</label>
         <textarea
           rows={2}
-          className="w-full text-sm border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 disabled:opacity-60"
+          className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-surface text-text-primary disabled:opacity-60"
           placeholder="Describe the corrective action taken to address the low rating…"
           value={fu.correctiveAction || ''}
           disabled={!canManage}
@@ -479,7 +479,7 @@ function CSIFollowUpPanel({
         onReopen={(reason) => onTransition('In Progress', reason, 'reopen')}
       />
       {!canManage && (
-        <p className="text-xs text-slate-400">Signed in as {currentUserName}. Only QA Manager / Admin can update this follow-up.</p>
+        <p className="text-xs text-text-tertiary">Signed in as {currentUserName}. Only QA Manager / Admin can update this follow-up.</p>
       )}
     </div>
   );
@@ -531,8 +531,8 @@ function CSIFormModal({ record, onClose, onSubmit }: { record: CSIRecord | null,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-white dark:bg-slate-800 w-full max-w-3xl rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 max-h-[90vh] overflow-y-auto animate-modal-enter">
-        <h3 className="text-xl font-bold mb-4 text-slate-800 dark:text-white">{record ? 'Edit' : 'New'} Survey — FM-CSS-01 Rev 02 (ISO Cl.9.1.2)</h3>
+      <div className="bg-surface w-full max-w-3xl rounded-lg p-4 shadow-2xl border border-border text-text-primary max-h-[90vh] overflow-y-auto animate-modal-enter">
+        <h3 className="text-xl font-bold mb-4 text-text-primary dark:text-white">{record ? 'Edit' : 'New'} Survey — FM-CSS-01 Rev 02 (ISO Cl.9.1.2)</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 text-sm rounded-lg px-3 py-2">
@@ -541,82 +541,82 @@ function CSIFormModal({ record, onClose, onSubmit }: { record: CSIRecord | null,
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Client *</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Client *</label>
               <input
                 placeholder="e.g. SABIC / ARAMCO"
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.cl}
                 onChange={e => setFormData({...formData, cl: e.target.value})}
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Project *</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Project *</label>
               <input
                 placeholder="e.g. Turnaround Maintenance"
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.proj}
                 onChange={e => setFormData({...formData, proj: e.target.value})}
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Date *</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Date *</label>
               <input
                 type="date"
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.dt}
                 onChange={e => setFormData({...formData, dt: e.target.value})}
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Year *</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Year *</label>
               <input
                 type="number"
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.yr}
                 onChange={e => setFormData({...formData, yr: e.target.value})}
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Project Code</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Project Code</label>
               <input
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.projCode}
                 onChange={e => setFormData({...formData, projCode: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">PO Number</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">PO Number</label>
               <input
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.po}
                 onChange={e => setFormData({...formData, po: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Client Contact Name</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Client Contact Name</label>
               <input
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.clientName}
                 onChange={e => setFormData({...formData, clientName: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Client Designation</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Client Designation</label>
               <input
                 placeholder="e.g. Superintendent PP Maintenance"
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.clientDesig}
                 onChange={e => setFormData({...formData, clientDesig: e.target.value})}
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Surveyed / Evaluated By</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Surveyed / Evaluated By</label>
               <select
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 value={formData.evaluatorName}
                 onChange={e => setFormData({...formData, evaluatorName: e.target.value})}
               >
@@ -627,23 +627,23 @@ function CSIFormModal({ record, onClose, onSubmit }: { record: CSIRecord | null,
             </div>
           </div>
 
-          <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
+          <div className="border-t border-border pt-4">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-sm font-bold text-slate-800 dark:text-white">22-Question Survey Instrument</h4>
-              <span className="text-xs text-slate-500">{answeredCount}/{totalQuestions} answered{preview ? ` — ${preview.totalScore}% (${preview.rating})` : ''}</span>
+              <h4 className="text-sm font-bold text-text-primary dark:text-white">22-Question Survey Instrument</h4>
+              <span className="text-xs text-text-tertiary">{answeredCount}/{totalQuestions} answered{preview ? ` — ${preview.totalScore}% (${preview.rating})` : ''}</span>
             </div>
             {record && !record.scores && (
-              <p className="text-xs text-amber-600 dark:text-amber-400 mb-2">This is a legacy record with a manually recorded score. Leave every question blank to keep it unchanged, or complete all {totalQuestions} to replace it with a derived score.</p>
+              <p className="text-xs text-warning-text dark:text-amber-400 mb-2">This is a legacy record with a manually recorded score. Leave every question blank to keep it unchanged, or complete all {totalQuestions} to replace it with a derived score.</p>
             )}
-            <div className="space-y-3 max-h-64 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+            <div className="space-y-3 max-h-64 overflow-y-auto border border-border rounded-lg p-3">
               {CSI_QUESTIONS.map(cat => (
                 <div key={cat.category}>
-                  <div className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">{cat.category}</div>
+                  <div className="text-xs font-semibold text-text-secondary mb-1">{cat.category}</div>
                   {cat.questions.map(q => (
                     <div key={q.code} className="flex items-center gap-2 py-1">
-                      <span className="text-xs text-slate-500 flex-1">{q.question}</span>
+                      <span className="text-xs text-text-tertiary flex-1">{q.question}</span>
                       <select
-                        className="w-16 text-sm border border-slate-300 dark:border-slate-600 rounded-md px-1 py-1 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+                        className="w-16 text-sm border border-border rounded-md px-1 py-1 bg-surface text-text-primary"
                         value={scores[q.code] ?? ''}
                         onChange={e => {
                           const val = e.target.value;
@@ -667,30 +667,30 @@ function CSIFormModal({ record, onClose, onSubmit }: { record: CSIRecord | null,
 
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Suggestions & Recommendations</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Suggestions & Recommendations</label>
               <textarea
                 placeholder="Client comments and suggestions..."
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 rows={2}
                 value={formData.suggestions}
                 onChange={e => setFormData({...formData, suggestions: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Observations</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Observations</label>
               <textarea
                 placeholder="Internal audit observations..."
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 rows={2}
                 value={formData.obs}
                 onChange={e => setFormData({...formData, obs: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Internal QA Comments</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Internal QA Comments</label>
               <textarea
                 placeholder="Internal QA notes (not shown to client)..."
-                className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
                 rows={2}
                 value={formData.comments}
                 onChange={e => setFormData({...formData, comments: e.target.value})}
@@ -698,9 +698,9 @@ function CSIFormModal({ record, onClose, onSubmit }: { record: CSIRecord | null,
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors">Cancel</button>
-            <button type="submit" className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm transition-colors">Submit Survey</button>
+          <div className="flex justify-end gap-2 pt-2 border-t border-border">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-surface-hover text-text-secondary transition-colors">Cancel</button>
+            <button type="submit" className="px-4 py-2 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent-hover shadow-sm transition-colors">Submit Survey</button>
           </div>
         </form>
       </div>

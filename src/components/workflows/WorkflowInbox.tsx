@@ -159,7 +159,7 @@ export function WorkflowInbox() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
@@ -215,7 +215,7 @@ export function WorkflowInbox() {
                     <div className="flex items-center gap-2">
                       {sla && (
                         <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
-                          sla === t('workflows.overdue') ? 'bg-red-500/10 text-red-600' : 'bg-yellow-500/10 text-yellow-600'
+                          sla === t('workflows.overdue') ? 'bg-red-500/10 text-danger-text' : 'bg-yellow-500/10 text-warning-text'
                         }`}>
                           <Clock className="w-3 h-3" />
                           {sla}
@@ -320,7 +320,7 @@ export function WorkflowInbox() {
                       </button>
                       <button
                         onClick={() => deleteTemplate(tpl.id)}
-                        className="text-xs text-red-500 hover:underline"
+                        className="text-xs text-danger-text hover:underline"
                       >
                         {t('common.delete')}
                       </button>

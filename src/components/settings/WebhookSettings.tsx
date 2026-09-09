@@ -180,7 +180,7 @@ export function WebhookSettings() {
       </div>
 
       {webhooks.length === 0 ? (
-        <div className="text-sm text-text-tertiary bg-surface-secondary rounded-lg p-6 text-center">
+        <div className="text-sm text-text-tertiary bg-surface-secondary rounded-lg p-4 text-center">
           {t('webhooks.noWebhooks')}
         </div>
       ) : (
@@ -197,8 +197,8 @@ export function WebhookSettings() {
                     <span
                       className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${
                         wh.enabled
-                          ? 'bg-green-500/10 text-green-600'
-                          : 'bg-red-500/10 text-red-500'
+                          ? 'bg-green-500/10 text-success-text'
+                          : 'bg-red-500/10 text-danger-text'
                       }`}
                     >
                       {wh.enabled ? t('webhooks.enabled') : 'Disabled'}
@@ -225,8 +225,8 @@ export function WebhookSettings() {
                       <span
                         className={
                           wh.lastStatus >= 200 && wh.lastStatus < 300
-                            ? 'text-green-600'
-                            : 'text-red-500'
+                            ? 'text-success-text'
+                            : 'text-danger-text'
                         }
                       >
                         Status: {wh.lastStatus}
@@ -253,7 +253,7 @@ export function WebhookSettings() {
                     title={t('webhooks.enabled')}
                   >
                     {wh.enabled ? (
-                      <ToggleRight className="w-4 h-4 text-green-600" />
+                      <ToggleRight className="w-4 h-4 text-success-text" />
                     ) : (
                       <ToggleLeft className="w-4 h-4" />
                     )}
@@ -267,7 +267,7 @@ export function WebhookSettings() {
                   </button>
                   <button
                     onClick={() => handleDelete(wh.id)}
-                    className="p-1.5 rounded-lg text-text-tertiary hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                    className="p-1.5 rounded-lg text-text-tertiary hover:text-danger-text hover:bg-red-500/10 transition-colors"
                     title={t('common.delete')}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -289,7 +289,7 @@ export function WebhookSettings() {
             className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-border">
               <h3 className="text-base font-semibold text-text-primary">
                 {editingId ? t('common.edit') : t('webhooks.addWebhook')}
               </h3>
@@ -300,7 +300,7 @@ export function WebhookSettings() {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="px-6 py-4 space-y-4">
+            <div className="px-4 py-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-1">
                   {t('webhooks.name')}
@@ -368,7 +368,7 @@ export function WebhookSettings() {
                 {t('webhooks.enabled')}
               </label>
             </div>
-            <div className="flex justify-end gap-2 px-6 py-4 border-t border-border">
+            <div className="flex justify-end gap-2 px-4 py-4 border-t border-border">
               <button
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 text-sm text-text-secondary bg-surface border border-border rounded-lg hover:bg-surface-hover transition-colors"

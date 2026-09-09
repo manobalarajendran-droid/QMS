@@ -100,7 +100,7 @@ export function ComplaintTrending() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ export function ComplaintTrending() {
         {canEdit && (
           <button
             onClick={() => { setEditingComplaint(null); setShowForm(true); }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('complaints.addComplaint')}
@@ -133,11 +133,11 @@ export function ComplaintTrending() {
           </div>
           <div className="bg-surface rounded-xl border border-border p-4">
             <p className="text-xs text-text-tertiary font-medium uppercase">{t('complaints.openComplaints')}</p>
-            <p className="text-2xl font-bold text-orange-500 mt-1">{trending.openCount}</p>
+            <p className="text-2xl font-bold text-warning-text mt-1">{trending.openCount}</p>
           </div>
           <div className="bg-surface rounded-xl border border-border p-4">
             <p className="text-xs text-text-tertiary font-medium uppercase">{t('complaints.closedComplaints')}</p>
-            <p className="text-2xl font-bold text-green-500 mt-1">{trending.closedCount}</p>
+            <p className="text-2xl font-bold text-success-text mt-1">{trending.closedCount}</p>
           </div>
           <div className="bg-surface rounded-xl border border-border p-4">
             <div className="flex items-center gap-1">
@@ -217,7 +217,7 @@ export function ComplaintTrending() {
           <tbody>
             {complaints.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-text-tertiary">
+                <td colSpan={6} className="px-4 py-5 text-center text-text-tertiary">
                   {t('complaints.noComplaints')}
                 </td>
               </tr>
@@ -239,7 +239,7 @@ export function ComplaintTrending() {
                       comp.investigationStatus === 'closed' ? 'bg-green-100 text-green-700' :
                       comp.investigationStatus === 'resolved' ? 'bg-blue-100 text-blue-700' :
                       comp.investigationStatus === 'investigating' ? 'bg-purple-100 text-purple-700' :
-                      'bg-gray-100 text-gray-700'
+                      'bg-surface-tertiary text-text-secondary'
                     }`}>
                       {t(`complaints.status_${comp.investigationStatus}`)}
                     </span>

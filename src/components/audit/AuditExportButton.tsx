@@ -206,7 +206,7 @@ export function AuditExportButton({ projectId }: Props) {
       )}
 
       {success && (
-        <span className="inline-flex items-center gap-1 text-xs text-success">
+        <span className="inline-flex items-center gap-1 text-xs text-success-text">
           <CheckCircle className="w-3.5 h-3.5" />
           {t('evidence.fileSize', { size: success.dataSize })} + {t('evidence.fileSize', { size: success.reportSize })}
         </span>

@@ -172,14 +172,14 @@ export function SupplierPortalView({ token }: { token: string }) {
 
   const scoreColor = (score: number | null) => {
     if (score === null) return 'text-text-tertiary';
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    if (score >= 40) return 'text-orange-600';
-    return 'text-red-600';
+    if (score >= 80) return 'text-success-text';
+    if (score >= 60) return 'text-warning-text';
+    if (score >= 40) return 'text-warning-text';
+    return 'text-danger-text';
   };
 
   const qualColors: Record<string, string> = {
-    pending: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    pending: 'bg-surface-tertiary text-text-secondary',
     qualified: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
     conditional: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
     disqualified: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
@@ -196,8 +196,8 @@ export function SupplierPortalView({ token }: { token: string }) {
   if (error) {
     return (
       <div className="min-h-screen bg-surface-secondary flex items-center justify-center">
-        <div className="bg-surface rounded-xl border border-border p-8 text-center max-w-md">
-          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+        <div className="bg-surface rounded-xl border border-border p-5 text-center max-w-md">
+          <AlertTriangle className="w-12 h-12 text-danger-text mx-auto mb-4" />
           <h2 className="text-lg font-semibold text-text-primary mb-2">{t('supplierPortal.accessDenied')}</h2>
           <p className="text-text-secondary">{error}</p>
         </div>
@@ -218,7 +218,7 @@ export function SupplierPortalView({ token }: { token: string }) {
     <div className="min-h-screen bg-surface-secondary">
       {/* Header */}
       <header className="bg-surface border-b border-border sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-4 lg:px-5">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3">
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-gradient-start to-gradient-end flex items-center justify-center">
@@ -240,8 +240,8 @@ export function SupplierPortalView({ token }: { token: string }) {
 
       {/* Expiry Banner */}
       <div className="bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-4 lg:px-5 py-2 flex items-center gap-2">
+          <Clock className="w-4 h-4 text-warning-text dark:text-amber-400" />
           <span className="text-sm text-amber-800 dark:text-amber-200">
             {t('supplierPortal.expiryBanner', { date: new Date(dashboard.expiresAt).toLocaleDateString() })}
           </span>
@@ -250,7 +250,7 @@ export function SupplierPortalView({ token }: { token: string }) {
 
       {/* Tab Navigation */}
       <div className="bg-surface border-b border-border">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-4 lg:px-5">
           <nav className="flex gap-1 -mb-px">
             {tabs.map((tab) => (
               <button
@@ -271,12 +271,12 @@ export function SupplierPortalView({ token }: { token: string }) {
       </div>
 
       {/* Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="max-w-5xl mx-auto px-4 sm:px-4 lg:px-5 py-4 space-y-4">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <>
             {/* Scorecard */}
-            <div className="bg-surface rounded-xl border border-border p-6">
+            <div className="bg-surface rounded-xl border border-border p-4">
               <h3 className="text-sm font-semibold text-text-primary mb-4">{t('supplierPortal.scorecard')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Overall Score */}
@@ -327,7 +327,7 @@ export function SupplierPortalView({ token }: { token: string }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-surface rounded-xl border border-border p-4 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                  <ClipboardCheck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <ClipboardCheck className="w-5 h-5 text-info-text dark:text-blue-400" />
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-text-primary">{dashboard.upcomingAuditsCount}</div>
@@ -336,7 +336,7 @@ export function SupplierPortalView({ token }: { token: string }) {
               </div>
               <div className="bg-surface rounded-xl border border-border p-4 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  <AlertTriangle className="w-5 h-5 text-warning-text dark:text-amber-400" />
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-text-primary">{dashboard.openCorrectiveActionsCount}</div>
@@ -354,7 +354,7 @@ export function SupplierPortalView({ token }: { token: string }) {
               <h3 className="text-sm font-semibold text-text-primary">{t('supplierPortal.auditHistory')}</h3>
             </div>
             {audits.length === 0 ? (
-              <div className="p-8 text-center text-text-tertiary">{t('supplierPortal.noAudits')}</div>
+              <div className="p-5 text-center text-text-tertiary">{t('supplierPortal.noAudits')}</div>
             ) : (
               <div className="divide-y divide-border">
                 {audits.map((audit) => (
@@ -397,8 +397,8 @@ export function SupplierPortalView({ token }: { token: string }) {
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-text-primary">{t('supplierPortal.openFindings')}</h3>
             {actions.length === 0 ? (
-              <div className="bg-surface rounded-xl border border-border p-8 text-center">
-                <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+              <div className="bg-surface rounded-xl border border-border p-5 text-center">
+                <CheckCircle className="w-10 h-10 text-success-text mx-auto mb-2" />
                 <p className="text-text-tertiary">{t('supplierPortal.noActions')}</p>
               </div>
             ) : (
@@ -449,7 +449,7 @@ export function SupplierPortalView({ token }: { token: string }) {
                       <button
                         onClick={() => handleRespond(action.id)}
                         disabled={!responseText[action.id]}
-                        className="self-end inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
+                        className="self-end inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
                       >
                         <Send className="w-4 h-4" />
                         {t('supplierPortal.submit')}
@@ -467,7 +467,7 @@ export function SupplierPortalView({ token }: { token: string }) {
           <div className="space-y-4">
             {/* Upload Zone */}
             <div
-              className={`bg-surface rounded-xl border-2 border-dashed p-8 text-center transition-colors ${
+              className={`bg-surface rounded-xl border-2 border-dashed p-5 text-center transition-colors ${
                 dragOver ? 'border-accent bg-accent/5' : 'border-border'
               }`}
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -485,7 +485,7 @@ export function SupplierPortalView({ token }: { token: string }) {
                   onChange={(e) => setUploadDesc(e.target.value)}
                   className="px-3 py-1.5 rounded-lg border border-border bg-surface text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 w-64"
                 />
-                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors cursor-pointer">
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors cursor-pointer">
                   <Upload className="w-4 h-4" />
                   {uploading ? t('supplierPortal.uploading') : t('supplierPortal.browse')}
                   <input
@@ -507,7 +507,7 @@ export function SupplierPortalView({ token }: { token: string }) {
                 <h3 className="text-sm font-semibold text-text-primary">{t('supplierPortal.uploadedDocuments')}</h3>
               </div>
               {documents.length === 0 ? (
-                <div className="p-8 text-center text-text-tertiary">{t('supplierPortal.noDocuments')}</div>
+                <div className="p-5 text-center text-text-tertiary">{t('supplierPortal.noDocuments')}</div>
               ) : (
                 <div className="divide-y divide-border">
                   {documents.map((doc) => (

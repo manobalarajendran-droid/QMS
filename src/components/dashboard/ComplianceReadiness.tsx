@@ -10,9 +10,9 @@ interface MetricDef {
 }
 
 function getColor(pct: number): { text: string; bar: string } {
-  if (pct >= 80) return { text: 'text-success', bar: 'bg-success' };
-  if (pct >= 50) return { text: 'text-warning', bar: 'bg-warning' };
-  return { text: 'text-danger', bar: 'bg-danger' };
+  if (pct >= 80) return { text: 'text-success-text', bar: 'bg-success' };
+  if (pct >= 50) return { text: 'text-warning-text', bar: 'bg-warning' };
+  return { text: 'text-danger-text', bar: 'bg-danger' };
 }
 
 export function ComplianceReadiness() {
@@ -83,12 +83,12 @@ export function ComplianceReadiness() {
   const strokeDashoffset = circumference - (overallScore / 100) * circumference;
 
   return (
-    <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+    <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
       <h3 className="text-sm font-semibold text-text-primary mb-4">
         {t('dashboard.complianceReadiness')}
       </h3>
 
-      <div className="flex items-start gap-6">
+      <div className="flex items-start gap-4">
         {/* Circular progress */}
         <div className="relative shrink-0">
           <svg width="128" height="128" viewBox="0 0 128 128">
@@ -145,7 +145,7 @@ export function ComplianceReadiness() {
 
           {hasCriticalRisk && (
             <div className="mt-2 flex items-center gap-2 rounded-lg bg-danger/10 border border-danger/30 px-3 py-2">
-              <span className="text-danger text-xs font-medium">
+              <span className="text-danger-text text-xs font-medium">
                 {t('dashboard.criticalGapPenalty')}
               </span>
             </div>

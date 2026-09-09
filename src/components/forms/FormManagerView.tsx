@@ -191,7 +191,7 @@ export function FormManagerView() {
           <span className="text-text-tertiary">/</span>
           <span className="text-sm font-medium text-text-primary">{t('forms.preview')}</span>
         </div>
-        <div className="bg-surface border border-border rounded-xl p-6">
+        <div className="bg-surface border border-border rounded-xl p-4">
           <FormRenderer
             templateId={activeTemplate.id}
             projectId={projectId || ''}
@@ -216,7 +216,7 @@ export function FormManagerView() {
           <span className="text-text-tertiary">/</span>
           <span className="text-sm font-medium text-text-primary">{t('forms.fillForm')}</span>
         </div>
-        <div className="bg-surface border border-border rounded-xl p-6">
+        <div className="bg-surface border border-border rounded-xl p-4">
           <FormRenderer
             templateId={activeTemplate.id}
             projectId={projectId || ''}
@@ -265,7 +265,7 @@ export function FormManagerView() {
           </button>
           <button
             onClick={handleNewTemplate}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('forms.newTemplate')}
@@ -304,7 +304,7 @@ export function FormManagerView() {
             <div className="flex gap-1">
               <button
                 onClick={() => handleFillForm(tmpl)}
-                className="flex-1 px-2 py-1.5 text-xs bg-accent text-white rounded-lg hover:bg-accent/90"
+                className="flex-1 px-2 py-1.5 text-xs bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
               >
                 {t('forms.fillForm')}
               </button>
@@ -322,7 +322,7 @@ export function FormManagerView() {
               </button>
               <button
                 onClick={() => handleDeleteTemplate(tmpl.id)}
-                className="px-2 py-1.5 text-xs border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500"
+                className="px-2 py-1.5 text-xs border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-danger-text"
               >
                 <Trash2 className="w-3 h-3" />
               </button>

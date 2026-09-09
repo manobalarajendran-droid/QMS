@@ -58,7 +58,7 @@ const STATUS_STYLES: Record<ApprovalStatus, string> = {
   draft: 'bg-badge-draft-bg text-badge-draft-text',
   in_review: 'bg-accent-subtle text-accent',
   approved: 'bg-badge-passed-bg text-badge-passed-text',
-  rejected: 'bg-danger-subtle text-danger',
+  rejected: 'bg-danger-subtle text-danger-text',
 };
 
 export function ApprovalPanel({ entityType, entityId, projectId, currentStatus: _currentStatus, open, onClose }: Props) {
@@ -398,7 +398,7 @@ export function ApprovalPanel({ entityType, entityId, projectId, currentStatus: 
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-accent-subtle flex items-center justify-center">
               <ShieldCheck className="w-4 h-4 text-accent" />
@@ -411,7 +411,7 @@ export function ApprovalPanel({ entityType, entityId, projectId, currentStatus: 
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
           {/* Current status badge */}
           <div className="flex items-center gap-3">
             <span className="text-sm text-text-secondary">{t('approval.status')}:</span>
@@ -443,7 +443,7 @@ export function ApprovalPanel({ entityType, entityId, projectId, currentStatus: 
           {/* Actions */}
           <div className="space-y-2">
             {errorMessage && (
-              <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
+              <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-text">
                 {errorMessage}
               </div>
             )}
@@ -492,7 +492,7 @@ export function ApprovalPanel({ entityType, entityId, projectId, currentStatus: 
                             setShowRejectField(true);
                           }
                         }}
-                        className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm text-danger bg-danger-subtle rounded-lg hover:bg-danger/20 transition-colors font-medium"
+                        className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm text-danger-text bg-danger-subtle rounded-lg hover:bg-danger/20 transition-colors font-medium"
                       >
                         <XCircle className="w-4 h-4" />
                         {t('approval.reject')}
@@ -530,7 +530,7 @@ export function ApprovalPanel({ entityType, entityId, projectId, currentStatus: 
                   <button
                     onClick={handleRevoke}
                     disabled={loading}
-                    className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm text-danger bg-danger-subtle rounded-lg hover:bg-danger/20 transition-colors font-medium"
+                    className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm text-danger-text bg-danger-subtle rounded-lg hover:bg-danger/20 transition-colors font-medium"
                   >
                     <ShieldAlert className="w-4 h-4" />
                     {t('approval.revoke')}
@@ -557,11 +557,11 @@ export function ApprovalPanel({ entityType, entityId, projectId, currentStatus: 
                     className="flex items-start gap-2 p-2 rounded-lg bg-surface border border-border-subtle"
                   >
                     {entry.action === 'approved' || entry.action === 'approve' || entry.meaning === 'approved' ? (
-                      <CheckCircle className="w-3.5 h-3.5 text-success mt-0.5 shrink-0" />
+                      <CheckCircle className="w-3.5 h-3.5 text-success-text mt-0.5 shrink-0" />
                     ) : entry.action === 'requested' ? (
                       <Clock className="w-3.5 h-3.5 text-accent mt-0.5 shrink-0" />
                     ) : (
-                      <XCircle className="w-3.5 h-3.5 text-danger mt-0.5 shrink-0" />
+                      <XCircle className="w-3.5 h-3.5 text-danger-text mt-0.5 shrink-0" />
                     )}
                     <div className="min-w-0">
                       <p className="text-sm text-text-primary">

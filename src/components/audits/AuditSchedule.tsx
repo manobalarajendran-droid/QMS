@@ -37,11 +37,11 @@ const STATUS_CONFIG: Record<string, { color: string; icon: any }> = {
   scheduled: { color: 'bg-blue-100 text-blue-700', icon: Clock },
   in_progress: { color: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
   completed: { color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  cancelled: { color: 'bg-gray-100 text-gray-600', icon: XCircle },
+  cancelled: { color: 'bg-surface-tertiary text-text-secondary', icon: XCircle },
 };
 
 const CLASSIFICATION_COLORS: Record<string, string> = {
-  observation: 'bg-gray-100 text-gray-700',
+  observation: 'bg-surface-tertiary text-text-secondary',
   minor: 'bg-amber-100 text-amber-700',
   major: 'bg-orange-100 text-orange-700',
   critical: 'bg-red-100 text-red-700',
@@ -142,7 +142,7 @@ export function AuditSchedule() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
@@ -157,7 +157,7 @@ export function AuditSchedule() {
         {canEdit && (
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('auditRecords.scheduleAudit')}
@@ -186,7 +186,7 @@ export function AuditSchedule() {
                   className="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-hover transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <StatusIcon className={`w-4 h-4 ${audit.overdue ? 'text-red-500' : 'text-text-tertiary'}`} />
+                    <StatusIcon className={`w-4 h-4 ${audit.overdue ? 'text-danger-text' : 'text-text-tertiary'}`} />
                     <div className="text-left">
                       <span className="text-sm font-medium text-text-primary">{audit.title}</span>
                       {audit.overdue && (
@@ -310,10 +310,10 @@ function AuditForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('auditRecords.scheduleAudit')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('auditRecords.titlePlaceholder')} value={title} onChange={(e) => setTitle(e.target.value)} />
           <div className="grid grid-cols-2 gap-3">
             <select className="px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={type} onChange={(e) => setType(e.target.value)}>
@@ -329,12 +329,12 @@ function AuditForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('auditRecords.leadAuditorPlaceholder')} value={leadAuditor} onChange={(e) => setLeadAuditor(e.target.value)} />
           <textarea className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" rows={2} placeholder={t('auditRecords.scopePlaceholder')} value={scope} onChange={(e) => setScope(e.target.value)} />
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ title, type, scheduledDate, leadAuditor, scope })}
             disabled={!title || !scheduledDate || !leadAuditor}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('auditRecords.scheduleAudit')}
           </button>
@@ -355,10 +355,10 @@ function FindingForm({ onSave, onCancel }: { onSave: (data: any) => void; onCanc
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('auditRecords.addFinding')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <select className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={classification} onChange={(e) => setClassification(e.target.value)}>
             <option value="observation">{t('auditRecords.class_observation')}</option>
             <option value="minor">{t('auditRecords.class_minor')}</option>
@@ -372,12 +372,12 @@ function FindingForm({ onSave, onCancel }: { onSave: (data: any) => void; onCanc
             <input type="date" className="px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ classification, area, description, responsibleParty: responsibleParty || undefined, dueDate: dueDate || undefined })}
             disabled={!area || !description}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('common.save')}
           </button>
