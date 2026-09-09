@@ -4,48 +4,131 @@
 
 @theme {
   --color-surface: #ffffff;
-  --color-surface-secondary: #f8fafc;
-  --color-surface-tertiary: #f1f5f9;
-  --color-surface-hover: #f1f5f9;
+  --color-surface-secondary: #f3f7f8;
+  --color-surface-tertiary: #eef4f5;
+  --color-surface-hover: #eef4f5;
   --color-surface-elevated: #ffffff;
-  --color-border: #e2e8f0;
-  --color-border-subtle: #f1f5f9;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-tertiary: #94a3b8;
+  --color-border: #dce7e8;
+  --color-border-subtle: #eef4f5;
+  --color-text-primary: #16232e;
+  --color-text-secondary: #4b5d68;
+  --color-text-tertiary: #5f7278;
   --color-text-inverse: #ffffff;
-  --color-accent: #6366f1;
-  --color-accent-hover: #4f46e5;
-  --color-accent-subtle: #eef2ff;
-  --color-accent-text: #4f46e5;
-  --color-danger: #ef4444;
-  --color-danger-hover: #dc2626;
+  /* The accent is a button fill first and a chart fill second, so it has to
+     clear 4.5:1 against its own label. #0f9e8c only managed 3.34:1 with white,
+     which put every primary action in the app below the body-text floor.
+     #0b7a6d is the same teal a shade deeper and reaches 5.23:1. */
+  --color-accent: #0b7a6d;
+  --color-accent-hover: #0a6f63;
+  --color-accent-subtle: #e6f5f3;
+  --color-accent-text: #0b7a6d;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
   --color-danger-subtle: #fef2f2;
   --color-success: #10b981;
   --color-success-subtle: #ecfdf5;
   --color-warning: #f59e0b;
   --color-warning-subtle: #fffbeb;
+
+  /* Paired foregrounds. A status colour and the ink that sits on it have to
+     move together, and they do not move the same way between themes: the teal
+     darkens for light mode and brightens for dark, so white is right on one
+     and unreadable (1.86:1) on the other. Filled buttons use these instead of
+     a hardcoded text-white. */
+  --color-accent-fg: #ffffff;   /* on --color-accent  5.23:1 */
+  --color-danger-fg: #ffffff;   /* on --color-danger  4.83:1 */
+  --color-success-fg: #052e1c;  /* on --color-success 5.85:1 */
+  --color-warning-fg: #3d2504;  /* on --color-warning 6.68:1 */
   --color-overlay: rgba(0, 0, 0, 0.5);
   --color-input-bg: #ffffff;
   --color-input-border: #cbd5e1;
-  --color-badge-draft-bg: #f1f5f9;
-  --color-badge-draft-text: #475569;
-  --color-badge-active-bg: #eef2ff;
-  --color-badge-active-text: #4f46e5;
+  --color-badge-draft-bg: #eef4f5;
+  --color-badge-draft-text: #4b5d68;
+  --color-badge-active-bg: #e6f5f3;
+  --color-badge-active-text: #0b7a6d;
   --color-badge-closed-bg: #ecfdf5;
   --color-badge-closed-text: #059669;
-  --color-badge-notrun-bg: #f1f5f9;
-  --color-badge-notrun-text: #475569;
+  --color-badge-notrun-bg: #eef4f5;
+  --color-badge-notrun-text: #4b5d68;
   --color-badge-passed-bg: #ecfdf5;
   --color-badge-passed-text: #059669;
   --color-badge-failed-bg: #fef2f2;
   --color-badge-failed-text: #dc2626;
-  --color-gradient-start: #6366f1;
-  --color-gradient-end: #8b5cf6;
+  --color-gradient-start: #0e2a47;
+  --color-gradient-end: #0f9e8c;
+
+  /* Type scale.
+     Tailwind's stock ramp is sized for marketing pages: text-sm is 14px and
+     text-2xl is 24px. This is a register-driven compliance console whose users
+     read tables all day, so the whole ramp is pulled down one notch and the
+     top is capped at 26px. Overriding the scale here rather than rewriting
+     ~2,200 utility classes keeps every view on one scale and stops sizes
+     drifting per component again.
+
+     11px is the floor: nothing functional is allowed below it. */
+  --text-xs: 0.6875rem;      /* 11px   was 12 */
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.78125rem;     /* 12.5px was 14 - the default reading size */
+  --text-sm--line-height: 1.125rem;
+  --text-base: 0.8125rem;    /* 13px   was 16 */
+  --text-base--line-height: 1.25rem;
+  --text-lg: 0.875rem;       /* 14px   was 18 - card and section headings */
+  --text-lg--line-height: 1.25rem;
+  --text-xl: 0.9375rem;      /* 15px   was 20 - page titles */
+  --text-xl--line-height: 1.375rem;
+  --text-2xl: 1.125rem;      /* 18px   was 24 - standard KPI value */
+  --text-2xl--line-height: 1.5rem;
+  --text-3xl: 1.375rem;      /* 22px   was 30 */
+  --text-3xl--line-height: 1.75rem;
+  --text-4xl: 1.625rem;      /* 26px   was 36 - the cap */
+  --text-4xl--line-height: 2rem;
+
+  /* Closure ramp: one hue family, pale = nothing done, deep = fully closed.
+     Used for the TÜV finding pipeline so the ring reads as filling with brand
+     colour rather than as an unordered categorical palette. */
+  --color-stage-open: #cbd8dc;
+  --color-stage-action: #7cc4bb;
+  --color-stage-verified: #2aa899;
+  --color-stage-closed: #0b7a6d;
+  --color-chart-track: #eef4f5;
+
+  /* --color-danger is tuned for fills and rules; at 3.8:1 on white it is below
+     the 4.5:1 body-text floor. Numbers and labels that carry an alert use this
+     darker red instead, which clears 6:1.
+
+     The other three follow the same rule and exist for the same reason: the app
+     had ~237 raw palette classes (text-green-600, text-amber-600, text-red-500,
+     text-cyan-600 ...) doing the job of status text, and every one of them sat
+     between 2.1:1 and 3.6:1 on a light surface. A step-500 or -600 swatch is a
+     fill colour; it is not ink. These are the ink, and unlike a palette class
+     they also carry a dark-theme value, so a status label cannot pass in one
+     theme and fail in the other.
+
+     Values are picked with headroom, not to the threshold - the worst light
+     ground in the app is one of the -50 tints, and each of these clears 5:1
+     there. Anything landing on 4.5 exactly fails again the next time someone
+     nudges the swatch. */
+  --color-danger-text: #b91c1c;   /* 6.47 on white, 5.91 on danger-subtle */
+  --color-success-text: #047857;  /* 5.48 on white, 5.01 worst tint */
+  --color-warning-text: #92400e;  /* 7.09 on white, 6.48 worst tint */
+  --color-info-text: #1d4ed8;     /* 6.70 on white, 6.13 worst tint */
+
+  /* Sidebar is a fixed navy → teal rail, independent of light/dark theme */
+  --color-sidebar-grad-from: #0b2138;
+  --color-sidebar-grad-via: #0e3450;
+  --color-sidebar-grad-to: #11485c;
+  --color-sidebar-active-rail: #2dd4bf;
+  --color-sidebar-text: rgba(255, 255, 255, 0.72);
+  --color-sidebar-text-active: #ffffff;
 }
 
-/* --- Dark theme overrides --- */
-.dark {
+/* --- Dark theme overrides ---
+   `:root` and a bare `.dark` both score (0,1,0), so these overrides would
+   win only on source order - which a stylesheet reorder (an HMR swap, a
+   plugin, a change of import order) can silently invert, leaving dark text
+   on light surfaces. `:root.dark` scores (0,1,1) and wins outright.
+   The class is only ever set on documentElement, so this cannot narrow. */
+:root.dark {
   --color-surface: #020617;
   --color-surface-secondary: #0f172a;
   --color-surface-tertiary: #1e293b;
@@ -55,12 +138,12 @@
   --color-border-subtle: #1e2030;
   --color-text-primary: #e2e8f0;
   --color-text-secondary: #94a3b8;
-  --color-text-tertiary: #64748b;
+  --color-text-tertiary: #8797a9;
   --color-text-inverse: #0f172a;
-  --color-accent: #818cf8;
-  --color-accent-hover: #6366f1;
-  --color-accent-subtle: rgba(99, 102, 241, 0.15);
-  --color-accent-text: #a5b4fc;
+  --color-accent: #2dd4bf;
+  --color-accent-hover: #14b8a6;
+  --color-accent-subtle: rgba(45, 212, 191, 0.15);
+  --color-accent-text: #5eead4;
   --color-danger: #f87171;
   --color-danger-hover: #ef4444;
   --color-danger-subtle: rgba(239, 68, 68, 0.15);
@@ -68,13 +151,20 @@
   --color-success-subtle: rgba(16, 185, 129, 0.15);
   --color-warning: #fbbf24;
   --color-warning-subtle: rgba(245, 158, 11, 0.15);
+
+  /* Dark keeps the bright fills - they are correct against a dark ground - and
+     flips the ink instead. White on #2dd4bf measured 1.86:1. */
+  --color-accent-fg: #04241f;   /* on --color-accent  8.83:1 */
+  --color-danger-fg: #2b0a0a;   /* on --color-danger  6.60:1 */
+  --color-success-fg: #052e1c;  /* on --color-success 7.73:1 */
+  --color-warning-fg: #3d2504;  /* on --color-warning 8.59:1 */
   --color-overlay: rgba(0, 0, 0, 0.7);
   --color-input-bg: #1a1c2e;
   --color-input-border: #2a2d3e;
   --color-badge-draft-bg: #1e2030;
   --color-badge-draft-text: #94a3b8;
-  --color-badge-active-bg: rgba(99, 102, 241, 0.15);
-  --color-badge-active-text: #a5b4fc;
+  --color-badge-active-bg: rgba(45, 212, 191, 0.15);
+  --color-badge-active-text: #5eead4;
   --color-badge-closed-bg: rgba(16, 185, 129, 0.15);
   --color-badge-closed-text: #34d399;
   --color-badge-notrun-bg: #1e2030;
@@ -83,8 +173,29 @@
   --color-badge-passed-text: #34d399;
   --color-badge-failed-bg: rgba(239, 68, 68, 0.15);
   --color-badge-failed-text: #f87171;
-  --color-gradient-start: #818cf8;
-  --color-gradient-end: #a78bfa;
+  --color-gradient-start: #0e2a47;
+  --color-gradient-end: #2dd4bf;
+  --color-stage-open: #33485a;
+  --color-stage-action: #14827a;
+  --color-stage-verified: #21b3a2;
+  --color-stage-closed: #5eead4;
+  --color-chart-track: #1e293b;
+  /* Status ink inverts: dark surfaces need the bright end of each ramp. Worst
+     dark ground in the app is --color-surface-elevated #1e293b. */
+  --color-danger-text: #fca5a5;   /* 7.71 on the worst dark ground */
+  --color-success-text: #34d399;  /* 7.61 */
+  --color-warning-text: #fbbf24;  /* 8.76 */
+  --color-info-text: #93c5fd;     /* 8.11 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-modal-enter {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 body {
@@ -114,8 +225,8 @@ body {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(220, 231, 232, 0.8);
+  box-shadow: 0 10px 25px -5px rgba(14, 42, 71, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
 }
 
 .dark .glass-card {
@@ -127,18 +238,18 @@ body {
 }
 
 .glass-card-accent {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%), rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(15, 158, 140, 0.08) 0%, rgba(14, 42, 71, 0.04) 100%), rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(15, 158, 140, 0.25);
+  box-shadow: 0 10px 25px -5px rgba(15, 158, 140, 0.1);
 }
 
 .dark .glass-card-accent {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.08) 100%), rgba(15, 23, 42, 0.75);
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.15) 0%, rgba(14, 42, 71, 0.08) 100%), rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid rgba(45, 212, 191, 0.35);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
