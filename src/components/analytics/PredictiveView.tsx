@@ -147,9 +147,9 @@ export function PredictiveView() {
   }, [activeTab, fetchData]);
 
   const riskScoreColor = (score: number) => {
-    if (score >= 70) return 'text-red-500';
-    if (score >= 40) return 'text-yellow-500';
-    return 'text-green-500';
+    if (score >= 70) return 'text-danger-text';
+    if (score >= 40) return 'text-warning-text';
+    return 'text-success-text';
   };
 
   const riskScoreBg = (score: number) => {
@@ -176,7 +176,7 @@ export function PredictiveView() {
             onClick={() => setActiveTab(tab.id)}
             className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-accent text-white'
+                ? 'bg-accent text-accent-fg'
                 : 'text-text-secondary hover:bg-surface-hover'
             }`}
           >
@@ -204,7 +204,7 @@ export function PredictiveView() {
         <div className="space-y-3">
           <p className="text-sm text-text-tertiary">{t('predictive.failureRiskDesc')}</p>
           {failureRisks.length === 0 ? (
-            <p className="text-sm text-text-tertiary text-center py-8">{t('predictive.noData')}</p>
+            <p className="text-sm text-text-tertiary text-center py-5">{t('predictive.noData')}</p>
           ) : (
             <div className="space-y-2">
               {failureRisks.slice(0, 20).map((risk) => (
@@ -220,10 +220,10 @@ export function PredictiveView() {
                       <span>{t('predictive.complexity')}: {risk.factors.complexity}</span>
                       <span>{t('predictive.riskLevel')}: {risk.riskLevel}</span>
                       {risk.factors.noCoverage && (
-                        <span className="text-yellow-500">{t('predictive.noTestCoverage')}</span>
+                        <span className="text-warning-text">{t('predictive.noTestCoverage')}</span>
                       )}
                       {risk.factors.similarityToFailed > 0 && (
-                        <span className="text-red-500">
+                        <span className="text-danger-text">
                           {t('predictive.similarToFailed', { pct: Math.round(risk.factors.similarityToFailed * 100) })}
                         </span>
                       )}
@@ -241,7 +241,7 @@ export function PredictiveView() {
         <div className="space-y-3">
           <p className="text-sm text-text-tertiary">{t('predictive.supplierRiskDesc')}</p>
           {supplierRisks.length === 0 ? (
-            <p className="text-sm text-text-tertiary text-center py-8">{t('predictive.noData')}</p>
+            <p className="text-sm text-text-tertiary text-center py-5">{t('predictive.noData')}</p>
           ) : (
             <div className="space-y-2">
               {supplierRisks.map((risk) => (
@@ -260,7 +260,7 @@ export function PredictiveView() {
                     <div>{t('predictive.auditTrend')}: {risk.factors.auditTrend}</div>
                     <div>{t('predictive.defectRate')}: {risk.factors.defectRate}</div>
                     {risk.factors.overdueAudit > 0 && (
-                      <div className="text-red-500">{t('predictive.overdueAudit')}</div>
+                      <div className="text-danger-text">{t('predictive.overdueAudit')}</div>
                     )}
                   </div>
                 </div>
@@ -275,13 +275,13 @@ export function PredictiveView() {
         <div className="space-y-3">
           <p className="text-sm text-text-tertiary">{t('predictive.capaRecurrenceDesc')}</p>
           {capaPatterns.length === 0 ? (
-            <p className="text-sm text-text-tertiary text-center py-8">{t('predictive.noPatterns')}</p>
+            <p className="text-sm text-text-tertiary text-center py-5">{t('predictive.noPatterns')}</p>
           ) : (
             <div className="space-y-3">
               {capaPatterns.map((pattern) => (
                 <div key={pattern.rootCause} className="p-4 bg-surface border border-border rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <RotateCcw className="w-4 h-4 text-yellow-500" />
+                    <RotateCcw className="w-4 h-4 text-warning-text" />
                     <h4 className="text-sm font-semibold text-text-primary">{pattern.rootCause}</h4>
                     <span className={`ml-auto px-2 py-0.5 text-xs rounded-full font-medium ${
                       pattern.severity === 'high'
@@ -313,15 +313,15 @@ export function PredictiveView() {
         <div className="space-y-3">
           <p className="text-sm text-text-tertiary">{t('predictive.processStabilityDesc')}</p>
           {processTrends.length === 0 ? (
-            <p className="text-sm text-text-tertiary text-center py-8">{t('predictive.noData')}</p>
+            <p className="text-sm text-text-tertiary text-center py-5">{t('predictive.noData')}</p>
           ) : (
             <div className="space-y-2">
               {processTrends.map((item) => (
                 <div key={item.product} className="flex items-center gap-3 p-3 bg-surface border border-border rounded-lg">
                   {item.trend === 'improving' ? (
-                    <TrendingUp className="w-5 h-5 text-green-500 shrink-0" />
+                    <TrendingUp className="w-5 h-5 text-success-text shrink-0" />
                   ) : item.trend === 'declining' ? (
-                    <TrendingDown className="w-5 h-5 text-red-500 shrink-0" />
+                    <TrendingDown className="w-5 h-5 text-danger-text shrink-0" />
                   ) : (
                     <Minus className="w-5 h-5 text-text-tertiary shrink-0" />
                   )}
@@ -335,7 +335,7 @@ export function PredictiveView() {
                   </div>
                   <div className="text-right text-xs">
                     <div className={`font-medium ${
-                      item.trend === 'declining' ? 'text-red-500' : item.trend === 'improving' ? 'text-green-500' : 'text-text-tertiary'
+                      item.trend === 'declining' ? 'text-danger-text' : item.trend === 'improving' ? 'text-success-text' : 'text-text-tertiary'
                     }`}>
                       {item.slopePerBatch > 0 ? '+' : ''}{item.slopePerBatch}%/{t('predictive.batch')}
                     </div>
@@ -343,7 +343,7 @@ export function PredictiveView() {
                       {t('predictive.projected')}: {item.projectedYield}%
                     </div>
                     {item.alert && (
-                      <div className="text-yellow-500 flex items-center gap-1 justify-end mt-0.5">
+                      <div className="text-warning-text flex items-center gap-1 justify-end mt-0.5">
                         <AlertTriangle className="w-3 h-3" />
                         {item.alert}
                       </div>
@@ -358,7 +358,7 @@ export function PredictiveView() {
 
       {/* Training Gaps */}
       {!loading && activeTab === 'training' && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <p className="text-sm text-text-tertiary">{t('predictive.trainingGapsDesc')}</p>
 
           {/* Expiring Users */}
@@ -373,7 +373,7 @@ export function PredictiveView() {
                 {trainingGaps.expiringUsers.map((user, idx) => (
                   <div key={idx} className="flex items-center gap-2 p-2 bg-surface border border-border rounded-lg text-sm">
                     <AlertTriangle className={`w-4 h-4 shrink-0 ${
-                      (user.daysRemaining || 999) <= 7 ? 'text-red-500' : 'text-yellow-500'
+                      (user.daysRemaining || 999) <= 7 ? 'text-danger-text' : 'text-warning-text'
                     }`} />
                     <span className="font-medium text-text-primary">{user.userName}</span>
                     <span className="text-text-tertiary">-</span>
@@ -404,7 +404,7 @@ export function PredictiveView() {
                       <span className="font-medium text-text-primary capitalize">{role.role.replace('_', ' ')}</span>
                     </div>
                     <div className="text-right text-xs">
-                      <div className={`font-medium ${role.completionRate < 50 ? 'text-red-500' : 'text-yellow-500'}`}>
+                      <div className={`font-medium ${role.completionRate < 50 ? 'text-danger-text' : 'text-warning-text'}`}>
                         {role.completionRate}%
                       </div>
                       <div className="text-text-tertiary">{role.completed}/{role.totalAssignments}</div>
@@ -430,7 +430,7 @@ export function PredictiveView() {
                       <span className="font-medium text-text-primary">{course.courseName}</span>
                     </div>
                     <div className="text-right text-xs">
-                      <div className="font-medium text-red-500">{course.failureRate}% {t('predictive.failRate')}</div>
+                      <div className="font-medium text-danger-text">{course.failureRate}% {t('predictive.failRate')}</div>
                       <div className="text-text-tertiary">{course.failedAttempts}/{course.totalAttempts} {t('predictive.failed')}</div>
                     </div>
                   </div>

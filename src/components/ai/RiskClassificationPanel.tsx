@@ -15,9 +15,9 @@ interface Props {
 }
 
 function confidenceColor(c: number): string {
-  if (c >= 0.9) return 'text-success';
-  if (c >= 0.7) return 'text-warning';
-  return 'text-danger';
+  if (c >= 0.9) return 'text-success-text';
+  if (c >= 0.7) return 'text-warning-text';
+  return 'text-danger-text';
 }
 
 function confidenceBg(c: number): string {
@@ -29,13 +29,13 @@ function confidenceBg(c: number): string {
 function riskLevelColor(level: RiskLevel): string {
   switch (level) {
     case 'critical':
-      return 'text-danger bg-danger/10';
+      return 'text-danger-text bg-danger/10';
     case 'high':
-      return 'text-orange-600 bg-orange-100 dark:text-orange-400 dark:bg-orange-900/30';
+      return 'text-warning-text bg-orange-100 dark:text-orange-400 dark:bg-orange-900/30';
     case 'medium':
-      return 'text-warning bg-warning/10';
+      return 'text-warning-text bg-warning/10';
     case 'low':
-      return 'text-success bg-success/10';
+      return 'text-success-text bg-success/10';
   }
 }
 
@@ -127,7 +127,7 @@ export function RiskClassificationPanel({ requirementId, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <ShieldAlert className="w-4 h-4 text-accent" />
             <div>
@@ -148,10 +148,10 @@ export function RiskClassificationPanel({ requirementId, onClose }: Props) {
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4">
           {!hasProvider ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <AlertTriangle className="w-8 h-8 text-warning mb-3" />
+              <AlertTriangle className="w-8 h-8 text-warning-text mb-3" />
               <p className="text-sm text-text-secondary">{t('ai.noProvider')}</p>
             </div>
           ) : loading ? (
@@ -161,8 +161,8 @@ export function RiskClassificationPanel({ requirementId, onClose }: Props) {
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <AlertTriangle className="w-8 h-8 text-danger mb-3" />
-              <p className="text-sm text-danger">{error}</p>
+              <AlertTriangle className="w-8 h-8 text-danger-text mb-3" />
+              <p className="text-sm text-danger-text">{error}</p>
               <button
                 onClick={classify}
                 className="mt-3 px-4 py-1.5 text-sm text-accent bg-accent-subtle rounded-lg hover:bg-accent-subtle/80 transition-colors"
@@ -251,10 +251,10 @@ export function RiskClassificationPanel({ requirementId, onClose }: Props) {
 
         {/* Footer */}
         {classification && !loading && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-border shrink-0">
+          <div className="flex items-center justify-between px-4 py-4 border-t border-border shrink-0">
             <button
               onClick={onClose}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-danger bg-danger/10 rounded-lg hover:bg-danger/20 transition-colors font-medium"
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-danger-text bg-danger/10 rounded-lg hover:bg-danger/20 transition-colors font-medium"
             >
               <Trash2 className="w-3.5 h-3.5" />
               {t('ai.reject')}

@@ -49,7 +49,7 @@ export function ActionPlanTable({ rows, editable, entityId, projectId, onChange 
                   <td className="px-3 py-2 font-medium text-text-primary align-top whitespace-nowrap">
                     {row.label}
                     {overdue && (
-                      <span className="ml-2 inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-danger-subtle text-danger">
+                      <span className="ml-2 inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-danger-subtle text-danger-text">
                         OVERDUE
                       </span>
                     )}

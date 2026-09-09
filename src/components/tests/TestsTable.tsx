@@ -84,7 +84,7 @@ export function TestsTable() {
         cell: (info) => {
           const ids = info.getValue();
           if (ids.length === 0) {
-            return <span className="text-danger text-xs font-medium">{t('tests.noLinked')}</span>;
+            return <span className="text-danger-text text-xs font-medium">{t('tests.noLinked')}</span>;
           }
           return (
             <div className="flex flex-wrap gap-1">
@@ -117,7 +117,7 @@ export function TestsTable() {
               >
                 <Paperclip className="w-3.5 h-3.5" />
                 {evCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-accent text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-accent text-accent-fg text-[9px] font-bold flex items-center justify-center">
                     {evCount}
                   </span>
                 )}
@@ -130,7 +130,7 @@ export function TestsTable() {
               </button>
               <button
                 onClick={() => setDeleteId(row.original.id)}
-                className="p-1.5 text-text-tertiary hover:text-danger rounded-lg hover:bg-danger-subtle transition-colors"
+                className="p-1.5 text-text-tertiary hover:text-danger-text rounded-lg hover:bg-danger-subtle transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

@@ -293,7 +293,7 @@ export function TaskPanel({ entityType, entityId, projectId }: TaskPanelProps) {
           <button
             onClick={handleCreate}
             disabled={!formTitle.trim()}
-            className="w-full py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
+            className="w-full py-2 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
           >
             {t('tasks.create')}
           </button>
@@ -318,7 +318,7 @@ export function TaskPanel({ entityType, entityId, projectId }: TaskPanelProps) {
               onClick={() => handleStatusToggle(task)}
               className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
                 task.status === 'completed'
-                  ? 'bg-accent border-accent text-white'
+                  ? 'bg-accent border-accent text-accent-fg'
                   : task.status === 'in_progress'
                   ? 'border-accent bg-accent/10'
                   : 'border-border hover:border-accent'
@@ -346,7 +346,7 @@ export function TaskPanel({ entityType, entityId, projectId }: TaskPanelProps) {
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-xs text-text-tertiary">{task.assigneeName || t('tasks.unassigned')}</span>
                 {task.dueDate && (
-                  <span className={`text-xs ${isOverdue(task) ? 'text-danger font-medium' : 'text-text-tertiary'}`}>
+                  <span className={`text-xs ${isOverdue(task) ? 'text-danger-text font-medium' : 'text-text-tertiary'}`}>
                     <Clock className="w-3 h-3 inline mr-0.5" />
                     {new Date(task.dueDate).toLocaleDateString()}
                   </span>
@@ -358,11 +358,11 @@ export function TaskPanel({ entityType, entityId, projectId }: TaskPanelProps) {
               {task.priority}
             </span>
 
-            {isOverdue(task) && <AlertTriangle className="w-4 h-4 text-danger shrink-0" />}
+            {isOverdue(task) && <AlertTriangle className="w-4 h-4 text-danger-text shrink-0" />}
 
             <button
               onClick={() => handleDelete(task.id)}
-              className="text-text-tertiary hover:text-danger transition-colors shrink-0"
+              className="text-text-tertiary hover:text-danger-text transition-colors shrink-0"
             >
               <X className="w-3.5 h-3.5" />
             </button>

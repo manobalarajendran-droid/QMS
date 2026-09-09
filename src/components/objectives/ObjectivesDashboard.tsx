@@ -181,23 +181,23 @@ export function ObjectivesDashboard() {
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">{corporate.length}</div>
+          <div className="text-2xl font-bold text-accent-text">{corporate.length}</div>
           <div className="text-xs text-text-tertiary mt-1">Total Objectives</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{corporate.filter((r) => r.status === "Completed" || r.status === "Achieved").length}</div>
+          <div className="text-2xl font-bold text-success-text">{corporate.filter((r) => r.status === "Completed" || r.status === "Achieved").length}</div>
           <div className="text-xs text-text-tertiary mt-1">Completed</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">{avgPct}%</div>
+          <div className="text-2xl font-bold text-warning-text">{avgPct}%</div>
           <div className="text-xs text-text-tertiary mt-1">Avg Achievement</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className={"text-2xl font-bold " + (overdueCount > 0 ? "text-danger" : "text-text-tertiary")}>{overdueCount}</div>
+          <div className={"text-2xl font-bold " + (overdueCount > 0 ? "text-danger-text" : "text-text-tertiary")}>{overdueCount}</div>
           <div className="text-xs text-text-tertiary mt-1">Overdue</div>
         </div>
         <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-cyan-600">{avgReactionMins !== null ? avgReactionMins + "m" : "New"}</div>
+          <div className="text-2xl font-bold text-info-text">{avgReactionMins !== null ? avgReactionMins + "m" : "New"}</div>
           <div className="text-xs text-text-tertiary mt-1">Avg Emergency Reaction</div>
         </div>
       </div>
@@ -206,7 +206,7 @@ export function ObjectivesDashboard() {
         <div className="flex rounded-lg border border-border overflow-hidden">
           {(["tree", "leaderboard"] as const).map((v) => (
             <button key={v} onClick={() => setView(v)}
-              className={"px-3 py-1.5 text-sm font-medium transition-colors " + (view === v ? "bg-accent text-white" : "bg-surface text-text-secondary hover:bg-surface-hover")}>
+              className={"px-3 py-1.5 text-sm font-medium transition-colors " + (view === v ? "bg-accent text-accent-fg" : "bg-surface text-text-secondary hover:bg-surface-hover")}>
               {v === "tree" ? "Strategic Tree" : "Leaderboard"}
             </button>
           ))}
@@ -216,7 +216,7 @@ export function ObjectivesDashboard() {
           {years.map((y) => <option key={y}>{y}</option>)}
         </select>
         <button onClick={() => { setSelectedObjective(null); setShowForm(true); }}
-          className="flex items-center gap-1 text-sm bg-accent text-white px-3 py-1.5 rounded-lg hover:bg-accent-hover ml-auto">
+          className="flex items-center gap-1 text-sm bg-accent text-accent-fg px-3 py-1.5 rounded-lg hover:bg-accent-hover ml-auto">
           <Plus className="w-4 h-4" /> New Objective
         </button>
       </div>
@@ -293,7 +293,7 @@ export function ObjectivesDashboard() {
                             <div className="text-xs text-text-tertiary mt-0.5">KPI: {obj.kpi}</div>
                           </div>
                           <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                            {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+                            {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
                             <StatusBadge status={obj.status} />
                           </div>
                         </div>
@@ -443,12 +443,12 @@ function ObjectiveModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-surface w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-border max-h-[90vh] overflow-y-auto animate-modal-enter">
+      <div className="bg-surface w-full max-w-2xl rounded-lg p-4 shadow-2xl border border-border max-h-[90vh] overflow-y-auto animate-modal-enter">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-text-primary">{record ? "Edit Objective" : "New Objective"}</h3>
           {record && (
             <div className="flex items-center gap-1.5">
-              {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+              {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
               <StatusBadge status={record.status} />
             </div>
           )}
@@ -458,12 +458,12 @@ function ObjectiveModal({
           <div>
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Year *</label>
             <input placeholder="e.g. 2026" className={inputCls} value={formData.yr} onChange={(e) => setFormData({ ...formData, yr: e.target.value })} />
-            {formErrors.yr && <p className="text-xs text-danger mt-1">{formErrors.yr}</p>}
+            {formErrors.yr && <p className="text-xs text-danger-text mt-1">{formErrors.yr}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Department *</label>
             <DeptSelect value={formData.dept} onChange={(v) => setFormData({ ...formData, dept: v })} />
-            {formErrors.dept && <p className="text-xs text-danger mt-1">{formErrors.dept}</p>}
+            {formErrors.dept && <p className="text-xs text-danger-text mt-1">{formErrors.dept}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Ref No</label>
@@ -489,7 +489,7 @@ function ObjectiveModal({
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Objective Description *</label>
             <textarea placeholder="Enter detailed objective description..." className={inputCls} rows={2} value={formData.desc} onChange={(e) => setFormData({ ...formData, desc: e.target.value })} />
-            {formErrors.desc && <p className="text-xs text-danger mt-1">{formErrors.desc}</p>}
+            {formErrors.desc && <p className="text-xs text-danger-text mt-1">{formErrors.desc}</p>}
           </div>
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">KPI / Target</label>
@@ -589,7 +589,7 @@ function ObjectiveModal({
                 <textarea autoFocus rows={2} value={gateReason} onChange={(e) => setGateReason(e.target.value)} placeholder="Explain the decision…" className={inputCls} />
                 <div className="flex justify-end gap-2">
                   <button onClick={() => { setGate(null); setGateReason(""); }} className="px-3 py-1.5 text-xs text-text-secondary bg-surface rounded-lg border border-border hover:bg-surface-hover transition-colors">Cancel</button>
-                  <button onClick={confirmGate} disabled={!gateReason.trim()} className="px-3 py-1.5 text-xs text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors">Confirm</button>
+                  <button onClick={confirmGate} disabled={!gateReason.trim()} className="px-3 py-1.5 text-xs text-accent-fg bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors">Confirm</button>
                 </div>
               </div>
             )}
@@ -672,7 +672,7 @@ function ObjectiveModal({
 
         <div className="flex justify-end gap-2 pt-2 border-t border-border">
           <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-surface-hover text-text-primary transition-colors">Cancel</button>
-          <button type="button" onClick={handleSubmit} className="px-4 py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent-hover shadow-sm transition-colors">Save Objective</button>
+          <button type="button" onClick={handleSubmit} className="px-4 py-2 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent-hover shadow-sm transition-colors">Save Objective</button>
         </div>
       </div>
     </div>

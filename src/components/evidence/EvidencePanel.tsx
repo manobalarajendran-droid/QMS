@@ -253,7 +253,7 @@ export function EvidencePanel({ entityType, entityId, projectId, open, onClose }
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-accent-subtle flex items-center justify-center">
               <Paperclip className="w-4 h-4 text-accent" />
@@ -267,12 +267,12 @@ export function EvidencePanel({ entityType, entityId, projectId, open, onClose }
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
           {/* Standalone mode warning */}
           {!isServerMode && (
             <div className="flex items-center gap-2 p-3 rounded-lg bg-warning/10 border border-warning/30">
-              <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
-              <p className="text-xs text-warning">{t('evidence.serverRequired')}</p>
+              <AlertTriangle className="w-4 h-4 text-warning-text shrink-0" />
+              <p className="text-xs text-warning-text">{t('evidence.serverRequired')}</p>
             </div>
           )}
 
@@ -281,7 +281,7 @@ export function EvidencePanel({ entityType, entityId, projectId, open, onClose }
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
+            className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer ${
               dragActive
                 ? 'border-accent bg-accent-subtle'
                 : 'border-border hover:border-accent/50 hover:bg-surface-hover'
@@ -328,7 +328,7 @@ export function EvidencePanel({ entityType, entityId, projectId, open, onClose }
 
           {/* Evidence list */}
           {visibleAttachments.length === 0 ? (
-            <div className="text-center py-8 text-text-tertiary">
+            <div className="text-center py-5 text-text-tertiary">
               <FileText className="w-8 h-8 mx-auto mb-2" />
               <p className="text-sm">{t('evidence.noEvidence')}</p>
             </div>
@@ -365,7 +365,7 @@ export function EvidencePanel({ entityType, entityId, projectId, open, onClose }
                     </button>
                     <button
                       onClick={() => handleDelete(att.id)}
-                      className="p-1.5 text-text-tertiary hover:text-danger rounded-lg hover:bg-danger-subtle transition-colors"
+                      className="p-1.5 text-text-tertiary hover:text-danger-text rounded-lg hover:bg-danger-subtle transition-colors"
                       title={t('evidence.delete')}
                     >
                       <Trash2 className="w-3.5 h-3.5" />

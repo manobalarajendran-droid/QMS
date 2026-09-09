@@ -74,9 +74,9 @@ export function EvidenceCompleteness() {
   const completePct = totalCount > 0 ? Math.round((completeCount / totalCount) * 100) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Summary bar */}
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-text-primary">
             {t('dashboard.evidenceCompleteness')}
@@ -142,17 +142,17 @@ export function EvidenceCompleteness() {
                     </td>
                     <td className="px-4 py-3 text-text-primary">{row.title}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={row.hasTests ? 'text-success' : 'text-danger'}>
+                      <span className={row.hasTests ? 'text-success-text' : 'text-danger-text'}>
                         {row.hasTests ? '\u2713' : '\u2717'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className={row.hasRiskAssessment ? 'text-success' : 'text-danger'}>
+                      <span className={row.hasRiskAssessment ? 'text-success-text' : 'text-danger-text'}>
                         {row.hasRiskAssessment ? '\u2713' : '\u2717'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className={row.hasApprovalSignature ? 'text-success' : 'text-danger'}>
+                      <span className={row.hasApprovalSignature ? 'text-success-text' : 'text-danger-text'}>
                         {row.hasApprovalSignature ? '\u2713' : '\u2717'}
                       </span>
                     </td>

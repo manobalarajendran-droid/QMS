@@ -173,7 +173,7 @@ export function FormRenderer({
           <div key={field.id}>
             <label className="block text-sm font-medium text-text-primary mb-1">
               {field.label}
-              {field.required && <span className="text-red-500 ml-0.5">*</span>}
+              {field.required && <span className="text-danger-text ml-0.5">*</span>}
             </label>
 
             {field.helpText && (
@@ -326,7 +326,7 @@ export function FormRenderer({
                 ) : (
                   <button
                     onClick={() => setValue(field.id, `Signed at ${new Date().toISOString()}`)}
-                    className="px-3 py-1.5 bg-accent text-white rounded-lg text-sm hover:bg-accent/90"
+                    className="px-3 py-1.5 bg-accent text-accent-fg rounded-lg text-sm hover:bg-accent/90"
                   >
                     {t('forms.clickToSign')}
                   </button>
@@ -334,7 +334,7 @@ export function FormRenderer({
               </div>
             )}
 
-            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+            {error && <p className="text-xs text-danger-text mt-1">{error}</p>}
           </div>
         );
       })}
@@ -343,7 +343,7 @@ export function FormRenderer({
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-sm font-medium hover:bg-accent/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-accent-fg rounded-lg text-sm font-medium hover:bg-accent/90 disabled:opacity-50"
         >
           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           {t('forms.submit')}

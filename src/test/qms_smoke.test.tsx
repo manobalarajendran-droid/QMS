@@ -255,8 +255,8 @@ describe('QMS Comprehensive Programmatic Smoke Test Suite', () => {
       );
 
       const mrBtn = screen.getByRole('button', { name: /MR Dashboard/i });
-      expect(mrBtn.className).toContain('bg-accent-subtle');
-      expect(mrBtn.className).toContain('text-accent');
+      expect(mrBtn.className).toContain('bg-white/15');
+      expect(mrBtn.className).toContain('text-white');
 
       // Change activeTab to dcr_workflow
       rerender(
@@ -269,9 +269,9 @@ describe('QMS Comprehensive Programmatic Smoke Test Suite', () => {
       );
 
       const dcrBtn = screen.getByRole('button', { name: /^DCR$/i });
-      expect(dcrBtn.className).toContain('bg-accent-subtle');
-      expect(dcrBtn.className).toContain('text-accent');
-      expect(mrBtn.className).not.toContain('bg-accent-subtle');
+      expect(dcrBtn.className).toContain('bg-white/15');
+      expect(dcrBtn.className).toContain('text-white');
+      expect(mrBtn.className).not.toContain('bg-white/15');
     });
   });
 
@@ -507,9 +507,9 @@ describe('QMS Comprehensive Programmatic Smoke Test Suite', () => {
 
       // Verify default tab "mr_dashboard" is rendered in main area
       await waitFor(() => {
-        expect(screen.getByText(/MR Dashboard \(Command Center\)/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /MR Dashboard/i })).toBeInTheDocument();
       });
-      expect(screen.getByText(/Management Representative Overview & Live Metrics/i)).toBeInTheDocument();
+      expect(screen.getByText(/Management representative overview and live metrics/i)).toBeInTheDocument();
     });
 
     it('switches views to DCRWorkflow on tab click without runtime crashes', async () => {

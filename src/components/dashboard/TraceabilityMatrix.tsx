@@ -32,12 +32,12 @@ export function TraceabilityMatrix({ filteredRequirements, filteredTests }: Prop
 
   if (requirements.length === 0 && tests.length === 0) {
     return (
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <Grid3X3 className="w-4 h-4 text-accent" />
           <h3 className="text-sm font-semibold text-text-primary">{t('dashboard.traceabilityMatrix')}</h3>
         </div>
-        <div className="text-sm text-text-tertiary text-center py-8">
+        <div className="text-sm text-text-tertiary text-center py-5">
           {t('dashboard.traceabilityEmpty')}
         </div>
       </div>
@@ -104,7 +104,7 @@ export function TraceabilityMatrix({ filteredRequirements, filteredTests }: Prop
                         }`}
                       >
                         {isLinked ? (
-                          <Check className="w-4 h-4 text-success mx-auto" />
+                          <Check className="w-4 h-4 text-success-text mx-auto" />
                         ) : (
                           <Minus className="w-3 h-3 text-text-tertiary/30 mx-auto" />
                         )}
@@ -112,7 +112,7 @@ export function TraceabilityMatrix({ filteredRequirements, filteredTests }: Prop
                     );
                   })}
                   <td className={`border-b border-border text-center px-3 py-2 font-semibold ${
-                    linkCount === 0 ? 'text-danger bg-danger-subtle' : 'text-success bg-success-subtle'
+                    linkCount === 0 ? 'text-danger-text bg-danger-subtle' : 'text-success-text bg-success-subtle'
                   }`}>
                     {linkCount}
                   </td>
@@ -133,7 +133,7 @@ export function TraceabilityMatrix({ filteredRequirements, filteredTests }: Prop
                   <td
                     key={test.id}
                     className={`border-r border-border text-center px-2 py-2 font-semibold ${
-                      count === 0 ? 'text-danger bg-danger-subtle' : 'text-success bg-success-subtle'
+                      count === 0 ? 'text-danger-text bg-danger-subtle' : 'text-success-text bg-success-subtle'
                     }`}
                   >
                     {count}

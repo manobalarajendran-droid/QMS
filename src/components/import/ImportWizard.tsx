@@ -282,7 +282,7 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <FileSpreadsheet className="w-5 h-5 text-accent" />
             <h2 className="text-base font-semibold text-text-primary">{t('import.title')}</h2>
@@ -293,11 +293,11 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
         </div>
 
         {/* Step indicators */}
-        <div className="flex items-center gap-2 px-6 py-3 border-b border-border-subtle bg-surface-tertiary">
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-border-subtle bg-surface-tertiary">
           {['upload', 'map', 'review'].map((s, i) => (
             <div key={s} className="flex items-center gap-2">
               {i > 0 && <ChevronRight className="w-3 h-3 text-text-tertiary" />}
-              <span className={`text-xs font-medium px-2 py-0.5 rounded ${step === s ? 'bg-accent text-white' : 'text-text-tertiary'}`}>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded ${step === s ? 'bg-accent text-accent-fg' : 'text-text-tertiary'}`}>
                 {i + 1}. {s === 'upload' ? t('import.upload') : s === 'map' ? t('import.mapColumns') : t('import.review')}
               </span>
             </div>
@@ -305,7 +305,7 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4">
           {/* Step 1: Upload */}
           {step === 'upload' && (
             <div className="space-y-4">
@@ -313,13 +313,13 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
               <div className="flex gap-2">
                 <button
                   onClick={() => setEntityType('requirement')}
-                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${entityType === 'requirement' ? 'bg-accent text-white border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${entityType === 'requirement' ? 'bg-accent text-accent-fg border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
                 >
                   {t('nav.requirements')}
                 </button>
                 <button
                   onClick={() => setEntityType('test')}
-                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${entityType === 'test' ? 'bg-accent text-white border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${entityType === 'test' ? 'bg-accent text-accent-fg border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
                 >
                   {t('nav.tests')}
                 </button>
@@ -364,7 +364,7 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
                   <div key={field.key} className="flex items-center gap-3">
                     <span className="text-sm text-text-primary w-36 shrink-0">
                       {t(`requirements.${field.key}`, t(`tests.${field.key}`, field.key))}
-                      {field.required && <span className="text-danger ml-1">*</span>}
+                      {field.required && <span className="text-danger-text ml-1">*</span>}
                     </span>
                     <select
                       value={mapping[field.key] ?? -1}
@@ -450,7 +450,7 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
           {result && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 p-4 bg-badge-passed-bg/30 rounded-lg">
-                <CheckCircle2 className="w-5 h-5 text-success" />
+                <CheckCircle2 className="w-5 h-5 text-success-text" />
                 <p className="text-sm text-text-primary font-medium">
                   {t('import.success', { created: result.created, skipped: result.skipped, errors: result.errors.length })}
                 </p>
@@ -458,7 +458,7 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
               {result.errors.length > 0 && (
                 <div className="space-y-1">
                   {result.errors.slice(0, 10).map((err, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-danger">
+                    <div key={i} className="flex items-start gap-2 text-xs text-danger-text">
                       <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                       <span>{err}</span>
                     </div>
@@ -473,7 +473,7 @@ export function ImportWizard({ open, onClose }: ImportWizardProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-t border-border shrink-0">
           <div>
             {step === 'map' && (
               <button

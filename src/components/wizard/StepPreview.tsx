@@ -91,7 +91,7 @@ export function StepPreview({
 
         <div>
           <div className="flex items-center gap-1.5 mb-2 sticky top-0 bg-surface py-1 z-10">
-            <FlaskConical className="w-4 h-4 text-success" />
+            <FlaskConical className="w-4 h-4 text-success-text" />
             <span className="text-sm font-semibold text-text-primary">
               {t('wizard.previewTests', { selected: testCount, total: tests.length })}
             </span>
@@ -110,7 +110,7 @@ export function StepPreview({
                     type="checkbox"
                     checked={selectedTests[index]}
                     onChange={() => onToggleTest(index)}
-                    className="mt-0.5 rounded border-input-border text-success focus:ring-success"
+                    className="mt-0.5 rounded border-input-border text-success-text focus:ring-success"
                   />
                   <div className="flex-1 min-w-0">
                     <span className="text-sm text-text-primary">{title}</span>
@@ -133,12 +133,12 @@ export function StepPreview({
         </button>
         <div className="flex items-end gap-3">
           {errorMessage && (
-            <p className="max-w-xs text-right text-xs text-danger">{errorMessage}</p>
+            <p className="max-w-xs text-right text-xs text-danger-text">{errorMessage}</p>
           )}
           <button
             onClick={onCreate}
             disabled={creating}
-            className="px-6 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {creating ? 'Creating...' : t('wizard.createWithCounts', { reqCount, testCount })}
           </button>

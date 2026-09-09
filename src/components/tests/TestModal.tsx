@@ -51,7 +51,7 @@ function TestModalContent({ test, onSave, onClose }: Omit<Props, 'open'>) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onClose}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <h2 className="text-lg font-semibold text-text-primary">
             {test ? t('tests.editTest') : t('tests.newTest')}
           </h2>
@@ -59,7 +59,7 @@ function TestModalContent({ test, onSave, onClose }: Omit<Props, 'open'>) {
             <X className="w-5 h-5" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-4 space-y-4 overflow-y-auto">
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-1">{t('tests.title')} *</label>
             <input

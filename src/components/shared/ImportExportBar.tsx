@@ -21,7 +21,7 @@ export function ImportExportBar() {
   return (
     <div className="flex items-center gap-2">
       {message && (
-        <span className={`text-xs font-medium ${message.type === 'success' ? 'text-success' : 'text-danger'}`}>
+        <span className={`text-xs font-medium ${message.type === 'success' ? 'text-success-text' : 'text-danger-text'}`}>
           {message.text}
         </span>
       )}

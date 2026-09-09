@@ -113,7 +113,7 @@ export function StepVertical({ countryCode, selected, onSelect, onBack, onNext }
         </button>
         <button
           onClick={onNext}
-          className="px-6 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover transition-colors font-medium"
+          className="px-4 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover transition-colors font-medium"
         >
           {t('common.next')}
         </button>

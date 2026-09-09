@@ -123,7 +123,7 @@ export function StepCountry({ selected, onSelect, onNext, onLoadDemo }: Props) {
         ))}
 
         {grouped.length === 0 && (
-          <p className="text-sm text-text-tertiary text-center py-6">{t('common.noData')}</p>
+          <p className="text-sm text-text-tertiary text-center py-4">{t('common.noData')}</p>
         )}
       </div>
 
@@ -145,7 +145,7 @@ export function StepCountry({ selected, onSelect, onNext, onLoadDemo }: Props) {
         <button
           onClick={onNext}
           disabled={!selected}
-          className="px-6 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          className="px-4 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
         >
           {t('common.next')}
         </button>

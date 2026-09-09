@@ -123,11 +123,11 @@ export function CalibrationRegister() {
       <div className="w-96 shrink-0 flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-surface rounded-lg border border-border p-3 text-center">
-            <div className={`text-2xl font-bold ${overdueCount > 0 ? 'text-danger' : 'text-text-tertiary'}`}>{overdueCount}</div>
+            <div className={`text-2xl font-bold ${overdueCount > 0 ? 'text-danger-text' : 'text-text-tertiary'}`}>{overdueCount}</div>
             <div className="text-xs text-text-tertiary">Overdue</div>
           </div>
           <div className="bg-surface rounded-lg border border-border p-3 text-center">
-            <div className={`text-2xl font-bold ${dueSoonCount > 0 ? 'text-warning' : 'text-text-tertiary'}`}>{dueSoonCount}</div>
+            <div className={`text-2xl font-bold ${dueSoonCount > 0 ? 'text-warning-text' : 'text-text-tertiary'}`}>{dueSoonCount}</div>
             <div className="text-xs text-text-tertiary">Due {'<'} 30 days</div>
           </div>
         </div>
@@ -138,7 +138,7 @@ export function CalibrationRegister() {
           </h2>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-1 text-xs bg-accent text-white px-2 py-1 rounded-lg hover:bg-accent-hover transition-colors"
+            className="flex items-center gap-1 text-xs bg-accent text-accent-fg px-2 py-1 rounded-lg hover:bg-accent-hover transition-colors"
           >
             <Plus className="w-3 h-3" /> Add
           </button>
@@ -199,7 +199,7 @@ export function CalibrationRegister() {
                 </div>
                 <div className="text-xs text-text-tertiary mt-1 truncate">{r.equipName}</div>
                 {overdue && (
-                  <div className="text-[10px] mt-1.5 flex items-center gap-1 text-danger">
+                  <div className="text-[10px] mt-1.5 flex items-center gap-1 text-danger-text">
                     <AlertTriangle className="w-3 h-3" /> Due: {r.nextCalibDate}
                   </div>
                 )}
@@ -212,7 +212,7 @@ export function CalibrationRegister() {
               </button>
             );
           })}
-          {filteredRecords.length === 0 && <p className="text-xs text-center text-text-tertiary py-8">No equipment found.</p>}
+          {filteredRecords.length === 0 && <p className="text-xs text-center text-text-tertiary py-5">No equipment found.</p>}
         </div>
       </div>
 
@@ -276,12 +276,12 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
 
   return (
     <div className="space-y-4 print:space-y-4">
-      <div className="bg-surface rounded-xl border border-border p-6">
+      <div className="bg-surface rounded-xl border border-border p-4">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-2xl font-bold text-text-primary">{record.equipNo}</h2>
             <StatusBadge status={record.status} />
-            {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+            {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
           </div>
           <div className="flex items-center gap-1 print:hidden">
             <button onClick={() => setShowEdit(true)} className="px-3 py-1.5 text-sm font-medium bg-surface border border-border rounded-lg hover:bg-surface-hover transition-colors mr-1">
@@ -303,7 +303,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
                   onClose();
                 }
               }}
-              className="p-2 text-danger hover:bg-danger-subtle rounded-full transition-colors"
+              className="p-2 text-danger-text hover:bg-danger-subtle rounded-full transition-colors"
             >
               Delete
             </button>
@@ -312,7 +312,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
                 toggleArchive(record.id);
                 onClose();
               }}
-              className="p-2 text-warning hover:bg-warning-subtle rounded-full transition-colors"
+              className="p-2 text-warning-text hover:bg-warning-subtle rounded-full transition-colors"
             >
               {record.isArchived ? 'Unarchive' : 'Archive'}
             </button>
@@ -331,7 +331,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
         </div>
       </div>
 
-      <div className="bg-surface rounded-xl border border-border p-6">
+      <div className="bg-surface rounded-xl border border-border p-4">
         <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Equipment Details</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <InfoField label="Manufacturer" value={record.manufacturer} />
@@ -344,7 +344,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
         </div>
       </div>
 
-      <div className="bg-surface rounded-xl border border-border p-6 space-y-4">
+      <div className="bg-surface rounded-xl border border-border p-4 space-y-4">
         <div>
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-2">Notes</h3>
           <p className="text-sm text-text-primary whitespace-pre-wrap bg-surface-secondary p-4 rounded-xl border border-border">{record.notes || '—'}</p>
@@ -352,7 +352,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
       </div>
 
       {(record.status === 'Out of Service' || record.status === 'Scrapped' || record.correctiveAction || record.correctiveOwner) && (
-        <div className="bg-surface rounded-xl border border-border p-6 space-y-3">
+        <div className="bg-surface rounded-xl border border-border p-4 space-y-3">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider">Corrective Action</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Labeled label="Corrective Action">
@@ -378,7 +378,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
       )}
 
       {(record.approvedBy || record.rejectedBy) && (
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-surface rounded-xl border border-border p-4">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Disposition Trail</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {record.approvedBy && <InfoField label="Returned to Service By" value={`${record.approvedBy}${record.approvalDate ? ` (${record.approvalDate})` : ''}`} />}
@@ -390,7 +390,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
       )}
 
       {inService && (
-        <div className="bg-surface-secondary p-6 rounded-xl border border-border">
+        <div className="bg-surface-secondary p-4 rounded-xl border border-border">
           <h3 className="text-lg font-bold text-text-primary mb-4">Instrument Status</h3>
           {showReportBox ? (
             <div className="space-y-3">
@@ -416,7 +416,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
                     setReportReason('');
                   }}
                   disabled={!reportReason.trim()}
-                  className="px-3 py-1.5 text-sm text-white bg-danger rounded-lg hover:opacity-90 disabled:opacity-50 transition-colors"
+                  className="px-3 py-1.5 text-sm text-danger-fg bg-danger rounded-lg hover:opacity-90 disabled:opacity-50 transition-colors"
                 >
                   Confirm
                 </button>
@@ -425,7 +425,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
           ) : (
             <button
               onClick={() => setShowReportBox(true)}
-              className="bg-danger text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
+              className="bg-danger text-danger-fg px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
             >
               Report Out-of-Tolerance
             </button>
@@ -434,7 +434,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
       )}
 
       {record.status === 'Out of Service' && (
-        <div className="bg-surface-secondary p-6 rounded-xl border border-border">
+        <div className="bg-surface-secondary p-4 rounded-xl border border-border">
           <h3 className="text-lg font-bold text-text-primary mb-4">Disposition Gate</h3>
           {isMR ? (
             oosAction ? (
@@ -457,7 +457,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
                   <button
                     onClick={submitOosGate}
                     disabled={!oosReason.trim()}
-                    className="px-3 py-1.5 text-sm text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-sm text-accent-fg bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
                   >
                     Confirm
                   </button>
@@ -467,13 +467,13 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
               <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={() => setOosAction('verify')}
-                  className="bg-success text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
+                  className="bg-success text-success-fg px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
                 >
                   Verify &amp; Return to Service
                 </button>
                 <button
                   onClick={() => setOosAction('scrap')}
-                  className="bg-danger text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
+                  className="bg-danger text-danger-fg px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
                 >
                   Scrap Instrument
                 </button>
@@ -486,8 +486,8 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
       )}
 
       {record.status === 'Scrapped' && (
-        <div className="bg-danger-subtle p-6 rounded-xl border border-border">
-          <h3 className="text-lg font-bold text-danger mb-2">Instrument Scrapped</h3>
+        <div className="bg-danger-subtle p-4 rounded-xl border border-border">
+          <h3 className="text-lg font-bold text-danger-text mb-2">Instrument Scrapped</h3>
           <p className="text-sm text-text-secondary mb-4">
             {record.stateHistory?.length
               ? record.stateHistory[record.stateHistory.length - 1].reason
@@ -508,7 +508,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
                   reopenFromScrap(record.id, user?.name || 'System', reopenReason.trim());
                   setReopenReason('');
                 }}
-                className="bg-accent text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-accent-hover disabled:opacity-50 transition-colors shadow-sm"
+                className="bg-accent text-accent-fg px-4 py-2.5 rounded-lg font-semibold hover:bg-accent-hover disabled:opacity-50 transition-colors shadow-sm"
               >
                 Reopen (Return to Out of Service)
               </button>
@@ -520,7 +520,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
       )}
 
       {record.stateHistory && record.stateHistory.length > 0 && (
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-surface rounded-xl border border-border p-4">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Transition History</h3>
           <div className="space-y-2">
             {[...record.stateHistory].reverse().map((h, i) => (
@@ -540,7 +540,7 @@ function CalibDetailPanel({ record, onClose }: { record: CalibRecord; onClose: (
       )}
 
       {showComments && (
-        <section className="bg-surface rounded-xl border border-border p-6 print:hidden">
+        <section className="bg-surface rounded-xl border border-border p-4 print:hidden">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Comments</h3>
           <CommentThread entityType="calibration" entityId={record.id} projectId={projectId} />
         </section>
@@ -609,14 +609,14 @@ function CalibrationFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-surface w-full max-w-2xl rounded-xl p-6 shadow-2xl border border-border my-8">
+      <div className="bg-surface w-full max-w-2xl rounded-xl p-4 shadow-2xl border border-border my-8">
         <h3 className="text-xl font-bold mb-4 text-text-primary">{initial ? 'Edit Equipment' : 'Add Equipment'}</h3>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             onSubmit(formData);
           }}
-          className="space-y-6"
+          className="space-y-4"
         >
           <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Labeled label="Equipment No *">
@@ -676,7 +676,7 @@ function CalibrationFormModal({
             <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium border border-border rounded-lg text-text-primary hover:bg-surface-hover transition-colors">
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-white rounded-lg shadow-sm transition-colors">
+            <button type="submit" className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-accent-fg rounded-lg shadow-sm transition-colors">
               {initial ? 'Save Changes' : 'Save Equipment'}
             </button>
           </div>

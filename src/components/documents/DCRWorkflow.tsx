@@ -129,7 +129,7 @@ export function DCRWorkflow() {
           </h2>
           <button
             onClick={() => setShowForm(true)}
-            className="bg-accent text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-accent-hover transition-colors shadow-sm"
+            className="bg-accent text-accent-fg px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-accent-hover transition-colors shadow-sm"
           >
             + New DCR
           </button>
@@ -197,7 +197,7 @@ export function DCRWorkflow() {
                 <div className="flex justify-between items-start gap-2">
                   <span className="font-semibold text-text-primary text-sm">{r.dcrNo}</span>
                   <div className="flex items-center gap-1">
-                    {overdue && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+                    {overdue && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
                     <StatusBadge status={STATUS_LABELS[r.status] ?? r.status} />
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export function DCRWorkflow() {
               </button>
             );
           })}
-          {filteredRecords.length === 0 && <p className="text-xs text-center text-text-tertiary py-8">No DCRs found.</p>}
+          {filteredRecords.length === 0 && <p className="text-xs text-center text-text-tertiary py-5">No DCRs found.</p>}
         </div>
       </div>
 
@@ -290,12 +290,12 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
 
   return (
     <div className="space-y-4 print:space-y-4">
-      <div className="bg-surface rounded-xl border border-border p-6">
+      <div className="bg-surface rounded-xl border border-border p-4">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-2xl font-bold text-text-primary">{record.dcrNo}</h2>
             <StatusBadge status={STATUS_LABELS[record.status] ?? record.status} />
-            {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+            {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
           </div>
           <div className="flex items-center gap-1 print:hidden">
             <button onClick={() => setShowEdit(true)} className="px-3 py-1.5 text-sm font-medium bg-surface border border-border rounded-lg hover:bg-surface-hover transition-colors mr-1">
@@ -317,7 +317,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
                   onClose();
                 }
               }}
-              className="p-2 text-danger hover:bg-danger-subtle rounded-full transition-colors"
+              className="p-2 text-danger-text hover:bg-danger-subtle rounded-full transition-colors"
             >
               Delete
             </button>
@@ -326,7 +326,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
                 useDCRStore.getState().updateRecord(record.id, { isArchived: !record.isArchived });
                 onClose();
               }}
-              className="p-2 text-amber-500 hover:bg-amber-50 rounded-full transition-colors"
+              className="p-2 text-warning-text hover:bg-amber-50 rounded-full transition-colors"
             >
               {record.isArchived ? 'Unarchive' : 'Archive'}
             </button>
@@ -345,7 +345,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
         </div>
       </div>
 
-      <div className="bg-surface rounded-xl border border-border p-6 space-y-4">
+      <div className="bg-surface rounded-xl border border-border p-4 space-y-4">
         <div>
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-2">Description of Change</h3>
           <p className="text-sm text-text-primary whitespace-pre-wrap bg-surface-secondary p-4 rounded-xl border border-border">{record.changeDescription}</p>
@@ -362,7 +362,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
       </div>
 
       {hasImportedFields && (
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-surface rounded-xl border border-border p-4">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Imported Record Data</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <InfoField label="Legacy Ref" value={record.ref} />
@@ -374,7 +374,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
       )}
 
       {hasApprovalTrail && (
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-surface rounded-xl border border-border p-4">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Review / Approval Trail</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {record.reviewedBy && <InfoField label="Reviewed By" value={`${record.reviewedBy}${record.reviewDate ? ` (${record.reviewDate})` : ''}`} />}
@@ -388,7 +388,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
       )}
 
       {atFinalGate && (
-        <div className="bg-surface-secondary p-6 rounded-xl border border-border">
+        <div className="bg-surface-secondary p-4 rounded-xl border border-border">
           <h3 className="text-lg font-bold text-text-primary mb-4">QA Approval Gate</h3>
           {isMR ? (
             <div className="space-y-3">
@@ -406,7 +406,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
                     useDCRStore.getState().approveDCR(record.id, user?.name || 'System', gateReason.trim());
                     setGateReason('');
                   }}
-                  className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+                  className="bg-green-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
                 >
                   <CheckCircle className="w-5 h-5" /> Approve &amp; Sync to DML
                 </button>
@@ -416,7 +416,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
                     useDCRStore.getState().rejectDCR(record.id, user?.name || 'System', gateReason.trim());
                     setGateReason('');
                   }}
-                  className="bg-surface text-text-primary border border-border px-6 py-2.5 rounded-lg font-semibold hover:bg-surface-hover disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+                  className="bg-surface text-text-primary border border-border px-4 py-2.5 rounded-lg font-semibold hover:bg-surface-hover disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
                 >
                   <X className="w-5 h-5" /> Reject Request
                 </button>
@@ -424,15 +424,15 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
             </div>
           ) : (
             <div className="bg-danger-subtle border border-border p-4 rounded-lg">
-              <p className="text-sm text-danger font-medium">Only Management Representative (Admin / QA Manager) can approve or reject this DCR.</p>
+              <p className="text-sm text-danger-text font-medium">Only Management Representative (Admin / QA Manager) can approve or reject this DCR.</p>
             </div>
           )}
         </div>
       )}
 
       {record.status === 'Rejected' ? (
-        <div className="bg-danger-subtle p-6 rounded-xl border border-border">
-          <h3 className="text-lg font-bold text-danger mb-2">Request Rejected</h3>
+        <div className="bg-danger-subtle p-4 rounded-xl border border-border">
+          <h3 className="text-lg font-bold text-danger-text mb-2">Request Rejected</h3>
           <p className="text-sm text-text-secondary mb-4">{record.rejectionReason || 'No rejection reason recorded.'}</p>
           {isMR ? (
             <div className="space-y-3">
@@ -449,7 +449,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
                   useDCRStore.getState().transitionStatus(record.id, 'Draft', user?.name || 'System', reopenReason.trim(), 'reopen');
                   setReopenReason('');
                 }}
-                className="bg-accent text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-accent-hover disabled:opacity-50 transition-colors shadow-sm"
+                className="bg-accent text-accent-fg px-4 py-2.5 rounded-lg font-semibold hover:bg-accent-hover disabled:opacity-50 transition-colors shadow-sm"
               >
                 Reopen to Draft
               </button>
@@ -459,7 +459,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
           )}
         </div>
       ) : (
-        <section className="bg-surface rounded-xl border border-border p-6">
+        <section className="bg-surface rounded-xl border border-border p-4">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Workflow State</h3>
           <StateTransitionBar
             statuses={STATUSES}
@@ -490,7 +490,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
       )}
 
       {showComments && (
-        <section className="bg-surface rounded-xl border border-border p-6 print:hidden">
+        <section className="bg-surface rounded-xl border border-border p-4 print:hidden">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Comments</h3>
           <CommentThread entityType="dcr" entityId={record.id} projectId={projectId} />
         </section>
@@ -555,9 +555,9 @@ function DCRFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-surface w-full max-w-3xl rounded-xl p-6 shadow-2xl border border-border my-8">
+      <div className="bg-surface w-full max-w-3xl rounded-xl p-4 shadow-2xl border border-border my-8">
         <h3 className="text-xl font-bold mb-4">{initial ? 'Edit Change Request' : 'New Change Request'}</h3>
-        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ ...formData, docId: initial?.docId ?? '' }); }} className="space-y-6">
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ ...formData, docId: initial?.docId ?? '' }); }} className="space-y-4">
           <fieldset className="grid grid-cols-2 gap-4">
             <Labeled label="Document Number">
               <input className={inputCls} value={formData.docNo} onChange={(e) => setFormData({ ...formData, docNo: e.target.value })} placeholder="e.g. PTA-HSE-P-02" required />
@@ -621,7 +621,7 @@ function DCRFormModal({
 
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className="px-4 py-2 border border-border rounded-lg hover:bg-surface-hover">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover">{initial ? 'Save Changes' : 'Submit'}</button>
+            <button type="submit" className="px-4 py-2 bg-accent text-accent-fg rounded-lg hover:bg-accent-hover">{initial ? 'Save Changes' : 'Submit'}</button>
           </div>
         </form>
       </div>

@@ -131,7 +131,7 @@ export function PMSDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Activity className="w-5 h-5 text-accent" />
@@ -150,7 +150,7 @@ export function PMSDashboard() {
           {canEdit && (
             <button
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
             >
               <Plus className="w-4 h-4" />
               {t('pms.addEntry')}
@@ -169,25 +169,25 @@ export function PMSDashboard() {
       {summary && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="bg-surface rounded-xl border border-border p-4 text-center">
-            <p className="text-2xl font-bold text-red-600">{summary.complaintCount}</p>
+            <p className="text-2xl font-bold text-danger-text">{summary.complaintCount}</p>
             <p className="text-xs text-text-tertiary">{t('pms.complaints')}</p>
-            <p className="text-xs text-red-500">{summary.openComplaints} {t('pms.open')}</p>
+            <p className="text-xs text-danger-text">{summary.openComplaints} {t('pms.open')}</p>
           </div>
           <div className="bg-surface rounded-xl border border-border p-4 text-center">
-            <p className="text-2xl font-bold text-amber-600">{summary.capaCount}</p>
+            <p className="text-2xl font-bold text-warning-text">{summary.capaCount}</p>
             <p className="text-xs text-text-tertiary">{t('pms.capas')}</p>
-            <p className="text-xs text-amber-500">{summary.openCapas} {t('pms.open')}</p>
+            <p className="text-xs text-warning-text">{summary.openCapas} {t('pms.open')}</p>
           </div>
           <div className="bg-surface rounded-xl border border-border p-4 text-center">
-            <p className="text-2xl font-bold text-purple-600">{summary.fieldActions}</p>
+            <p className="text-2xl font-bold text-info-text">{summary.fieldActions}</p>
             <p className="text-xs text-text-tertiary">{t('pms.fieldActions')}</p>
           </div>
           <div className="bg-surface rounded-xl border border-border p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{summary.byType.literature || 0}</p>
+            <p className="text-2xl font-bold text-info-text">{summary.byType.literature || 0}</p>
             <p className="text-xs text-text-tertiary">{t('pms.literature')}</p>
           </div>
           <div className="bg-surface rounded-xl border border-border p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">{summary.byType.customer_feedback || 0}</p>
+            <p className="text-2xl font-bold text-success-text">{summary.byType.customer_feedback || 0}</p>
             <p className="text-xs text-text-tertiary">{t('pms.customerFeedback')}</p>
           </div>
         </div>
@@ -197,14 +197,14 @@ export function PMSDashboard() {
       <div className="bg-surface rounded-xl border border-border p-4">
         <h3 className="text-sm font-semibold text-text-primary mb-4">{t('pms.timeline')}</h3>
         {entries.length === 0 ? (
-          <p className="text-center text-sm text-text-tertiary py-8">{t('pms.noEntries')}</p>
+          <p className="text-center text-sm text-text-tertiary py-5">{t('pms.noEntries')}</p>
         ) : (
           <div className="space-y-3">
             {entries.map((entry) => {
               const Icon = TYPE_ICONS[entry.entryType] || Activity;
               return (
                 <div key={entry.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-hover transition-colors">
-                  <div className={`p-1.5 rounded-lg ${TYPE_COLORS[entry.entryType] || 'bg-gray-100 text-gray-700'}`}>
+                  <div className={`p-1.5 rounded-lg ${TYPE_COLORS[entry.entryType] || 'bg-surface-tertiary text-text-secondary'}`}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -252,10 +252,10 @@ function PMSEntryForm({ onSave, onCancel }: { onSave: (data: any) => void; onCan
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('pms.addEntry')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <select className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={entryType} onChange={(e) => setEntryType(e.target.value)}>
             <option value="complaint_summary">{t('pms.type_complaint_summary')}</option>
             <option value="literature">{t('pms.type_literature')}</option>
@@ -271,12 +271,12 @@ function PMSEntryForm({ onSave, onCancel }: { onSave: (data: any) => void; onCan
           </div>
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('pms.severityPlaceholder')} value={severity} onChange={(e) => setSeverity(e.target.value)} />
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ entryType, title, description, source, severity: severity || undefined, date })}
             disabled={!title}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('common.save')}
           </button>

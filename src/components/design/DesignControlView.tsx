@@ -29,9 +29,9 @@ const PHASE_LABELS: Record<DesignPhase, string> = {
 
 const STATUS_CONFIG: Record<string, { icon: React.ReactNode; className: string }> = {
   draft: { icon: <Clock className="w-3 h-3" />, className: 'bg-surface-hover text-text-secondary' },
-  in_review: { icon: <Edit2 className="w-3 h-3" />, className: 'bg-warning-subtle text-warning' },
-  approved: { icon: <CheckCircle2 className="w-3 h-3" />, className: 'bg-success-subtle text-success' },
-  rejected: { icon: <XCircle className="w-3 h-3" />, className: 'bg-danger-subtle text-danger' },
+  in_review: { icon: <Edit2 className="w-3 h-3" />, className: 'bg-warning-subtle text-warning-text' },
+  approved: { icon: <CheckCircle2 className="w-3 h-3" />, className: 'bg-success-subtle text-success-text' },
+  rejected: { icon: <XCircle className="w-3 h-3" />, className: 'bg-danger-subtle text-danger-text' },
 };
 
 let createCounter = 0;
@@ -197,7 +197,7 @@ export function DesignControlView() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleCreate(phase)}
-                      className="text-xs px-2.5 py-1 bg-accent text-white rounded-md hover:bg-accent-hover transition-colors"
+                      className="text-xs px-2.5 py-1 bg-accent text-accent-fg rounded-md hover:bg-accent-hover transition-colors"
                     >
                       {t('common.add')}
                     </button>
@@ -230,7 +230,7 @@ export function DesignControlView() {
             className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[85vh] flex flex-col border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
               <h2 className="text-base font-semibold text-text-primary truncate">{selectedItem.title}</h2>
               <button
                 onClick={() => setSelectedItem(null)}
@@ -240,7 +240,7 @@ export function DesignControlView() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
               {/* Phase & Status */}
               <div className="flex items-center gap-3">
                 <span className="text-xs text-text-tertiary">{t('designControl.phase')}:</span>
@@ -304,7 +304,7 @@ export function DesignControlView() {
               {selectedItem.status === 'approved' && selectedItem.phase !== 'released' && (
                 <button
                   onClick={() => handleAdvance(selectedItem.id)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors text-sm font-medium"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-accent-fg rounded-lg hover:bg-accent-hover transition-colors text-sm font-medium"
                 >
                   <ChevronRight className="w-4 h-4" />
                   {t('designControl.advancePhase')}
@@ -317,7 +317,7 @@ export function DesignControlView() {
                   deleteDesignItem(selectedItem.id);
                   setSelectedItem(null);
                 }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-danger bg-danger-subtle rounded-lg hover:bg-danger/10 transition-colors text-sm"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-danger-text bg-danger-subtle rounded-lg hover:bg-danger/10 transition-colors text-sm"
               >
                 {t('common.delete')}
               </button>

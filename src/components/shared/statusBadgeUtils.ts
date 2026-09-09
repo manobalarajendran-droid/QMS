@@ -2,16 +2,19 @@ import type { RequirementStatus, TestStatus } from '../../types';
 
 export type BadgeVariant = 'green' | 'amber' | 'red' | 'blue' | 'gray';
 
+/* Borders are the badge's own text colour at low alpha, so the legacy
+   requirement/test badges read as the same outline pill as everything else
+   without needing a second set of tokens. */
 export const REQ_COLORS: Record<RequirementStatus, string> = {
-  Draft: 'bg-badge-draft-bg text-badge-draft-text',
-  Active: 'bg-badge-active-bg text-badge-active-text',
-  Closed: 'bg-badge-closed-bg text-badge-closed-text',
+  Draft: 'bg-badge-draft-bg text-badge-draft-text border-badge-draft-text/25',
+  Active: 'bg-badge-active-bg text-badge-active-text border-badge-active-text/25',
+  Closed: 'bg-badge-closed-bg text-badge-closed-text border-badge-closed-text/25',
 };
 
 export const TEST_COLORS: Record<TestStatus, string> = {
-  'Not Run': 'bg-badge-notrun-bg text-badge-notrun-text',
-  Passed: 'bg-badge-passed-bg text-badge-passed-text',
-  Failed: 'bg-badge-failed-bg text-badge-failed-text',
+  'Not Run': 'bg-badge-notrun-bg text-badge-notrun-text border-badge-notrun-text/25',
+  Passed: 'bg-badge-passed-bg text-badge-passed-text border-badge-passed-text/25',
+  Failed: 'bg-badge-failed-bg text-badge-failed-text border-badge-failed-text/25',
 };
 
 export function resolveStatusVariant(status?: string): BadgeVariant {
@@ -41,10 +44,15 @@ export function resolveStatusVariant(status?: string): BadgeVariant {
   return 'gray';
 }
 
+/**
+ * Outline pills, not filled blocks. A register page shows dozens of these at
+ * once; a solid fill turns the table into a colour field and buries the row
+ * text. The border carries the state, the fill stays near-white.
+ */
 export const VARIANT_STYLES: Record<BadgeVariant, string> = {
-  green: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60',
-  amber: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/60',
-  red: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60',
-  blue: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-400 dark:border-sky-800/60',
-  gray: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+  green: 'border-emerald-300 bg-emerald-50/70 text-emerald-700 dark:border-emerald-800/70 dark:bg-emerald-950/30 dark:text-emerald-400',
+  amber: 'border-amber-300 bg-amber-50/70 text-amber-700 dark:border-amber-800/70 dark:bg-amber-950/30 dark:text-amber-400',
+  red:   'border-rose-300 bg-rose-50/70 text-rose-700 dark:border-rose-800/70 dark:bg-rose-950/30 dark:text-rose-400',
+  blue:  'border-sky-300 bg-sky-50/70 text-sky-700 dark:border-sky-800/70 dark:bg-sky-950/30 dark:text-sky-400',
+  gray:  'border-slate-300 bg-slate-50/70 text-slate-600 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300',
 };

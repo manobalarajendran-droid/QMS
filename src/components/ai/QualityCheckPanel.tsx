@@ -18,8 +18,8 @@ const SEVERITY_ICONS = {
 };
 
 const SEVERITY_COLORS = {
-  error: 'text-danger',
-  warning: 'text-warning',
+  error: 'text-danger-text',
+  warning: 'text-warning-text',
   info: 'text-accent',
 };
 
@@ -88,7 +88,7 @@ export function QualityCheckPanel({ requirement, onClose }: QualityCheckPanelPro
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div>
             <h2 className="text-base font-semibold text-text-primary">{t('quality.checkQuality')}</h2>
             <p className="text-xs text-text-tertiary mt-0.5">{requirement.id}: {requirement.title}</p>
@@ -99,7 +99,7 @@ export function QualityCheckPanel({ requirement, onClose }: QualityCheckPanelPro
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4">
           {loading && (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-6 h-6 text-accent animate-spin" />
@@ -109,8 +109,8 @@ export function QualityCheckPanel({ requirement, onClose }: QualityCheckPanelPro
 
           {error && (
             <div className="flex items-center gap-2 p-3 bg-danger/10 rounded-lg">
-              <AlertCircle className="w-4 h-4 text-danger shrink-0" />
-              <span className="text-sm text-danger">{error}</span>
+              <AlertCircle className="w-4 h-4 text-danger-text shrink-0" />
+              <span className="text-sm text-danger-text">{error}</span>
             </div>
           )}
 
@@ -118,7 +118,7 @@ export function QualityCheckPanel({ requirement, onClose }: QualityCheckPanelPro
             <>
               {issues.length === 0 ? (
                 <div className="flex items-center gap-2 p-4 bg-badge-passed-bg/30 rounded-lg">
-                  <Check className="w-5 h-5 text-success" />
+                  <Check className="w-5 h-5 text-success-text" />
                   <span className="text-sm text-text-primary font-medium">{t('quality.noIssues')}</span>
                 </div>
               ) : (
@@ -140,9 +140,9 @@ export function QualityCheckPanel({ requirement, onClose }: QualityCheckPanelPro
                               </span>
                               <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
                                 issue.severity === 'error'
-                                  ? 'bg-danger/20 text-danger'
+                                  ? 'bg-danger/20 text-danger-text'
                                   : issue.severity === 'warning'
-                                    ? 'bg-warning/20 text-warning'
+                                    ? 'bg-warning/20 text-warning-text'
                                     : 'bg-accent/20 text-accent'
                               }`}>
                                 {issue.severity}

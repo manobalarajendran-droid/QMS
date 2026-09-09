@@ -147,7 +147,7 @@ export function ReportPreview({ config, onBack }: ReportPreviewProps) {
         </div>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex gap-4">
         {/* Table of Contents */}
         <div className="hidden lg:block w-56 shrink-0">
           <div className="sticky top-20 bg-surface rounded-xl border border-border p-4">
@@ -196,7 +196,7 @@ export function ReportPreview({ config, onBack }: ReportPreviewProps) {
         {/* Report Content */}
         <div ref={reportRef} className="flex-1 min-w-0 space-y-4">
           {/* Report Header */}
-          <div className="bg-surface rounded-xl border border-border p-6">
+          <div className="bg-surface rounded-xl border border-border p-4">
             <h1 className="text-xl font-bold text-text-primary">
               {getReportTitle(config.type)}
             </h1>
@@ -216,7 +216,7 @@ export function ReportPreview({ config, onBack }: ReportPreviewProps) {
               className="bg-surface rounded-xl border border-border overflow-hidden"
             >
               {/* Section Header */}
-              <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-surface-tertiary">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-tertiary">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-text-primary">
                     {i + 1}. {section.title}
@@ -232,7 +232,7 @@ export function ReportPreview({ config, onBack }: ReportPreviewProps) {
                   onClick={() => toggleApproval(i)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-lg font-medium transition-colors ${
                     approvedSections.has(i)
-                      ? 'bg-success/10 text-success border border-success/30'
+                      ? 'bg-success/10 text-success-text border border-success/30'
                       : 'bg-surface border border-border text-text-secondary hover:bg-surface-hover'
                   }`}
                 >
@@ -242,7 +242,7 @@ export function ReportPreview({ config, onBack }: ReportPreviewProps) {
               </div>
 
               {/* Section Content */}
-              <div className="px-6 py-4">
+              <div className="px-4 py-4">
                 <pre className="text-sm text-text-primary whitespace-pre-wrap font-sans leading-relaxed">
                   {section.content}
                 </pre>
@@ -253,12 +253,12 @@ export function ReportPreview({ config, onBack }: ReportPreviewProps) {
           {/* Signature Block */}
           {config.includeSignatures && (
             <div className="bg-surface rounded-xl border border-border overflow-hidden">
-              <div className="px-6 py-3 border-b border-border bg-surface-tertiary">
+              <div className="px-4 py-3 border-b border-border bg-surface-tertiary">
                 <span className="text-sm font-semibold text-text-primary">
                   Signatures
                 </span>
               </div>
-              <div className="p-6">
+              <div className="p-4">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">

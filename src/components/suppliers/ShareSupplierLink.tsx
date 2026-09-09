@@ -121,7 +121,7 @@ export function ShareSupplierLink() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-border">
               <div className="flex items-center gap-2">
                 <Link2 className="w-5 h-5 text-accent" />
                 <h2 className="text-base font-semibold text-text-primary">{t('supplierPortal.sharePortal')}</h2>
@@ -132,10 +132,10 @@ export function ShareSupplierLink() {
             </div>
 
             {/* Body */}
-            <div className="px-6 py-4 space-y-4">
+            <div className="px-4 py-4 space-y-4">
               {/* Warning */}
               <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
-                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-warning-text dark:text-amber-400 mt-0.5 shrink-0" />
                 <p className="text-xs text-amber-800 dark:text-amber-200">{t('supplierPortal.warning')}</p>
               </div>
 
@@ -183,7 +183,7 @@ export function ShareSupplierLink() {
                 <button
                   onClick={handleGenerate}
                   disabled={generating || !selectedSupplierId}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
                 >
                   <Link2 className="w-4 h-4" />
                   {generating ? t('common.saving') : t('supplierPortal.generateLink')}
@@ -202,7 +202,7 @@ export function ShareSupplierLink() {
                     />
                     <button
                       onClick={handleCopy}
-                      className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+                      className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
                     >
                       {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                       {copied ? t('auditMode.copied') : t('auditMode.copyLink')}
@@ -217,7 +217,7 @@ export function ShareSupplierLink() {
               )}
 
               {/* Error */}
-              {error && <p className="text-xs text-danger">{error}</p>}
+              {error && <p className="text-xs text-danger-text">{error}</p>}
             </div>
           </div>
         </div>

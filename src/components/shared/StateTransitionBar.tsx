@@ -114,7 +114,7 @@ export function StateTransitionBar({
             <button
               onClick={submit}
               disabled={!reason.trim()}
-              className="px-3 py-1.5 text-sm text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
+              className="px-3 py-1.5 text-sm text-accent-fg bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors"
             >
               Confirm
             </button>
@@ -133,7 +133,7 @@ export function StateTransitionBar({
           {forwardAllowed && nextStatus && (
             <button
               onClick={() => setPending('forward')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-accent text-accent-fg rounded-lg hover:bg-accent-hover transition-colors"
             >
               {advancingToTerminal ? <CheckCircle className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
               {advancingToTerminal ? `Verify & Close` : `Advance to ${statusLabels[nextStatus]}`}

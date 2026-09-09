@@ -14,14 +14,14 @@ export function OrphanedTests({ tests }: Props) {
     <div className="bg-surface rounded-xl border border-border shadow-sm">
       <div className="px-4 py-3 border-b border-border flex items-center gap-2">
         <div className="w-6 h-6 rounded-md bg-warning-subtle flex items-center justify-center">
-          <AlertCircle className="w-3.5 h-3.5 text-warning" />
+          <AlertCircle className="w-3.5 h-3.5 text-warning-text" />
         </div>
         <h3 className="text-sm font-semibold text-text-primary">
           {t('dashboard.orphanedTests', { count: tests.length })}
         </h3>
       </div>
       {tests.length === 0 ? (
-        <div className="px-4 py-6 text-sm text-text-tertiary text-center">
+        <div className="px-4 py-4 text-sm text-text-tertiary text-center">
           {t('dashboard.orphanedTestsEmpty')}
         </div>
       ) : (

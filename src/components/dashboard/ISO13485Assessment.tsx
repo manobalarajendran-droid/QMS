@@ -17,14 +17,14 @@ interface ClauseResult {
 }
 
 const STATUS_CONFIG = {
-  covered: { icon: ShieldCheck, color: 'text-success', bg: 'bg-success-subtle', label: 'Covered' },
-  partial: { icon: AlertTriangle, color: 'text-warning', bg: 'bg-warning-subtle', label: 'Partial' },
-  gap: { icon: XCircle, color: 'text-danger', bg: 'bg-danger-subtle', label: 'Gap' },
+  covered: { icon: ShieldCheck, color: 'text-success-text', bg: 'bg-success-subtle', label: 'Covered' },
+  partial: { icon: AlertTriangle, color: 'text-warning-text', bg: 'bg-warning-subtle', label: 'Partial' },
+  gap: { icon: XCircle, color: 'text-danger-text', bg: 'bg-danger-subtle', label: 'Gap' },
 } as const;
 
 const CRITICALITY_COLORS = {
-  critical: 'bg-danger-subtle text-danger',
-  high: 'bg-warning-subtle text-warning',
+  critical: 'bg-danger-subtle text-danger-text',
+  high: 'bg-warning-subtle text-warning-text',
   medium: 'bg-badge-active-bg text-badge-active-text',
   low: 'bg-badge-draft-bg text-badge-draft-text',
 };
@@ -140,9 +140,9 @@ export function ISO13485Assessment() {
   const reqMap = useMemo(() => new Map(requirements.map((r) => [r.id, r])), [requirements]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header with mode toggle and summary */}
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-lg font-semibold text-text-primary">ISO 13485:2016 Gap Assessment</h3>
@@ -177,14 +177,14 @@ export function ISO13485Assessment() {
         </div>
 
         {aiError && (
-          <div className="mb-4 rounded-lg bg-danger-subtle border border-danger/30 p-3 text-sm text-danger">{aiError}</div>
+          <div className="mb-4 rounded-lg bg-danger-subtle border border-danger/30 p-3 text-sm text-danger-text">{aiError}</div>
         )}
 
         {/* Readiness score */}
-        <div className="flex items-center gap-6 mb-4">
+        <div className="flex items-center gap-4 mb-4">
           <div className="flex items-baseline gap-2">
             <span className={`text-4xl font-bold ${
-              stats.readiness >= 80 ? 'text-success' : stats.readiness >= 50 ? 'text-warning' : 'text-danger'
+              stats.readiness >= 80 ? 'text-success-text' : stats.readiness >= 50 ? 'text-warning-text' : 'text-danger-text'
             }`}>
               {stats.readiness}%
             </span>
@@ -225,7 +225,7 @@ export function ISO13485Assessment() {
           <div key={section.name} className="bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
             <button
               onClick={() => toggleSection(section.name)}
-              className="w-full flex items-center justify-between px-6 py-4 hover:bg-surface-hover transition-colors text-left"
+              className="w-full flex items-center justify-between px-4 py-4 hover:bg-surface-hover transition-colors text-left"
             >
               <div className="flex items-center gap-3">
                 {expanded ? <ChevronDown className="w-4 h-4 text-text-tertiary" /> : <ChevronRight className="w-4 h-4 text-text-tertiary" />}
@@ -259,7 +259,7 @@ export function ISO13485Assessment() {
                   const Icon = cfg.icon;
                   const isGenerated = generatedClauses.has(result.clause.clause);
                   return (
-                    <div key={result.clause.clause} className="px-6 py-4">
+                    <div key={result.clause.clause} className="px-4 py-4">
                       <div className="flex items-start gap-3">
                         <div className={`w-7 h-7 rounded-lg ${cfg.bg} flex items-center justify-center shrink-0 mt-0.5`}>
                           <Icon className={`w-4 h-4 ${cfg.color}`} />
@@ -292,7 +292,7 @@ export function ISO13485Assessment() {
                             </div>
                           )}
                           {mode === 'ai' && result.aiRecommendation && (
-                            <div className="mt-1 text-xs text-warning bg-warning-subtle rounded-lg p-2">
+                            <div className="mt-1 text-xs text-warning-text bg-warning-subtle rounded-lg p-2">
                               <strong>Recommendation:</strong> {result.aiRecommendation}
                             </div>
                           )}
@@ -305,7 +305,7 @@ export function ISO13485Assessment() {
                             disabled={isGenerated}
                             className={`shrink-0 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors ${
                               isGenerated
-                                ? 'bg-success-subtle text-success'
+                                ? 'bg-success-subtle text-success-text'
                                 : 'bg-surface-tertiary text-text-primary hover:bg-surface-hover border border-border'
                             }`}
                           >

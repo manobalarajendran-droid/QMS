@@ -150,11 +150,11 @@ export function GlobalSearch() {
 
             <div className="flex-1 overflow-y-auto">
               {query.trim().length < 2 ? (
-                <div className="px-4 py-8 text-center text-sm text-text-tertiary">
+                <div className="px-4 py-5 text-center text-sm text-text-tertiary">
                   {t('search.hint')}
                 </div>
               ) : results.length === 0 && !loading ? (
-                <div className="px-4 py-8 text-center text-sm text-text-tertiary">
+                <div className="px-4 py-5 text-center text-sm text-text-tertiary">
                   {t('search.noResults')}
                 </div>
               ) : (

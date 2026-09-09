@@ -71,7 +71,7 @@ export function EvaluationDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Tab bar */}
       <div className="border-b border-border">
         <nav className="flex gap-1 overflow-x-auto" aria-label="Dashboard tabs">
@@ -117,7 +117,7 @@ export function EvaluationDashboard() {
 
       {/* Compliance tab */}
       {activeTab === 'compliance' && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <ComplianceReadiness />
           <GapAnalysisView />
         </div>

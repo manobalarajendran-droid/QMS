@@ -20,7 +20,7 @@ export function StatusBadge({ status, variant, className = '', type }: StatusBad
       ? REQ_COLORS[status as RequirementStatus]
       : TEST_COLORS[status as TestStatus];
     return (
-      <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${colors || ''} ${className}`}>
+      <span className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[11px] font-medium leading-tight ${colors || ''} ${className}`}>
         {t(`statuses.${status}`)}
       </span>
     );
@@ -30,7 +30,7 @@ export function StatusBadge({ status, variant, className = '', type }: StatusBad
   const colorClasses = VARIANT_STYLES[activeVariant];
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${colorClasses} ${className}`}>
+    <span className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[11px] font-medium leading-tight ${colorClasses} ${className}`}>
       {status || '—'}
     </span>
   );

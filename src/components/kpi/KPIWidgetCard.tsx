@@ -77,7 +77,7 @@ export function KPIWidgetCard({ widget, data }: Props) {
         <div className="text-4xl font-bold text-text-primary">{value.toLocaleString()}</div>
         <div className="text-sm text-text-secondary mt-1">{label}</div>
         <div className={`flex items-center gap-1 mt-2 text-xs ${
-          trendDir === 'up' ? 'text-green-600' : trendDir === 'down' ? 'text-red-600' : 'text-text-tertiary'
+          trendDir === 'up' ? 'text-success-text' : trendDir === 'down' ? 'text-danger-text' : 'text-text-tertiary'
         }`}>
           {trendDir === 'up' && <TrendingUp className="w-3.5 h-3.5" />}
           {trendDir === 'down' && <TrendingDown className="w-3.5 h-3.5" />}

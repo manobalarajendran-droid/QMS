@@ -154,7 +154,7 @@ export function StabilityStudy() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TestTube2 className="w-5 h-5 text-accent" />
@@ -163,7 +163,7 @@ export function StabilityStudy() {
         {canEdit && (
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('stability.addStudy')}
@@ -244,8 +244,8 @@ export function StabilityStudy() {
                               <td className="px-3 py-1.5 font-mono">{sample.result || '-'}</td>
                               <td className="px-3 py-1.5 text-text-tertiary">{sample.specification || '-'}</td>
                               <td className="px-3 py-1.5 text-center">
-                                {sample.inSpec === true && <span className="text-green-600 font-medium">Pass</span>}
-                                {sample.inSpec === false && <span className="text-red-600 font-medium">Fail</span>}
+                                {sample.inSpec === true && <span className="text-success-text font-medium">Pass</span>}
+                                {sample.inSpec === false && <span className="text-danger-text font-medium">Fail</span>}
                                 {sample.inSpec === null && '-'}
                               </td>
                               <td className="px-3 py-1.5 text-center">
@@ -330,10 +330,10 @@ function StudyForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('stability.addStudy')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('stability.productNamePlaceholder')} value={productName} onChange={(e) => setProductName(e.target.value)} />
           <div className="grid grid-cols-2 gap-3">
             <select className="px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={studyType} onChange={(e) => setStudyType(e.target.value)}>
@@ -355,12 +355,12 @@ function StudyForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel
             </div>
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ productName, studyType, conditions, startDate, durationMonths })}
             disabled={!productName || !conditions}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('common.save')}
           </button>
@@ -380,10 +380,10 @@ function SampleForm({ onSave, onCancel }: { onSave: (data: any) => void; onCance
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-md mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('stability.addSample')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">{t('stability.timePoint')}</label>
@@ -396,12 +396,12 @@ function SampleForm({ onSave, onCancel }: { onSave: (data: any) => void; onCance
             <input className="px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('stability.specPlaceholder')} value={specification} onChange={(e) => setSpecification(e.target.value)} />
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ timePointMonths, parameter, result: result || undefined, specification: specification || undefined })}
             disabled={!parameter}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('common.save')}
           </button>

@@ -148,7 +148,7 @@ export function DocumentManager() {
   };
 
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-700',
+    draft: 'bg-surface-tertiary text-text-secondary',
     in_review: 'bg-purple-100 text-purple-700',
     approved: 'bg-blue-100 text-blue-700',
     effective: 'bg-green-100 text-green-700',
@@ -183,7 +183,7 @@ export function DocumentManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
@@ -199,7 +199,7 @@ export function DocumentManager() {
         {canEdit && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('documents.createDocument')}
@@ -239,7 +239,7 @@ export function DocumentManager() {
             className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
           />
           <div className="flex gap-2">
-            <button onClick={handleCreate} className="px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90">
+            <button onClick={handleCreate} className="px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90">
               {t('common.save')}
             </button>
             <button onClick={() => setShowCreateForm(false)} className="px-3 py-1.5 text-sm font-medium text-text-secondary bg-surface border border-border rounded-lg hover:bg-surface-hover">
@@ -251,7 +251,7 @@ export function DocumentManager() {
 
       {/* Document List */}
       {documents.length === 0 ? (
-        <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <div className="bg-surface rounded-xl border border-border p-5 text-center">
           <FileText className="w-10 h-10 text-text-tertiary mx-auto mb-2" />
           <p className="text-text-tertiary">{t('documents.noDocuments')}</p>
         </div>
@@ -274,7 +274,7 @@ export function DocumentManager() {
                   <tr className="border-b border-border hover:bg-surface-hover transition-colors">
                     <td className="px-4 py-3 text-text-primary font-medium">{doc.title}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${typeColors[doc.type] || 'bg-gray-100 text-gray-700'}`}>
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${typeColors[doc.type] || 'bg-surface-tertiary text-text-secondary'}`}>
                         {t(`documents.type_${doc.type}`)}
                       </span>
                     </td>
@@ -299,7 +299,7 @@ export function DocumentManager() {
                         {canEdit && doc.status === 'draft' && (
                           <button
                             onClick={() => handleReview(doc.id, 'in_review')}
-                            className="text-xs text-purple-600 hover:underline"
+                            className="text-xs text-info-text hover:underline"
                           >
                             {t('documents.submitForReview')}
                           </button>
@@ -307,7 +307,7 @@ export function DocumentManager() {
                         {canApprove && doc.status === 'in_review' && (
                           <button
                             onClick={() => handleReview(doc.id, 'approved')}
-                            className="text-xs text-blue-600 hover:underline"
+                            className="text-xs text-info-text hover:underline"
                           >
                             {t('documents.approve')}
                           </button>
@@ -315,7 +315,7 @@ export function DocumentManager() {
                         {canApprove && doc.status === 'approved' && (
                           <button
                             onClick={() => handleReview(doc.id, 'effective')}
-                            className="text-xs text-green-600 hover:underline"
+                            className="text-xs text-success-text hover:underline"
                           >
                             {t('documents.makeEffective')}
                           </button>
@@ -323,7 +323,7 @@ export function DocumentManager() {
                         {canApprove && doc.status === 'effective' && (
                           <button
                             onClick={() => handleRetire(doc.id)}
-                            className="text-xs text-red-600 hover:underline"
+                            className="text-xs text-danger-text hover:underline"
                           >
                             {t('documents.retire')}
                           </button>
@@ -375,7 +375,7 @@ export function DocumentManager() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleCreateVersion(doc.id)}
-                              className="px-2 py-1 text-xs font-medium text-white bg-accent rounded-lg hover:bg-accent/90"
+                              className="px-2 py-1 text-xs font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90"
                             >
                               {t('common.save')}
                             </button>

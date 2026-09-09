@@ -23,13 +23,13 @@ const ROLE_OPTIONS = ['admin', 'qa_manager', 'qa_engineer', 'reviewer', 'auditor
 function roleBadgeClass(role: string) {
   switch (role) {
     case 'admin':
-      return 'bg-red-500/10 text-red-500 border-red-500/20';
+      return 'bg-red-500/10 text-danger-text border-red-500/20';
     case 'qa_manager':
       return 'bg-accent-subtle text-accent-text border-accent/20';
     case 'qa_engineer':
-      return 'bg-sky-500/10 text-sky-600 border-sky-500/20';
+      return 'bg-sky-500/10 text-info-text border-sky-500/20';
     case 'reviewer':
-      return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
+      return 'bg-emerald-500/10 text-success-text border-emerald-500/20';
     case 'auditor':
       return 'bg-amber-500/10 text-amber-700 border-amber-500/20';
     case 'editor':
@@ -149,7 +149,7 @@ export function WorkspaceManager({ open, onClose }: WorkspaceManagerProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <Users className="w-5 h-5 text-accent" />
             <div>
@@ -163,9 +163,9 @@ export function WorkspaceManager({ open, onClose }: WorkspaceManagerProps) {
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
           {loading ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-5">
               <Loader2 className="w-5 h-5 animate-spin text-accent" />
             </div>
           ) : (
@@ -244,13 +244,13 @@ export function WorkspaceManager({ open, onClose }: WorkspaceManagerProps) {
                     <button
                       type="submit"
                       disabled={inviting}
-                      className="px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
+                      className="px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
                     >
                       {inviting ? <Loader2 className="w-4 h-4 animate-spin" /> : t('auth.inviteUser')}
                     </button>
                   </form>
                   {inviteError && (
-                    <p className="text-xs text-red-500 mt-1">{inviteError}</p>
+                    <p className="text-xs text-danger-text mt-1">{inviteError}</p>
                   )}
                 </div>
               )}

@@ -15,36 +15,46 @@ export function TopBar({ title }: TopBarProps) {
   const openNCRs = ncrRecords.filter(r => r.status === 'Open').length;
 
   return (
-    <header className="h-14 shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-between px-6 z-10">
-      <div className="flex items-center gap-2">
-        <span className="font-bold text-indigo-600 dark:text-indigo-400 text-lg">PTA</span>
-        <span className="text-slate-400">|</span>
-        <span className="font-semibold text-slate-800 dark:text-slate-100">Plant-Tech Arabia</span>
+    <header className="z-10 flex h-12 shrink-0 items-center justify-between border-b border-border bg-surface px-4">
+      <div className="flex items-center gap-2.5">
+        <span
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white"
+          style={{ background: 'linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end))' }}
+        >
+          PT
+        </span>
+        <span className="text-[13px] font-semibold text-text-primary">Plant-Tech Arabia</span>
       </div>
-      
-      <div className="font-medium text-slate-700 dark:text-slate-200">
+
+      <div className="text-[12.5px] font-medium text-text-secondary">
         {title}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1.5">
         <CloudSyncButton />
         <ThemeToggle />
-        
-        <div className="relative">
-          <Bell className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+
+        <button
+          type="button"
+          aria-label={
+            openNCRs > 0 ? `Notifications: ${openNCRs} open NCRs` : 'Notifications: none open'
+          }
+          className="relative rounded-md p-2 text-text-tertiary transition-colors hover:bg-surface-hover hover:text-text-secondary"
+        >
+          <Bell className="h-4 w-4" />
           {openNCRs > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+            <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold tabular-nums text-danger-fg">
               {openNCRs}
             </span>
           )}
-        </div>
-        
+        </button>
+
         {user && (
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-bold text-sm">
+          <div className="ml-2 flex items-center gap-2 border-l border-border pl-3">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-subtle text-[11px] font-bold text-accent-text">
               {user.name.charAt(0).toUpperCase()}
             </div>
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300 hidden sm:block">
+            <span className="hidden text-[12.5px] font-medium text-text-secondary sm:block">
               {user.name}
             </span>
           </div>

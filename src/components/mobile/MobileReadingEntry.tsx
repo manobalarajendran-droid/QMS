@@ -68,7 +68,7 @@ export function MobileReadingEntry({ points, onSaveReading, onBack }: MobileRead
           </div>
         </div>
 
-        <div className="flex-1 px-4 py-6 space-y-6">
+        <div className="flex-1 px-4 py-4 space-y-4">
           {/* Last reading */}
           {selectedPoint.lastReading && (
             <div className="p-4 bg-surface rounded-xl border border-border">
@@ -86,14 +86,14 @@ export function MobileReadingEntry({ points, onSaveReading, onBack }: MobileRead
           <div className="grid grid-cols-2 gap-3">
             {selectedPoint.alertThreshold !== undefined && (
               <div className="p-3 bg-warning/10 border border-warning/30 rounded-xl text-center">
-                <p className="text-xs text-warning uppercase tracking-wider">{t('mobile.alertThreshold')}</p>
-                <p className="text-lg font-bold text-warning">{selectedPoint.alertThreshold} {selectedPoint.unit}</p>
+                <p className="text-xs text-warning-text uppercase tracking-wider">{t('mobile.alertThreshold')}</p>
+                <p className="text-lg font-bold text-warning-text">{selectedPoint.alertThreshold} {selectedPoint.unit}</p>
               </div>
             )}
             {selectedPoint.actionThreshold !== undefined && (
               <div className="p-3 bg-danger/10 border border-danger/30 rounded-xl text-center">
-                <p className="text-xs text-danger uppercase tracking-wider">{t('mobile.actionThreshold')}</p>
-                <p className="text-lg font-bold text-danger">{selectedPoint.actionThreshold} {selectedPoint.unit}</p>
+                <p className="text-xs text-danger-text uppercase tracking-wider">{t('mobile.actionThreshold')}</p>
+                <p className="text-lg font-bold text-danger-text">{selectedPoint.actionThreshold} {selectedPoint.unit}</p>
               </div>
             )}
           </div>
@@ -105,11 +105,11 @@ export function MobileReadingEntry({ points, onSaveReading, onBack }: MobileRead
               type="text"
               value={value}
               onChange={(e) => { setValue(e.target.value); setSaved(false); }}
-              className={`w-full px-4 py-6 text-3xl bg-surface border-2 rounded-xl text-center focus:outline-none transition-colors ${
+              className={`w-full px-4 py-4 text-3xl bg-surface border-2 rounded-xl text-center focus:outline-none transition-colors ${
                 status === 'action'
-                  ? 'border-danger text-danger'
+                  ? 'border-danger text-danger-text'
                   : status === 'alert'
-                  ? 'border-warning text-warning'
+                  ? 'border-warning text-warning-text'
                   : 'border-border text-text-primary focus:border-accent'
               }`}
               placeholder={selectedPoint.unit}
@@ -117,7 +117,7 @@ export function MobileReadingEntry({ points, onSaveReading, onBack }: MobileRead
               autoFocus
             />
             {status !== 'ok' && (
-              <div className={`mt-2 flex items-center gap-2 text-sm font-medium ${status === 'action' ? 'text-danger' : 'text-warning'}`}>
+              <div className={`mt-2 flex items-center gap-2 text-sm font-medium ${status === 'action' ? 'text-danger-text' : 'text-warning-text'}`}>
                 <AlertTriangle className="w-4 h-4" />
                 {status === 'action' ? t('mobile.actionExcursion') : t('mobile.alertExcursion')}
               </div>
@@ -132,7 +132,7 @@ export function MobileReadingEntry({ points, onSaveReading, onBack }: MobileRead
             className={`w-full py-4 rounded-xl text-lg font-medium transition-all ${
               saved
                 ? 'bg-green-500 text-white'
-                : 'bg-accent text-white hover:bg-accent-hover disabled:opacity-50'
+                : 'bg-accent text-accent-fg hover:bg-accent-hover disabled:opacity-50'
             }`}
           >
             {saved ? (

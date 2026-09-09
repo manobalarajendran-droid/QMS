@@ -98,7 +98,7 @@ export function QuizTaker({ quizId, onBack }: Props) {
   }
 
   if (!quiz) {
-    return <div className="text-center py-8 text-text-secondary">{t('quizzes.notFound')}</div>;
+    return <div className="text-center py-5 text-text-secondary">{t('quizzes.notFound')}</div>;
   }
 
   // Results view
@@ -110,11 +110,11 @@ export function QuizTaker({ quizId, onBack }: Props) {
           {t('common.back')}
         </button>
 
-        <div className={`p-6 rounded-xl text-center ${result.attempt.passed ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
+        <div className={`p-4 rounded-xl text-center ${result.attempt.passed ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
           {result.attempt.passed ? (
-            <CheckCircle2 className="w-12 h-12 mx-auto mb-2 text-green-500" />
+            <CheckCircle2 className="w-12 h-12 mx-auto mb-2 text-success-text" />
           ) : (
-            <XCircle className="w-12 h-12 mx-auto mb-2 text-red-500" />
+            <XCircle className="w-12 h-12 mx-auto mb-2 text-danger-text" />
           )}
           <h3 className="text-xl font-bold text-text-primary">
             {result.attempt.passed ? t('quizzes.passed') : t('quizzes.failed')}
@@ -210,7 +210,7 @@ export function QuizTaker({ quizId, onBack }: Props) {
         <button
           onClick={handleSubmit}
           disabled={submitting || Object.keys(answers).length === 0}
-          className="px-4 py-2 text-sm bg-accent text-white rounded-lg disabled:opacity-50"
+          className="px-4 py-2 text-sm bg-accent text-accent-fg rounded-lg disabled:opacity-50"
         >
           {submitting ? t('common.saving') : t('quizzes.submitQuiz')}
         </button>

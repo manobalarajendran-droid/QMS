@@ -102,7 +102,7 @@ export function UDIManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Barcode className="w-5 h-5 text-accent" />
@@ -130,7 +130,7 @@ export function UDIManager() {
           {canEdit && (
             <button
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
             >
               <Plus className="w-4 h-4" />
               {t('udi.addUDI')}
@@ -169,16 +169,16 @@ export function UDIManager() {
                   <td className="px-4 py-2.5 text-text-secondary">{udi.versionModelNo || '-'}</td>
                   <td className="px-4 py-2.5 text-center">
                     {udi.gudidSubmitted ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-500 mx-auto" />
+                      <CheckCircle2 className="w-4 h-4 text-success-text mx-auto" />
                     ) : (
-                      <XCircle className="w-4 h-4 text-gray-300 mx-auto" />
+                      <XCircle className="w-4 h-4 text-text-tertiary mx-auto" />
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     {udi.eudamedRegistered ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-500 mx-auto" />
+                      <CheckCircle2 className="w-4 h-4 text-success-text mx-auto" />
                     ) : (
-                      <XCircle className="w-4 h-4 text-gray-300 mx-auto" />
+                      <XCircle className="w-4 h-4 text-text-tertiary mx-auto" />
                     )}
                   </td>
                 </tr>
@@ -207,10 +207,10 @@ function UDIForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel: 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('udi.addUDI')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('udi.deviceIdentifierPlaceholder')} value={deviceIdentifier} onChange={(e) => setDeviceIdentifier(e.target.value)} />
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('udi.productNamePlaceholder')} value={productName} onChange={(e) => setProductName(e.target.value)} />
           <div className="grid grid-cols-2 gap-3">
@@ -221,12 +221,12 @@ function UDIForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel: 
           <textarea className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" rows={2} placeholder={t('udi.descriptionPlaceholder')} value={deviceDescription} onChange={(e) => setDeviceDescription(e.target.value)} />
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('udi.productionIdPlaceholder')} value={productionId} onChange={(e) => setProductionId(e.target.value)} />
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ deviceIdentifier, productName, brandName, versionModelNo, companyName, deviceDescription, productionId: productionId || undefined })}
             disabled={!deviceIdentifier || !productName}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('common.save')}
           </button>

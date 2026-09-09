@@ -216,13 +216,13 @@ export function MRMManager() {
       <div className="flex items-center gap-2">
         <button
           onClick={() => setView('meetings')}
-          className={`text-sm font-semibold px-3 py-1.5 rounded-lg border transition-colors flex items-center gap-1.5 ${view === 'meetings' ? 'bg-accent text-white border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
+          className={`text-sm font-semibold px-3 py-1.5 rounded-lg border transition-colors flex items-center gap-1.5 ${view === 'meetings' ? 'bg-accent text-accent-fg border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
         >
           <Landmark className="w-4 h-4" /> Meetings
         </button>
         <button
           onClick={() => setView('actions')}
-          className={`text-sm font-semibold px-3 py-1.5 rounded-lg border transition-colors flex items-center gap-1.5 ${view === 'actions' ? 'bg-accent text-white border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
+          className={`text-sm font-semibold px-3 py-1.5 rounded-lg border transition-colors flex items-center gap-1.5 ${view === 'actions' ? 'bg-accent text-accent-fg border-accent' : 'border-border text-text-secondary hover:bg-surface-hover'}`}
         >
           <ListChecks className="w-4 h-4" /> Action Tracker
         </button>
@@ -249,14 +249,14 @@ export function MRMManager() {
             {/* Pre-read alerts */}
             {(preRead.objectiveMisses.length > 0 || preRead.slaBreaches.length > 0) && (
               <div className="bg-danger-subtle border border-danger/30 rounded-lg p-3">
-                <div className="text-xs font-semibold text-danger mb-2 flex items-center gap-1">
+                <div className="text-xs font-semibold text-danger-text mb-2 flex items-center gap-1">
                   <Flag className="w-3 h-3" /> Auto-flagged for next MRM
                 </div>
                 {preRead.objectiveMisses.map((m, i) => (
-                  <div key={i} className="text-xs text-danger mb-1">⚠ {m}</div>
+                  <div key={i} className="text-xs text-danger-text mb-1">⚠ {m}</div>
                 ))}
                 {preRead.slaBreaches.map((b, i) => (
-                  <div key={i} className="text-xs text-danger mb-1">🚨 {b}</div>
+                  <div key={i} className="text-xs text-danger-text mb-1">🚨 {b}</div>
                 ))}
               </div>
             )}
@@ -268,7 +268,7 @@ export function MRMManager() {
               </h2>
               <button
                 onClick={() => setShowNewModal(true)}
-                className="flex items-center gap-1 text-xs bg-accent text-white px-2 py-1 rounded-lg hover:bg-accent-hover transition-colors"
+                className="flex items-center gap-1 text-xs bg-accent text-accent-fg px-2 py-1 rounded-lg hover:bg-accent-hover transition-colors"
               >
                 <Plus className="w-3 h-3" /> New
               </button>
@@ -333,12 +333,12 @@ export function MRMManager() {
                         <div className="text-xs text-text-tertiary mt-0.5">{r.meetingDate} · {r.chairperson}</div>
                       </div>
                       <div className="flex items-center gap-1">
-                        {overdue && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+                        {overdue && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
                         <StatusBadge status={STATUS_LABELS[r.status] ?? r.status} />
                       </div>
                     </div>
                     {(r.flaggedObjectiveMisses.length > 0 || r.flaggedSLABreaches.length > 0) && (
-                      <div className="mt-1.5 text-xs text-danger flex items-center gap-1">
+                      <div className="mt-1.5 text-xs text-danger-text flex items-center gap-1">
                         <AlertTriangle className="w-3 h-3" />
                         {r.flaggedObjectiveMisses.length + r.flaggedSLABreaches.length} flagged items
                       </div>
@@ -347,7 +347,7 @@ export function MRMManager() {
                 );
               })}
               {filteredRecords.length === 0 && (
-                <p className="text-sm text-text-tertiary text-center py-8">No meetings found.</p>
+                <p className="text-sm text-text-tertiary text-center py-5">No meetings found.</p>
               )}
             </div>
           </div>
@@ -426,7 +426,7 @@ function ActionTrackerView({ records }: { records: MRMRecord[] }) {
                 <span>{a.meetingNo}</span>
                 <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {a.owner || '—'}</span>
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {a.dueDate || '—'}</span>
-                {isActionOverdue(a) && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+                {isActionOverdue(a) && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
               </div>
             </div>
             <select
@@ -445,7 +445,7 @@ function ActionTrackerView({ records }: { records: MRMRecord[] }) {
             </select>
           </div>
         ))}
-        {filtered.length === 0 && <p className="text-sm text-text-tertiary text-center py-8">No action items found.</p>}
+        {filtered.length === 0 && <p className="text-sm text-text-tertiary text-center py-5">No action items found.</p>}
       </div>
     </div>
   );
@@ -495,13 +495,13 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
 
   return (
     <div className="space-y-4 print:space-y-4">
-      <div className="bg-surface rounded-xl border border-border p-6">
+      <div className="bg-surface rounded-xl border border-border p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 flex-wrap">
               <h2 className="text-2xl font-bold text-text-primary">{record.meetingNo}</h2>
               <StatusBadge status={STATUS_LABELS[record.status] ?? record.status} />
-              {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+              {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
             </div>
             {!editingDetails ? (
               <>
@@ -541,7 +541,7 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
                   onClose();
                 }
               }}
-              className="p-2 text-danger hover:bg-danger-subtle rounded-full transition-colors"
+              className="p-2 text-danger-text hover:bg-danger-subtle rounded-full transition-colors"
             >
               Delete
             </button>
@@ -561,14 +561,14 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
       {/* Flagged items */}
       {(record.flaggedObjectiveMisses.length > 0 || record.flaggedSLABreaches.length > 0) && (
         <div className="bg-danger-subtle border border-danger/30 rounded-xl p-4">
-          <h4 className="text-sm font-semibold text-danger mb-2 flex items-center gap-2">
+          <h4 className="text-sm font-semibold text-danger-text mb-2 flex items-center gap-2">
             <Flag className="w-4 h-4" /> Auto-flagged Agenda Items (require root-cause discussion)
           </h4>
           {record.flaggedObjectiveMisses.map((m, i) => (
-            <div key={i} className="text-sm text-danger mb-1">⚠ Objective Miss: {m}</div>
+            <div key={i} className="text-sm text-danger-text mb-1">⚠ Objective Miss: {m}</div>
           ))}
           {record.flaggedSLABreaches.map((b, i) => (
-            <div key={i} className="text-sm text-danger mb-1">🚨 SLA Breach: {b}</div>
+            <div key={i} className="text-sm text-danger-text mb-1">🚨 SLA Breach: {b}</div>
           ))}
         </div>
       )}
@@ -707,7 +707,7 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
                       className="bg-transparent border-b border-transparent hover:border-border focus:border-accent outline-none"
                     />
                   </span>
-                  {isActionOverdue(a) && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+                  {isActionOverdue(a) && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
                   <input
                     value={a.clause ?? ''}
                     onChange={(e) => updateActionItem(record.id, a.id, { clause: e.target.value })}
@@ -738,7 +738,7 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
               </select>
               <button
                 onClick={() => deleteActionItem(record.id, a.id)}
-                className="p-1 text-text-tertiary hover:text-danger transition-colors"
+                className="p-1 text-text-tertiary hover:text-danger-text transition-colors"
                 title="Remove action item"
               >
                 <X className="w-3.5 h-3.5" />
@@ -752,7 +752,7 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
       </div>
 
       {/* Workflow state */}
-      <section className="bg-surface rounded-xl border border-border p-6">
+      <section className="bg-surface rounded-xl border border-border p-4">
         <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Workflow State</h3>
         <StateTransitionBar
           statuses={STATUSES}
@@ -786,7 +786,7 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
       </section>
 
       {showComments && (
-        <section className="bg-surface rounded-xl border border-border p-6 print:hidden">
+        <section className="bg-surface rounded-xl border border-border p-4 print:hidden">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Comments</h3>
           <CommentThread entityType="mrm" entityId={record.id} projectId={projectId} />
         </section>
@@ -840,7 +840,7 @@ function MRMDetailsEditForm({
               attendees: attendeesStr.split(',').map((s) => s.trim()).filter(Boolean),
             })
           }
-          className="px-3 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
+          className="px-3 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent-hover transition-colors"
         >
           Save
         </button>
@@ -891,7 +891,7 @@ function MRMFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-surface w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-border text-text-primary animate-modal-enter">
+      <div className="bg-surface w-full max-w-2xl rounded-lg p-4 shadow-2xl border border-border text-text-primary animate-modal-enter">
         <h3 className="text-xl font-bold text-text-primary mb-5">Schedule Management Review Meeting</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -932,7 +932,7 @@ function MRMFormModal({
               className={`${inputCls} font-mono text-xs`}
             />
           </Labeled>
-          <div className="flex justify-end gap-3 mt-6 pt-2 border-t border-border">
+          <div className="flex justify-end gap-3 mt-4 pt-2 border-t border-border">
             <button
               type="button"
               onClick={onClose}
@@ -942,7 +942,7 @@ function MRMFormModal({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-white rounded-lg shadow-sm transition-colors"
+              className="px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-accent-fg rounded-lg shadow-sm transition-colors"
             >
               Schedule Meeting
             </button>

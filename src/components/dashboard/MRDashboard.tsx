@@ -1,15 +1,38 @@
+import { useMemo } from 'react';
+import { CalendarClock, ChevronRight, ClipboardList, Info } from 'lucide-react';
 import { useNCRStore } from '../../store/useNCRStore';
 import { useTUVStore } from '../../store/useTUVStore';
 import { useCSIStore } from '../../store/useCSIStore';
 import { useObjectivesStore } from '../../store/useObjectivesStore';
-import { ShieldCheck, CheckCircle, Clock, Info, Target, FileWarning, ArrowUpRight, Minus } from 'lucide-react';
-import { useMemo } from 'react';
 import { StatusBadge } from '../shared/StatusBadge';
 import type { ViewTab } from '../../types';
+import {
+  CARD,
+  ClauseSpine,
+  DeptProgress,
+  StagePipeline,
+  T,
+  clauseFamily,
+  type ClauseDatum,
+  type DeptDatum,
+  type StageDatum,
+} from './AuditCharts';
 
 interface MRDashboardProps {
   onNavigate: (tab: ViewTab) => void;
 }
+
+const TUV_SURVEILLANCE_DATE = new Date('2027-06-30T00:00:00Z');
+
+const DATE_FORMAT = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
+/** 'Achieved' is canonical; 'Completed' is the legacy alias kept for V12 imports. */
+const OBJECTIVE_DONE = new Set(['Achieved', 'Completed']);
 
 export function MRDashboard({ onNavigate }: MRDashboardProps) {
   const ncrRecords = useNCRStore((s) => s.records);
@@ -17,206 +40,362 @@ export function MRDashboard({ onNavigate }: MRDashboardProps) {
   const csiRecords = useCSIStore((s) => s.records);
   const objRecords = useObjectivesStore((s) => s.records);
 
-  const openNCRsList = ncrRecords.filter(r => r.status !== 'Closed');
+  const openNCRsList = ncrRecords.filter((r) => r.status !== 'Closed');
   const openNCRs = openNCRsList.length;
 
+  const activeObjectives = objRecords.filter((r) => !OBJECTIVE_DONE.has(r.status));
   const overdueObjectives = useMemo(() => {
-    return objRecords.filter(r => {
-      if (r.status === 'Completed' || !r.deadline) return false;
-      return new Date(r.deadline) < new Date();
-    }).length;
-  }, [objRecords]);
+    const now = new Date();
+    return activeObjectives.filter((r) => r.deadline && new Date(r.deadline) < now).length;
+  }, [activeObjectives]);
 
   const daysToTuv = useMemo(() => {
-    const auditDate = new Date('2027-06-30T00:00:00Z');
-    const today = new Date();
-    const diffTime = auditDate.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diff = TUV_SURVEILLANCE_DATE.getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }, []);
 
-  const avgCSI = useMemo(() => {
-    if (csiRecords.length === 0) return '0.0';
-    const total = csiRecords.reduce((acc, curr) => {
-      const num = Number(curr?.score) || 0;
-      const normalized = num > 10 ? num / 10 : num;
-      return acc + normalized;
-    }, 0);
-    return (total / csiRecords.length).toFixed(1);
+  const openTuv = tuvRecords.filter((r) => r.status !== 'Closed');
+  const closedTuvCount = tuvRecords.length - openTuv.length;
+  const tuvClosureRate = tuvRecords.length
+    ? Math.round((closedTuvCount / tuvRecords.length) * 100)
+    : 0;
+
+  const csiPercent = useMemo(() => {
+    const scored = csiRecords
+      .map((r) => {
+        // totalScore is the calculated 0-100 field; older V12 rows only carry
+        // `score`, which was imported as a 0-1 fraction on some vintages.
+        if (typeof r.totalScore === 'number' && Number.isFinite(r.totalScore)) return r.totalScore;
+        const num = Number(r.score);
+        if (!Number.isFinite(num) || num === 0) return null;
+        return num <= 1 ? num * 100 : num <= 10 ? num * 10 : num;
+      })
+      .filter((n): n is number => n !== null);
+    if (scored.length === 0) return null;
+    return {
+      value: Math.round(scored.reduce((a, b) => a + b, 0) / scored.length),
+      n: scored.length,
+    };
   }, [csiRecords]);
 
+  const stages: StageDatum[] = useMemo(() => {
+    const bucket = { Open: 0, 'Action Taken': 0, Verified: 0, Closed: 0 };
+    for (const r of tuvRecords) {
+      if (r.status === 'Closed') bucket.Closed += 1;
+      else if (r.status === 'Verified') bucket.Verified += 1;
+      else if (r.status === 'Action Taken' || r.status === 'In Progress')
+        bucket['Action Taken'] += 1;
+      else bucket.Open += 1;
+    }
+    return [
+      { name: 'Open', value: bucket.Open, color: 'var(--color-stage-open)' },
+      { name: 'Action taken', value: bucket['Action Taken'], color: 'var(--color-stage-action)' },
+      { name: 'Verified', value: bucket.Verified, color: 'var(--color-stage-verified)' },
+      { name: 'Closed', value: bucket.Closed, color: 'var(--color-stage-closed)' },
+    ];
+  }, [tuvRecords]);
+
+  const { clauseData, unmappedFindings } = useMemo(() => {
+    const now = Date.now();
+    const map = new Map<number, ClauseDatum>();
+    let unmapped = 0;
+    for (const r of tuvRecords) {
+      const fam = clauseFamily(r.cl);
+      if (fam === null) {
+        unmapped += 1;
+        continue;
+      }
+      const entry = map.get(fam) ?? { clause: fam, total: 0, overdue: 0 };
+      entry.total += 1;
+      if (r.status !== 'Closed' && r.due && new Date(r.due).getTime() < now) entry.overdue += 1;
+      map.set(fam, entry);
+    }
+    return { clauseData: [...map.values()], unmappedFindings: unmapped };
+  }, [tuvRecords]);
+
+  const deptData: DeptDatum[] = useMemo(() => {
+    const now = Date.now();
+    const map = new Map<string, { sum: number; count: number; overdue: number }>();
+    for (const r of objRecords) {
+      const dept = (r.dept || '').trim();
+      if (!dept) continue;
+      const entry = map.get(dept) ?? { sum: 0, count: 0, overdue: 0 };
+      entry.sum += OBJECTIVE_DONE.has(r.status) ? 100 : Math.min(100, Math.max(0, r.pct ?? 0));
+      entry.count += 1;
+      if (!OBJECTIVE_DONE.has(r.status) && r.deadline && new Date(r.deadline).getTime() < now)
+        entry.overdue += 1;
+      map.set(dept, entry);
+    }
+    return [...map.entries()]
+      .map(([dept, v]) => ({
+        dept,
+        pct: Math.round(v.sum / v.count),
+        count: v.count,
+        overdue: v.overdue,
+      }))
+      .sort((a, b) => a.pct - b.pct || b.count - a.count)
+      .slice(0, 6);
+  }, [objRecords]);
+
+  const overdueTuv = useMemo(() => {
+    const now = Date.now();
+    return openTuv.filter((r) => r.due && new Date(r.due).getTime() < now).length;
+  }, [openTuv]);
+
+  /**
+   * Every item is derived from a register and links to it. An action the data
+   * cannot substantiate is a fabricated instruction on an audited system, so a
+   * clear board shows the empty state rather than filler.
+   */
+  const secretariatActions = [
+    {
+      key: 'tuv-overdue',
+      show: overdueTuv > 0,
+      text: `Close ${overdueTuv} TÜV finding${overdueTuv === 1 ? '' : 's'} past the committed due date.`,
+      tab: 'tuv' as ViewTab,
+    },
+    {
+      key: 'obj-overdue',
+      show: overdueObjectives > 0,
+      text: `Follow up on ${overdueObjectives} departmental objective${
+        overdueObjectives === 1 ? '' : 's'
+      } past deadline.`,
+      tab: 'objectives' as ViewTab,
+    },
+    {
+      key: 'ncr-open',
+      show: openNCRs > 0,
+      text: `Progress ${openNCRs} open NCR${openNCRs === 1 ? '' : 's'} toward closure.`,
+      tab: 'deviations' as ViewTab,
+    },
+    {
+      key: 'clause-unmapped',
+      show: unmappedFindings > 0,
+      text: `Add clause references to ${unmappedFindings} finding${
+        unmappedFindings === 1 ? '' : 's'
+      } so they map to the standard.`,
+      tab: 'tuv' as ViewTab,
+    },
+    {
+      key: 'csi-missing',
+      show: csiPercent === null,
+      text: 'Record a customer satisfaction evaluation; none is on file.',
+      tab: 'pms' as ViewTab,
+    },
+  ].filter((a) => a.show);
+
+  const bandMetrics = [
+    {
+      key: 'ncr',
+      label: 'Open NCRs',
+      value: String(openNCRs),
+      context: `of ${ncrRecords.length} raised`,
+      alert: openNCRs > 0,
+      tab: 'deviations' as ViewTab,
+    },
+    {
+      key: 'obj',
+      label: 'Overdue objectives',
+      value: String(overdueObjectives),
+      context: `of ${activeObjectives.length} active`,
+      alert: overdueObjectives > 0,
+      tab: 'objectives' as ViewTab,
+    },
+    {
+      key: 'csi',
+      label: 'CSI score',
+      value: csiPercent === null ? '—' : `${csiPercent.value}%`,
+      context: csiPercent === null ? 'Not evaluated' : `${csiPercent.n} evaluations`,
+      alert: false,
+      tab: 'pms' as ViewTab,
+    },
+  ];
+
   return (
-    <div className="p-6 space-y-6 animate-fade-in max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="animate-fade-in mx-auto max-w-[1400px] space-y-4">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <ShieldCheck className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
-            MR Dashboard (Command Center)
+          <h1 className="text-[16px] font-semibold tracking-tight text-text-primary">
+            MR Dashboard
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Management Representative Overview & Live Metrics</p>
+          <p className={`mt-0.5 ${T.label}`}>
+            Management representative overview and live metrics
+          </p>
         </div>
-      </div>
+        <div className="flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-1.5">
+          <CalendarClock className="h-3.5 w-3.5 shrink-0 text-text-tertiary" />
+          <span className={T.body}>
+            Surveillance No. 3 · {DATE_FORMAT.format(TUV_SURVEILLANCE_DATE)}
+          </span>
+        </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* KPI 1: Open NCRs */}
-        <button
-          type="button"
-          onClick={() => onNavigate('deviations')}
-          className="text-left glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-red-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40 cursor-pointer"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Open NCRs</h3>
-            <div className="p-2.5 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"><FileWarning className="w-5 h-5" /></div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">{openNCRs}</div>
-            <div className="flex items-center text-xs font-medium text-red-600">
-              <ArrowUpRight className="w-3 h-3 mr-0.5" /> +2 this week
-            </div>
-          </div>
-          <div className="text-xs text-slate-500 mt-1">Non-conformance reports awaiting closure</div>
-        </button>
+      {/* Every tile carries its own denominator and links to the register it
+          came from, so a number is never a dead end. */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+        <div className={`${CARD} p-3`}>
+          <div className={T.micro}>Days to surveillance</div>
+          <div className={`mt-1.5 ${T.hero}`}>{daysToTuv}</div>
+          <div className={`mt-1.5 ${T.label}`}>{DATE_FORMAT.format(TUV_SURVEILLANCE_DATE)}</div>
+        </div>
 
-        {/* KPI 2: Overdue Objectives */}
-        <button
-          type="button"
-          onClick={() => onNavigate('objectives')}
-          className="text-left glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-amber-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40 cursor-pointer"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Overdue Objectives</h3>
-            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"><Target className="w-5 h-5" /></div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">{overdueObjectives}</div>
-            <div className="flex items-center text-xs font-medium text-amber-600">
-              <Minus className="w-3 h-3 mr-0.5" /> Unchanged
-            </div>
-          </div>
-          <div className="text-xs text-slate-500 mt-1">Action required by department heads</div>
-        </button>
-
-        {/* KPI 3: Next Audit */}
         <button
           type="button"
           onClick={() => onNavigate('tuv_tracker')}
-          className="text-left glass-card-accent rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-indigo-500 shadow-lg text-slate-900 dark:text-white cursor-pointer"
+          className={`${CARD} p-3 text-left transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent`}
         >
-          <div className="flex items-center justify-between mb-3 opacity-90">
-            <h3 className="font-semibold text-sm">Next TÜV Audit</h3>
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 dark:bg-white/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"><Clock className="w-5 h-5" /></div>
+          <div className={T.micro}>Findings closed</div>
+          <div className="mt-1.5 flex items-baseline gap-1.5">
+            <span className={T.metric}>{tuvClosureRate}%</span>
+            <span className={T.label}>
+              {closedTuvCount}/{tuvRecords.length}
+            </span>
           </div>
-          <div className="flex items-baseline gap-2">
-            <div className="text-3xl font-bold font-mono">{daysToTuv > 0 ? daysToTuv : 0}</div>
-            <div className="text-sm opacity-80">Days</div>
+          <div
+            className="mt-2 h-1 w-full overflow-hidden rounded-full bg-chart-track"
+            role="progressbar"
+            aria-valuenow={tuvClosureRate}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="TÜV findings closed"
+          >
+            <div className="h-full rounded-full bg-accent" style={{ width: `${tuvClosureRate}%` }} />
           </div>
-          <div className="text-xs opacity-70 mt-1">Surveillance No. 3 Preparation</div>
         </button>
 
-        {/* KPI 4: Avg CSI */}
-        <button
-          type="button"
-          onClick={() => onNavigate('pms')}
-          className="text-left glass-card rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-emerald-500 shadow-lg shadow-slate-200/40 dark:shadow-slate-950/40 cursor-pointer"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Average CSI Score</h3>
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"><CheckCircle className="w-5 h-5" /></div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">{avgCSI}</div>
-            <div className="flex items-center text-xs font-medium text-emerald-600">
-              <ArrowUpRight className="w-3 h-3 mr-0.5" /> 8.5 target
+        {bandMetrics.map(({ key, label, value, context, alert, tab }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onNavigate(tab)}
+            className={`${CARD} p-3 text-left transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent`}
+          >
+            <div className={`truncate ${T.micro}`}>{label}</div>
+            <div
+              className={`mt-1.5 ${T.metric}`}
+              style={alert ? { color: 'var(--color-danger-text)' } : undefined}
+            >
+              {value}
             </div>
-          </div>
-          <div className="text-xs text-slate-500 mt-1">Across all recent projects</div>
-        </button>
+            <div className={`mt-1.5 truncate ${T.label}`}>{context}</div>
+          </button>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column: Recent NCRs */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-[400px]">
-          <div className="border-b border-slate-200 dark:border-slate-700 px-5 py-4">
-            <h3 className="font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-              <FileWarning className="w-4 h-4 text-slate-500" />
-              Recent Open NCRs
-            </h3>
+      <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-12">
+        {/* Signature: TÜV audits against clauses, so weakness is a clause question */}
+        <section className={`${CARD} lg:col-span-8`}>
+          <header className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border px-4 py-2.5">
+            <h2 className={T.section}>Findings by ISO 9001 clause</h2>
+            <p className={T.label}>Red marks a clause with an overdue finding</p>
+          </header>
+          <div className="px-4 py-4">
+            <ClauseSpine data={clauseData} unmapped={unmappedFindings} />
           </div>
-          <div className="flex-1 overflow-y-auto p-2">
-            {openNCRsList.length === 0 ? (
-              <div className="p-8 text-center text-slate-500">No open NCRs.</div>
-            ) : (
-              <ul className="space-y-1">
-                {openNCRsList.slice(0, 10).map((r) => (
-                  <li key={r.id} className="p-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="font-medium text-indigo-600 dark:text-indigo-400 text-sm">{r.ref || r.id}</span>
-                      <StatusBadge status={r.status} />
-                    </div>
-                    <div className="text-sm text-slate-700 dark:text-slate-300 line-clamp-1">{r.desc}</div>
-                    <div className="text-xs text-slate-500 mt-1 flex justify-between">
-                      <span>Owner: {r.raisedBy || 'Unassigned'}</span>
-                      <span>{r.dt || r.createdAt.slice(0,10)}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
+        </section>
 
-        {/* Right Column: Upcoming Deadlines & Secretariat Reminders */}
-        <div className="flex flex-col gap-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div className="border-b border-slate-200 dark:border-slate-700 px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-l-amber-500">
-              <h3 className="font-semibold text-amber-700 dark:text-amber-500 text-sm flex items-center gap-2">
-                <Info className="w-4 h-4" />
-                MR Secretariat — Action Items
-              </h3>
-            </div>
-            <div className="p-4 text-sm text-slate-600 dark:text-slate-300">
-              <ul className="space-y-3">
-                <li className="flex gap-2">
-                  <span className="text-amber-500 mt-0.5">•</span>
-                  <span>Review QMS Document Master List for obsolete forms.</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-amber-500 mt-0.5">•</span>
-                  <span>Follow up on {overdueObjectives} overdue departmental objectives.</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-amber-500 mt-0.5">•</span>
-                  <span>Prepare Management Review Meeting (MRM) slides for next week.</span>
-                </li>
-              </ul>
-            </div>
+        <section className={`${CARD} lg:col-span-4`}>
+          <header className="border-b border-border px-4 py-2.5">
+            <h2 className={T.section}>Finding pipeline</h2>
+            <p className={`mt-0.5 ${T.label}`}>How far the register has moved toward closure</p>
+          </header>
+          <div className="px-4 py-4">
+            <StagePipeline data={stages} centerValue={String(openTuv.length)} centerLabel="open" />
           </div>
+        </section>
+      </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col flex-1">
-            <div className="border-b border-slate-200 dark:border-slate-700 px-5 py-4">
-              <h3 className="font-semibold text-slate-800 dark:text-white flex items-center gap-2 text-sm">
-                <Clock className="w-4 h-4 text-slate-500" />
-                Upcoming Deadlines (TÜV Recs)
-              </h3>
-            </div>
-            <div className="p-4 flex-1">
-              <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                {tuvRecords.filter(r => r.status !== 'Closed').slice(0, 5).map((r, i) => (
-                  <li key={r.id} className="flex items-start gap-3 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
-                    <span className="w-6 h-6 shrink-0 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-medium mt-0.5">{i + 1}</span>
-                    <div className="flex-1">
-                      <div className="font-medium text-slate-800 dark:text-slate-200">{r.num}:</div>
-                      <div className="mt-0.5 opacity-90">{r.desc}</div>
-                    </div>
-                  </li>
-                ))}
-                {tuvRecords.filter(r => r.status !== 'Closed').length === 0 && (
-                  <div className="text-center text-slate-500 py-4">No pending TÜV recommendations.</div>
-                )}
-              </ul>
-            </div>
+      <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-12">
+        <section className={`${CARD} lg:col-span-7`}>
+          <header className="flex items-center justify-between border-b border-border px-4 py-2.5">
+            <h2 className={T.section}>Open TÜV findings</h2>
+            <span className={`tabular-nums ${T.label}`}>{openTuv.length}</span>
+          </header>
+          {openTuv.length === 0 ? (
+            <p className={`px-4 py-5 text-center ${T.body}`}>No pending TÜV recommendations.</p>
+          ) : (
+            <ul className="divide-y divide-border-subtle">
+              {openTuv.slice(0, 5).map((r) => (
+                <li key={r.id} className="px-4 py-2.5">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[12.5px] font-semibold text-text-primary">{r.num}</span>
+                    {r.cl && <span className={`tabular-nums ${T.label}`}>Cl. {r.cl}</span>}
+                    <span className={`ml-auto tabular-nums ${T.label}`}>due {r.due || '—'}</span>
+                  </div>
+                  <p className="mt-0.5 line-clamp-2 text-[12.5px] text-text-secondary">{r.desc}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className={`${CARD} lg:col-span-5`}>
+          <header className="border-b border-border px-4 py-2.5">
+            <h2 className={T.section}>Objective progress by department</h2>
+            <p className={`mt-0.5 ${T.label}`}>Furthest behind first</p>
+          </header>
+          <div className="px-4 py-3">
+            <DeptProgress data={deptData} />
           </div>
-        </div>
+        </section>
+      </div>
+
+      <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-12">
+        <section className={`${CARD} lg:col-span-7`}>
+          <header className="flex items-center justify-between border-b border-border px-4 py-2.5">
+            <h2 className={T.section}>Open NCRs</h2>
+            <span className={`tabular-nums ${T.label}`}>{openNCRs}</span>
+          </header>
+          {openNCRsList.length === 0 ? (
+            <p className={`px-4 py-5 text-center ${T.body}`}>No open non-conformances.</p>
+          ) : (
+            <ul className="divide-y divide-border-subtle">
+              {openNCRsList.slice(0, 5).map((r) => (
+                <li key={r.id} className="px-4 py-2.5 transition-colors hover:bg-surface-hover">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-[12.5px] font-medium text-accent-text">
+                      {r.ref || r.id}
+                    </span>
+                    <StatusBadge status={r.status} />
+                  </div>
+                  <p className="mt-0.5 line-clamp-1 text-[12.5px] text-text-secondary">{r.desc}</p>
+                  <div className={`mt-1 flex justify-between ${T.label}`}>
+                    <span className="truncate">{r.raisedBy || 'Unassigned'}</span>
+                    <span className="shrink-0 tabular-nums">{r.dt || r.createdAt.slice(0, 10)}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className={`${CARD} lg:col-span-5`}>
+          <header className="flex items-center gap-2 border-b border-border px-4 py-2.5">
+            <Info className="h-3.5 w-3.5 text-text-tertiary" />
+            <h2 className={T.section}>Secretariat actions</h2>
+          </header>
+          {secretariatActions.length === 0 ? (
+            <p className={`px-4 py-5 text-center ${T.body}`}>
+              Nothing outstanding. Every register is clear.
+            </p>
+          ) : (
+            <ul className="divide-y divide-border-subtle">
+              {secretariatActions.map((a) => (
+                <li key={a.key}>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(a.tab)}
+                    className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left transition-colors hover:bg-surface-hover"
+                  >
+                    <ClipboardList className="h-3.5 w-3.5 shrink-0 text-text-tertiary" />
+                    <span className={`min-w-0 flex-1 ${T.body}`}>{a.text}</span>
+                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-text-tertiary" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   );

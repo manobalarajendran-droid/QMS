@@ -226,7 +226,7 @@ export function ProviderSettings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-text-primary">
@@ -243,7 +243,7 @@ export function ProviderSettings() {
 
       {/* Provider list */}
       {providers.length === 0 ? (
-        <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <div className="bg-surface rounded-xl border border-border p-5 text-center">
           <p className="text-text-secondary">{t('ai.noProviderInSettings')}</p>
         </div>
       ) : (
@@ -260,9 +260,9 @@ export function ProviderSettings() {
                 <div className="shrink-0">
                   {result ? (
                     result.ok ? (
-                      <CheckCircle2 className="w-5 h-5 text-success" />
+                      <CheckCircle2 className="w-5 h-5 text-success-text" />
                     ) : (
-                      <XCircle className="w-5 h-5 text-danger" />
+                      <XCircle className="w-5 h-5 text-danger-text" />
                     )
                   ) : (
                     <div className="w-5 h-5 rounded-full border-2 border-border" />
@@ -293,7 +293,7 @@ export function ProviderSettings() {
                       <span>{t('ai.avgLatency', { ms: result.latencyMs })}</span>
                     )}
                     {result && !result.ok && (
-                      <span className="text-danger">{t('ai.unreachable')}</span>
+                      <span className="text-danger-text">{t('ai.unreachable')}</span>
                     )}
                   </div>
                 </div>
@@ -332,7 +332,7 @@ export function ProviderSettings() {
                   </button>
                   <button
                     onClick={() => removeProvider(provider.id)}
-                    className="p-1.5 text-text-tertiary hover:text-danger rounded-lg hover:bg-danger-subtle transition-colors"
+                    className="p-1.5 text-text-tertiary hover:text-danger-text rounded-lg hover:bg-danger-subtle transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -428,7 +428,7 @@ export function ProviderSettings() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-border">
               <h3 className="text-sm font-semibold text-text-primary">
                 {editingId ? t('common.edit') : t('ai.addProvider')}
               </h3>
@@ -441,7 +441,7 @@ export function ProviderSettings() {
             </div>
 
             {/* Modal body */}
-            <div className="px-6 py-4 space-y-4">
+            <div className="px-4 py-4 space-y-4">
               {/* Quick presets — only for new providers */}
               {!editingId && (
                 <div>
@@ -680,7 +680,7 @@ export function ProviderSettings() {
             </div>
 
             {/* Modal footer */}
-            <div className="flex justify-end gap-2 px-6 py-4 border-t border-border">
+            <div className="flex justify-end gap-2 px-4 py-4 border-t border-border">
               <button
                 onClick={() => setModalOpen(false)}
                 className="px-3 py-1.5 text-sm text-text-secondary bg-surface-tertiary rounded-lg hover:bg-surface-hover transition-colors"

@@ -327,9 +327,9 @@ export function SetupWizard({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="min-h-screen bg-surface-secondary flex items-center justify-center p-4">
-      <div className="bg-surface rounded-2xl shadow-lg w-full max-w-2xl border border-border">
+      <div className="bg-surface rounded-lg shadow-lg w-full max-w-2xl border border-border">
         {/* Header */}
-        <div className="px-8 pt-8 pb-4">
+        <div className="px-5 pt-8 pb-4">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gradient-start to-gradient-end flex items-center justify-center">
               <Rocket className="w-5 h-5 text-white" />
@@ -353,7 +353,7 @@ export function SetupWizard({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {/* Content */}
-        <div className="px-8 py-4">
+        <div className="px-5 py-4">
           {step === 0 && (
             <StepCompliancePack
               onSelectPack={handleSelectPack}

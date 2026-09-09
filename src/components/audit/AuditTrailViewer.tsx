@@ -23,18 +23,18 @@ interface Props {
 const ACTION_COLORS: Record<string, string> = {
   create: 'bg-badge-active-bg text-badge-active-text',
   update: 'bg-accent-subtle text-accent',
-  delete: 'bg-danger-subtle text-danger',
+  delete: 'bg-danger-subtle text-danger-text',
   status_change: 'bg-badge-draft-bg text-badge-draft-text',
   link: 'bg-accent-subtle text-accent',
   unlink: 'bg-badge-notrun-bg text-badge-notrun-text',
   approve: 'bg-badge-passed-bg text-badge-passed-text',
-  reject: 'bg-danger-subtle text-danger',
+  reject: 'bg-danger-subtle text-danger-text',
   sign: 'bg-accent-subtle text-accent',
   export: 'bg-badge-draft-bg text-badge-draft-text',
   generate_report: 'bg-badge-draft-bg text-badge-draft-text',
   ai_generate: 'bg-accent-subtle text-accent',
   ai_accept: 'bg-badge-passed-bg text-badge-passed-text',
-  ai_reject: 'bg-danger-subtle text-danger',
+  ai_reject: 'bg-danger-subtle text-danger-text',
   login: 'bg-badge-active-bg text-badge-active-text',
   logout: 'bg-badge-notrun-bg text-badge-notrun-text',
   import: 'bg-badge-draft-bg text-badge-draft-text',
@@ -171,13 +171,13 @@ export function AuditTrailViewer({ entityId }: Props) {
           <div className="mt-1.5 rounded-lg border border-border bg-surface-tertiary p-3 text-xs font-mono space-y-2">
             {entry.previousValue && (
               <div>
-                <span className="text-danger font-medium">- Previous:</span>
+                <span className="text-danger-text font-medium">- Previous:</span>
                 <pre className="mt-0.5 text-text-secondary whitespace-pre-wrap break-words">{entry.previousValue}</pre>
               </div>
             )}
             {entry.newValue && (
               <div>
-                <span className="text-success font-medium">+ New:</span>
+                <span className="text-success-text font-medium">+ New:</span>
                 <pre className="mt-0.5 text-text-secondary whitespace-pre-wrap break-words">{entry.newValue}</pre>
               </div>
             )}

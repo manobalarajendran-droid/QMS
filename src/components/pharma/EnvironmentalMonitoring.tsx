@@ -149,7 +149,7 @@ export function EnvironmentalMonitoring() {
   const expandedPoint = points.find((p) => p.id === expanded);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Thermometer className="w-5 h-5 text-accent" />
@@ -158,7 +158,7 @@ export function EnvironmentalMonitoring() {
         {canEdit && (
           <button
             onClick={() => setShowPointForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('envmon.addPoint')}
@@ -176,7 +176,7 @@ export function EnvironmentalMonitoring() {
       {excursions.length > 0 && (
         <div className="bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-200 dark:border-red-800 p-4">
           <div className="flex items-center gap-2 mb-2">
-            <AlertCircle className="w-4 h-4 text-red-600" />
+            <AlertCircle className="w-4 h-4 text-danger-text" />
             <h3 className="text-sm font-semibold text-red-700 dark:text-red-300">
               {t('envmon.excursions')} ({excursions.length})
             </h3>
@@ -184,10 +184,10 @@ export function EnvironmentalMonitoring() {
           <div className="space-y-1">
             {excursions.slice(0, 5).map((ex) => (
               <div key={ex.id} className="flex items-center justify-between text-xs">
-                <span className="text-red-600 dark:text-red-400">
+                <span className="text-danger-text dark:text-red-400">
                   {ex.point?.name} ({ex.point?.zone}) - {ex.value} ({ex.excursionType})
                 </span>
-                <span className="text-red-500">{new Date(ex.timestamp).toLocaleString()}</span>
+                <span className="text-danger-text">{new Date(ex.timestamp).toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -215,10 +215,10 @@ export function EnvironmentalMonitoring() {
                 </div>
                 <div className="flex items-center gap-3">
                   {point.alertThreshold !== null && (
-                    <span className="text-xs text-amber-600">{t('envmon.alert')}: {point.alertThreshold}{point.unit}</span>
+                    <span className="text-xs text-warning-text">{t('envmon.alert')}: {point.alertThreshold}{point.unit}</span>
                   )}
                   {point.actionThreshold !== null && (
-                    <span className="text-xs text-red-600">{t('envmon.action')}: {point.actionThreshold}{point.unit}</span>
+                    <span className="text-xs text-danger-text">{t('envmon.action')}: {point.actionThreshold}{point.unit}</span>
                   )}
                   {canEdit && (
                     <button
@@ -320,10 +320,10 @@ function PointForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-md mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('envmon.addPoint')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('envmon.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('envmon.zonePlaceholder')} value={zone} onChange={(e) => setZone(e.target.value)} />
           <div className="grid grid-cols-2 gap-3">
@@ -340,12 +340,12 @@ function PointForm({ onSave, onCancel }: { onSave: (data: any) => void; onCancel
             <input type="number" className="px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('envmon.actionThreshold')} value={actionThreshold} onChange={(e) => setActionThreshold(e.target.value)} />
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ name, zone, type, unit, alertThreshold: alertThreshold ? Number(alertThreshold) : undefined, actionThreshold: actionThreshold ? Number(actionThreshold) : undefined })}
             disabled={!name || !zone}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('common.save')}
           </button>
@@ -362,10 +362,10 @@ function ReadingForm({ pointId: _pointId, unit, onSave, onCancel }: { pointId: s
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-sm mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('envmon.addReading')}</h3>
         </div>
-        <div className="px-6 py-4">
+        <div className="px-4 py-4">
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -379,12 +379,12 @@ function ReadingForm({ pointId: _pointId, unit, onSave, onCancel }: { pointId: s
             <span className="text-sm text-text-tertiary">{unit}</span>
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave(Number(value))}
             disabled={!value}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('envmon.record')}
           </button>

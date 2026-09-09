@@ -21,23 +21,23 @@ interface ComputerizedSystem {
 }
 
 const GAMP_COLORS: Record<number, string> = {
-  1: 'bg-gray-200 text-gray-700',
+  1: 'bg-surface-tertiary text-text-secondary',
   3: 'bg-blue-100 text-blue-700',
   4: 'bg-amber-100 text-amber-700',
   5: 'bg-red-100 text-red-700',
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  planned: 'bg-gray-100 text-gray-600',
+  planned: 'bg-surface-tertiary text-text-secondary',
   in_progress: 'bg-blue-100 text-blue-700',
   validated: 'bg-green-100 text-green-700',
-  retired: 'bg-red-100 text-red-600',
+  retired: 'bg-red-100 text-danger-text',
 };
 
 const RISK_COLORS: Record<string, string> = {
-  low: 'text-green-600',
-  medium: 'text-amber-600',
-  high: 'text-red-600',
+  low: 'text-success-text',
+  medium: 'text-warning-text',
+  high: 'text-danger-text',
 };
 
 export function SystemInventory() {
@@ -140,7 +140,7 @@ export function SystemInventory() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Server className="w-5 h-5 text-accent" />
@@ -149,7 +149,7 @@ export function SystemInventory() {
         {canEdit && (
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('systems.addSystem')}
@@ -208,7 +208,7 @@ export function SystemInventory() {
                   </td>
                   <td className="px-4 py-2.5">
                     {sys.nextReviewDate ? (
-                      <span className={`text-xs ${isOverdue(sys.nextReviewDate) ? 'text-red-600 font-bold flex items-center gap-1' : 'text-text-secondary'}`}>
+                      <span className={`text-xs ${isOverdue(sys.nextReviewDate) ? 'text-danger-text font-bold flex items-center gap-1' : 'text-text-secondary'}`}>
                         {isOverdue(sys.nextReviewDate) && <AlertTriangle className="w-3 h-3" />}
                         {new Date(sys.nextReviewDate).toLocaleDateString()}
                       </span>
@@ -230,7 +230,7 @@ export function SystemInventory() {
                       {canEdit && sys.validationStatus !== 'retired' && (
                         <button
                           onClick={() => handleRetire(sys.id)}
-                          className="p-1 rounded hover:bg-surface-hover text-text-tertiary hover:text-red-500 transition-colors"
+                          className="p-1 rounded hover:bg-surface-hover text-text-tertiary hover:text-danger-text transition-colors"
                           title={t('systems.retire')}
                         >
                           <Archive className="w-3.5 h-3.5" />
@@ -275,10 +275,10 @@ function SystemForm({ onSave, onCancel }: { onSave: (data: any) => void; onCance
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('systems.addSystem')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('systems.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
           <div className="grid grid-cols-2 gap-3">
             <input className="px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" placeholder={t('systems.vendor')} value={vendor} onChange={(e) => setVendor(e.target.value)} />
@@ -303,12 +303,12 @@ function SystemForm({ onSave, onCancel }: { onSave: (data: any) => void; onCance
             <input type="date" className="px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={nextReviewDate} onChange={(e) => setNextReviewDate(e.target.value)} />
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ name, vendor, version, gampCategory, riskLevel, description, nextReviewDate: nextReviewDate || undefined })}
             disabled={!name}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('common.save')}
           </button>
@@ -327,10 +327,10 @@ function ReviewForm({ systemId: _systemId, onSave, onCancel }: { systemId: strin
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
       <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-md mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-text-primary">{t('systems.scheduleReview')}</h3>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-4 py-4 space-y-3">
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1">{t('systems.reviewDate')}</label>
             <input type="date" className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={reviewDate} onChange={(e) => setReviewDate(e.target.value)} />
@@ -341,12 +341,12 @@ function ReviewForm({ systemId: _systemId, onSave, onCancel }: { systemId: strin
             <input type="date" className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-surface text-text-primary" value={nextReviewDate} onChange={(e) => setNextReviewDate(e.target.value)} />
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+        <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover">{t('common.cancel')}</button>
           <button
             onClick={() => onSave({ reviewDate, reviewer, nextReviewDate: nextReviewDate || undefined })}
             disabled={!reviewer}
-            className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 disabled:opacity-50"
           >
             {t('systems.scheduleReview')}
           </button>

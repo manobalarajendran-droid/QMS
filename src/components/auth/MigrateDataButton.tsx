@@ -114,15 +114,15 @@ export function MigrateDataButton({ projectId }: MigrateDataButtonProps) {
         <div className="flex items-center gap-1.5 text-xs">
           {result.failed === 0 ? (
             <>
-              <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
-              <span className="text-green-600">
+              <CheckCircle2 className="w-3.5 h-3.5 text-success-text" />
+              <span className="text-success-text">
                 {t('auth.migrateSuccess', { count: result.success })}
               </span>
             </>
           ) : (
             <>
-              <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
-              <span className="text-amber-600">
+              <AlertCircle className="w-3.5 h-3.5 text-warning-text" />
+              <span className="text-warning-text">
                 {result.success} OK, {result.failed} failed
               </span>
             </>
@@ -131,7 +131,7 @@ export function MigrateDataButton({ projectId }: MigrateDataButtonProps) {
       )}
 
       {error && (
-        <div className="flex items-center gap-1.5 text-xs text-red-500">
+        <div className="flex items-center gap-1.5 text-xs text-danger-text">
           <AlertCircle className="w-3.5 h-3.5" />
           {t('auth.migrateError')}
         </div>

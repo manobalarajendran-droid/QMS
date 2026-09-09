@@ -16,10 +16,10 @@ export function ConfirmDialog({ open, title, message, onConfirm, onCancel }: Pro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onCancel}>
-      <div className="bg-surface-elevated rounded-xl shadow-2xl p-6 w-full max-w-sm mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-surface-elevated rounded-xl shadow-2xl p-4 w-full max-w-sm mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 rounded-lg bg-danger-subtle flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-4 h-4 text-danger" />
+            <AlertTriangle className="w-4 h-4 text-danger-text" />
           </div>
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
@@ -33,7 +33,7 @@ export function ConfirmDialog({ open, title, message, onConfirm, onCancel }: Pro
           <button onClick={onCancel} className="px-3 py-1.5 text-sm text-text-secondary bg-surface-tertiary rounded-lg hover:bg-surface-hover transition-colors">
             {t('common.cancel')}
           </button>
-          <button onClick={onConfirm} className="px-3 py-1.5 text-sm text-white bg-danger rounded-lg hover:bg-danger-hover transition-colors">
+          <button onClick={onConfirm} className="px-3 py-1.5 text-sm text-danger-fg bg-danger rounded-lg hover:bg-danger-hover transition-colors">
             {t('common.delete')}
           </button>
         </div>

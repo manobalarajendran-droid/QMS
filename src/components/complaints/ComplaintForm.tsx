@@ -79,7 +79,7 @@ export function ComplaintForm({ open, onClose, onSave, initialData }: ComplaintF
         className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col border border-border"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-accent" />
             <h2 className="text-base font-semibold text-text-primary">
@@ -91,7 +91,7 @@ export function ComplaintForm({ open, onClose, onSave, initialData }: ComplaintF
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
           {/* Product Name */}
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-1">
@@ -245,7 +245,7 @@ export function ComplaintForm({ open, onClose, onSave, initialData }: ComplaintF
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
             >
               {t('common.save')}
             </button>

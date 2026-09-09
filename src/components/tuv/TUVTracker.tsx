@@ -68,6 +68,44 @@ export function TUVTracker() {
   const nonArchived = useMemo(() => records.filter((r) => showArchived || !r.isArchived), [records, showArchived]);
   const overdueCount = useMemo(() => nonArchived.filter(isTUVOverdue).length, [nonArchived]);
 
+  const summary = useMemo(() => {
+    const total = nonArchived.length;
+    const closed = nonArchived.filter((r) => r.status === 'Closed').length;
+    const actionTaken = nonArchived.filter((r) => stageOf(r.status) === 'actiontaken').length;
+    const open = total - closed;
+    const share = (n: number) => (total ? `${Math.round((n / total) * 100)}% of register` : '—');
+    return [
+      {
+        key: 'total',
+        label: 'Recommendations',
+        value: String(total),
+        context: 'On the active register',
+        alert: false,
+      },
+      {
+        key: 'closed',
+        label: 'Closed',
+        value: String(closed),
+        context: share(closed),
+        alert: false,
+      },
+      {
+        key: 'action',
+        label: 'Action Taken',
+        value: String(actionTaken),
+        context: 'Awaiting verification',
+        alert: false,
+      },
+      {
+        key: 'overdue',
+        label: 'Overdue',
+        value: String(overdueCount),
+        context: open ? `of ${open} still open` : 'Nothing open',
+        alert: overdueCount > 0,
+      },
+    ];
+  }, [nonArchived, overdueCount]);
+
   const availableDepts = useMemo(() => {
     const extra = records.map((r) => r.assignedDept || '').filter((d) => d && !DEPTS.includes(d));
     return [...DEPTS, ...Array.from(new Set(extra))];
@@ -107,12 +145,12 @@ export function TUVTracker() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-text-primary">TÜV Tracker</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-text-primary">TÜV Tracker</h2>
           <p className="text-sm text-text-secondary mt-1">Track TÜV recommendations and closures</p>
         </div>
         <button
           onClick={() => { setSelectedRecord(null); setShowForm(true); }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-accent-fg rounded-lg hover:bg-accent/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Recommendation
@@ -120,22 +158,22 @@ export function TUVTracker() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">{nonArchived.length}</div>
-          <div className="text-xs text-text-tertiary mt-1">Total Recommendations</div>
-        </div>
-        <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{nonArchived.filter((r) => r.status === 'Closed').length}</div>
-          <div className="text-xs text-text-tertiary mt-1">Closed</div>
-        </div>
-        <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className="text-2xl font-bold text-sky-600">{nonArchived.filter((r) => stageOf(r.status) === 'actiontaken').length}</div>
-          <div className="text-xs text-text-tertiary mt-1">Action Taken</div>
-        </div>
-        <div className="bg-surface rounded-xl border border-border p-4 text-center">
-          <div className={'text-2xl font-bold ' + (overdueCount > 0 ? 'text-danger' : 'text-text-tertiary')}>{overdueCount}</div>
-          <div className="text-xs text-text-tertiary mt-1">Overdue</div>
-        </div>
+        {summary.map(({ key, label, value, context, alert }) => (
+          <div key={key} className="rounded-xl border border-border bg-surface p-4">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-tertiary">
+              {label}
+            </div>
+            <div
+              className={
+                'mt-2 text-2xl font-semibold tabular-nums tracking-tight ' +
+                (alert ? 'text-danger-text' : 'text-text-primary')
+              }
+            >
+              {value}
+            </div>
+            <div className="mt-0.5 text-xs text-text-tertiary">{context}</div>
+          </div>
+        ))}
       </div>
 
       <div className="flex flex-wrap gap-2 items-center">
@@ -182,11 +220,11 @@ export function TUVTracker() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-secondary text-xs text-text-tertiary uppercase tracking-wider border-b border-border">
-                <th className="px-6 py-4 font-semibold">Ref & Clause</th>
-                <th className="px-6 py-4 font-semibold">Description</th>
-                <th className="px-6 py-4 font-semibold">Owner / Dept</th>
-                <th className="px-6 py-4 font-semibold">Status & Countdown</th>
-                <th className="px-6 py-4 font-semibold">Evidence</th>
+                <th className="px-4 py-4 font-semibold">Ref & Clause</th>
+                <th className="px-4 py-4 font-semibold">Description</th>
+                <th className="px-4 py-4 font-semibold">Owner / Dept</th>
+                <th className="px-4 py-4 font-semibold">Status & Countdown</th>
+                <th className="px-4 py-4 font-semibold">Evidence</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -200,41 +238,41 @@ export function TUVTracker() {
                     className="hover:bg-surface-hover transition-colors cursor-pointer"
                     onClick={() => { setSelectedRecord(record); setShowForm(true); }}
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Target className="w-4 h-4 text-accent" />
                         <span className="font-medium text-text-primary">{record.num}</span>
                       </div>
                       <div className="text-sm text-text-secondary mt-1">Cl. {record.cl}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <div className="text-sm text-text-primary line-clamp-3">{record.desc}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-text-primary">{record.owner}</div>
                       {record.assignedDept && <div className="text-xs text-text-tertiary mt-0.5">{record.assignedDept}</div>}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2 mb-2">
-                        {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+                        {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
                         <StatusBadge status={record.status} />
                       </div>
                       {record.status !== 'Closed' && record.due && (
-                        <div className={`flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-md inline-flex ${overdue ? 'bg-red-500/10 text-red-500' :
-                          daysLeft !== null && daysLeft <= 30 ? 'bg-amber-500/10 text-amber-500' :
+                        <div className={`flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-md inline-flex ${overdue ? 'bg-red-500/10 text-danger-text' :
+                          daysLeft !== null && daysLeft <= 30 ? 'bg-amber-500/10 text-warning-text' :
                           'bg-surface-secondary text-text-secondary'}`}>
                           <Clock className="w-3 h-3" />
                           {overdue ? `${Math.abs(daysLeft!)} days overdue` : `${daysLeft} days left`}
                         </div>
                       )}
                       {record.status === 'Closed' && record.closed && (
-                        <div className="text-xs text-emerald-500/80 mt-1">Closed: {record.closed}</div>
+                        <div className="text-xs text-success-text mt-1">Closed: {record.closed}</div>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       {record.evidence ? (
                         <div className="flex items-start gap-2 text-sm text-text-secondary">
-                          <FileCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                          <FileCheck className="w-4 h-4 text-success-text shrink-0 mt-0.5" />
                           <span className="line-clamp-2">{record.evidence}</span>
                         </div>
                       ) : (
@@ -249,7 +287,7 @@ export function TUVTracker() {
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-text-tertiary">
+                  <td colSpan={5} className="px-4 py-12 text-center text-text-tertiary">
                     <Target className="w-12 h-12 mx-auto mb-3 opacity-20" />
                     <p>No recommendations found.</p>
                   </td>
@@ -342,12 +380,12 @@ function TUVModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-surface w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-border max-h-[90vh] overflow-y-auto animate-modal-enter">
+      <div className="bg-surface w-full max-w-2xl rounded-lg p-4 shadow-2xl border border-border max-h-[90vh] overflow-y-auto animate-modal-enter">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-text-primary">{record ? 'Edit Recommendation' : 'Add Recommendation'}</h3>
           {record && (
             <div className="flex items-center gap-1.5">
-              {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>}
+              {overdue && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
               <StatusBadge status={record.status} />
             </div>
           )}
@@ -357,7 +395,7 @@ function TUVModal({
           <div>
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Ref Number *</label>
             <input className={inputCls} value={formData.num} onChange={(e) => setFormData({ ...formData, num: e.target.value })} />
-            {formErrors.num && <p className="text-xs text-danger mt-1">{formErrors.num}</p>}
+            {formErrors.num && <p className="text-xs text-danger-text mt-1">{formErrors.num}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Clause</label>
@@ -366,14 +404,14 @@ function TUVModal({
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Description *</label>
             <textarea rows={3} className={inputCls} value={formData.desc} onChange={(e) => setFormData({ ...formData, desc: e.target.value })} />
-            {formErrors.desc && <p className="text-xs text-danger mt-1">{formErrors.desc}</p>}
+            {formErrors.desc && <p className="text-xs text-danger-text mt-1">{formErrors.desc}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1 flex items-center gap-1">
               <UserIcon className="w-3 h-3" /> Owner *
             </label>
             <UserSelect value={formData.owner} onChange={(v) => setFormData({ ...formData, owner: v })} />
-            {formErrors.owner && <p className="text-xs text-danger mt-1">{formErrors.owner}</p>}
+            {formErrors.owner && <p className="text-xs text-danger-text mt-1">{formErrors.owner}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Assigned Department</label>
@@ -384,7 +422,7 @@ function TUVModal({
               <Clock className="w-3 h-3" /> Due Date *
             </label>
             <input type="date" className={inputCls} value={formData.due} onChange={(e) => setFormData({ ...formData, due: e.target.value })} />
-            {formErrors.due && <p className="text-xs text-danger mt-1">{formErrors.due}</p>}
+            {formErrors.due && <p className="text-xs text-danger-text mt-1">{formErrors.due}</p>}
           </div>
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Evidence Linking</label>
@@ -436,7 +474,7 @@ function TUVModal({
                 <textarea autoFocus rows={2} value={gateReason} onChange={(e) => setGateReason(e.target.value)} placeholder="Explain the decision…" className={inputCls} />
                 <div className="flex justify-end gap-2">
                   <button onClick={() => { setGate(null); setGateReason(''); }} className="px-3 py-1.5 text-xs text-text-secondary bg-surface rounded-lg border border-border hover:bg-surface-hover transition-colors">Cancel</button>
-                  <button onClick={confirmGate} disabled={!gateReason.trim()} className="px-3 py-1.5 text-xs text-white bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors">Confirm</button>
+                  <button onClick={confirmGate} disabled={!gateReason.trim()} className="px-3 py-1.5 text-xs text-accent-fg bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors">Confirm</button>
                 </div>
               </div>
             )}
@@ -510,7 +548,7 @@ function TUVModal({
 
         <div className="flex justify-end gap-2 pt-2 border-t border-border">
           <button type="button" onClick={onClose} className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-surface-hover text-text-primary transition-colors">Cancel</button>
-          <button type="button" onClick={handleSubmit} className="px-4 py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent-hover shadow-sm transition-colors">Save Recommendation</button>
+          <button type="button" onClick={handleSubmit} className="px-4 py-2 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent-hover shadow-sm transition-colors">Save Recommendation</button>
         </div>
       </div>
     </div>

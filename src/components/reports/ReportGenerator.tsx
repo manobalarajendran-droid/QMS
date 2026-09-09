@@ -235,7 +235,7 @@ export function ReportGenerator() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Report Type Selection */}
       <div>
         <h2 className="text-lg font-semibold text-text-primary mb-4">
@@ -276,7 +276,7 @@ export function ReportGenerator() {
 
       {/* Configuration */}
       {selectedType && (
-        <div className="bg-surface rounded-xl border border-border p-6 space-y-4">
+        <div className="bg-surface rounded-xl border border-border p-4 space-y-4">
           <h3 className="text-sm font-semibold text-text-primary">
             Configuration
           </h3>
@@ -333,7 +333,7 @@ export function ReportGenerator() {
 
           {/* Error */}
           {error && (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-danger-subtle text-danger text-sm">
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-danger-subtle text-danger-text text-sm">
               <AlertTriangle className="w-4 h-4 shrink-0" />
               {error}
             </div>
@@ -364,7 +364,7 @@ export function ReportGenerator() {
 
       {/* No project warning */}
       {!project && (
-        <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <div className="bg-surface rounded-xl border border-border p-5 text-center">
           <p className="text-text-secondary">
             Create a project first to generate reports.
           </p>

@@ -130,7 +130,7 @@ export function CAPAFunnel() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-surface rounded-xl border border-border p-5 shadow-sm">
@@ -140,19 +140,19 @@ export function CAPAFunnel() {
           <p className="text-2xl font-bold text-text-primary">{summary.total}</p>
         </div>
         <div className="bg-surface rounded-xl border border-red-200 p-5 shadow-sm">
-          <p className="text-xs font-semibold text-red-600 uppercase tracking-wider mb-1">
+          <p className="text-xs font-semibold text-danger-text uppercase tracking-wider mb-1">
             {t('dashboard.capaOpen')}
           </p>
           <p className="text-2xl font-bold text-red-700">{summary.open}</p>
         </div>
         <div className="bg-surface rounded-xl border border-amber-200 p-5 shadow-sm">
-          <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-1">
+          <p className="text-xs font-semibold text-warning-text uppercase tracking-wider mb-1">
             {t('dashboard.capaInProgress')}
           </p>
           <p className="text-2xl font-bold text-amber-700">{summary.inProgress}</p>
         </div>
         <div className="bg-surface rounded-xl border border-green-200 p-5 shadow-sm">
-          <p className="text-xs font-semibold text-green-600 uppercase tracking-wider mb-1">
+          <p className="text-xs font-semibold text-success-text uppercase tracking-wider mb-1">
             {t('dashboard.capaResolved')}
           </p>
           <p className="text-2xl font-bold text-green-700">{summary.resolved}</p>
@@ -161,7 +161,7 @@ export function CAPAFunnel() {
 
       {/* Failed tests list */}
       <div className="bg-surface rounded-xl border border-border shadow-sm">
-        <div className="px-6 py-4 border-b border-border">
+        <div className="px-4 py-4 border-b border-border">
           <h3 className="text-lg font-semibold text-text-primary">
             {t('dashboard.capaFunnel')}
           </h3>
@@ -181,7 +181,7 @@ export function CAPAFunnel() {
               const isGenerating = generatingFor === test.id;
 
               return (
-                <div key={test.id} className="px-6 py-4">
+                <div key={test.id} className="px-4 py-4">
                   <div className="flex items-center gap-4">
                     {/* Status indicator */}
                     <span

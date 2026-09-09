@@ -226,9 +226,9 @@ export function ETMFView() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-1.5 py-0.5 rounded-md"><Check className="w-3 h-3" />{t('etmf.approved')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-success-text bg-green-500/10 px-1.5 py-0.5 rounded-md"><Check className="w-3 h-3" />{t('etmf.approved')}</span>;
       case 'uploaded':
-        return <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-500/10 px-1.5 py-0.5 rounded-md"><Upload className="w-3 h-3" />{t('etmf.uploaded')}</span>;
+        return <span className="inline-flex items-center gap-1 text-xs font-medium text-warning-text bg-amber-500/10 px-1.5 py-0.5 rounded-md"><Upload className="w-3 h-3" />{t('etmf.uploaded')}</span>;
       case 'not_applicable':
         return <span className="inline-flex items-center gap-1 text-xs font-medium text-text-tertiary bg-surface-secondary px-1.5 py-0.5 rounded-md"><Ban className="w-3 h-3" />{t('etmf.notApplicable')}</span>;
       default:
@@ -237,10 +237,10 @@ export function ETMFView() {
   };
 
   const readinessColor = readiness
-    ? readiness.level === 'inspection_ready' ? 'text-green-600'
-    : readiness.level === 'near_ready' ? 'text-amber-600'
-    : readiness.level === 'in_progress' ? 'text-orange-500'
-    : 'text-red-500'
+    ? readiness.level === 'inspection_ready' ? 'text-success-text'
+    : readiness.level === 'near_ready' ? 'text-warning-text'
+    : readiness.level === 'in_progress' ? 'text-warning-text'
+    : 'text-danger-text'
     : 'text-text-tertiary';
 
   if (!projectId) {
@@ -274,7 +274,7 @@ export function ETMFView() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-text-primary">{t('etmf.title')}</h2>
       </div>
@@ -310,7 +310,7 @@ export function ETMFView() {
             </span>
           </div>
           {readiness && readiness.missing > 0 && (
-            <div className="mt-2 flex items-center gap-1 text-xs text-amber-600">
+            <div className="mt-2 flex items-center gap-1 text-xs text-warning-text">
               <AlertTriangle className="w-3 h-3" />
               {readiness.missing} {t('etmf.artifactsMissing')}
             </div>
@@ -326,12 +326,12 @@ export function ETMFView() {
               <span className="font-medium text-text-primary">{completeness?.overall.total ?? 0}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-green-600">{t('etmf.approved')}</span>
-              <span className="font-medium text-green-600">{completeness?.overall.approved ?? 0}</span>
+              <span className="text-success-text">{t('etmf.approved')}</span>
+              <span className="font-medium text-success-text">{completeness?.overall.approved ?? 0}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-amber-600">{t('etmf.uploaded')}</span>
-              <span className="font-medium text-amber-600">{(completeness?.overall.uploaded ?? 0) - (completeness?.overall.approved ?? 0)}</span>
+              <span className="text-warning-text">{t('etmf.uploaded')}</span>
+              <span className="font-medium text-warning-text">{(completeness?.overall.uploaded ?? 0) - (completeness?.overall.approved ?? 0)}</span>
             </div>
           </div>
         </div>
@@ -379,7 +379,7 @@ export function ETMFView() {
                       {/* Section Header */}
                       <button
                         onClick={() => toggleSection(section.id)}
-                        className="w-full flex items-center justify-between px-6 py-2.5 hover:bg-surface-hover transition-colors"
+                        className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-surface-hover transition-colors"
                       >
                         <div className="flex items-center gap-2">
                           {expandedSection === section.id ? <ChevronDown className="w-3.5 h-3.5 text-text-tertiary" /> : <ChevronRight className="w-3.5 h-3.5 text-text-tertiary" />}
@@ -403,7 +403,7 @@ export function ETMFView() {
 
                       {/* Artifacts */}
                       {expandedSection === section.id && (
-                        <div className="bg-surface-secondary px-8 py-2">
+                        <div className="bg-surface-secondary px-5 py-2">
                           {loadingArtifacts === section.id ? (
                             <div className="flex items-center justify-center py-3">
                               <Loader2 className="w-4 h-4 animate-spin text-accent" />
@@ -447,7 +447,7 @@ export function ETMFView() {
                                         {artifact.status === 'uploaded' && (
                                           <button
                                             onClick={() => approveArtifact(artifact.id)}
-                                            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-600 bg-green-500/10 rounded hover:opacity-80 transition-opacity"
+                                            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-success-text bg-green-500/10 rounded hover:opacity-80 transition-opacity"
                                           >
                                             <Check className="w-3 h-3" />
                                             {t('etmf.approve')}
@@ -457,7 +457,7 @@ export function ETMFView() {
                                           <span className="text-xs text-text-tertiary italic">{t('etmf.markedNA')}</span>
                                         )}
                                         {artifact.status === 'approved' && (
-                                          <span className="text-xs text-green-600 italic">{t('etmf.fullyApproved')}</span>
+                                          <span className="text-xs text-success-text italic">{t('etmf.fullyApproved')}</span>
                                         )}
                                       </div>
                                     </td>

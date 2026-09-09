@@ -217,7 +217,7 @@ export function EnhancedSignatureModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-accent-subtle flex items-center justify-center">
               <ShieldCheck className="w-4 h-4 text-accent" />
@@ -229,7 +229,7 @@ export function EnhancedSignatureModal({
           </button>
         </div>
 
-        <div className="px-6 py-4 space-y-4">
+        <div className="px-4 py-4 space-y-4">
           {success ? (
             /* Success state */
             <div className="text-center py-4 space-y-3">
@@ -281,7 +281,7 @@ export function EnhancedSignatureModal({
                     </label>
                   ))}
                   {allowedMeanings.length === 0 && (
-                    <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
+                    <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-text">
                       No allowed signature actions are available for your role.
                     </div>
                   )}
@@ -291,7 +291,7 @@ export function EnhancedSignatureModal({
               {/* Reason */}
               <div>
                 <label className="block text-sm font-medium text-text-primary mb-1">
-                  {t('signature.reasonLabel')} <span className="text-danger">*</span>
+                  {t('signature.reasonLabel')} <span className="text-danger-text">*</span>
                 </label>
                 <textarea
                   value={reason}
@@ -305,13 +305,13 @@ export function EnhancedSignatureModal({
                     errors.reason ? 'border-danger' : 'border-input-border'
                   }`}
                 />
-                {errors.reason && <p className="text-xs text-danger mt-0.5">{errors.reason}</p>}
+                {errors.reason && <p className="text-xs text-danger-text mt-0.5">{errors.reason}</p>}
               </div>
 
               {/* Password */}
               <div>
                 <label className="block text-sm font-medium text-text-primary mb-1">
-                  {t('signature.password')} <span className="text-danger">*</span>
+                  {t('signature.password')} <span className="text-danger-text">*</span>
                 </label>
                 <input
                   type="password"
@@ -325,12 +325,12 @@ export function EnhancedSignatureModal({
                     errors.password ? 'border-danger' : 'border-input-border'
                   }`}
                 />
-                {errors.password && <p className="text-xs text-danger mt-0.5">{errors.password}</p>}
+                {errors.password && <p className="text-xs text-danger-text mt-0.5">{errors.password}</p>}
               </div>
 
               {/* Auth error */}
               {errors.auth && (
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-danger/10 border border-danger/30 text-sm text-danger">
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-danger/10 border border-danger/30 text-sm text-danger-text">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
                   {errors.auth}
                 </div>
@@ -359,7 +359,7 @@ export function EnhancedSignatureModal({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 px-6 py-4 border-t border-border">
+        <div className="flex justify-end gap-2 px-4 py-4 border-t border-border">
           {success ? (
             <button
               onClick={handleClose}

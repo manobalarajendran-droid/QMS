@@ -158,16 +158,16 @@ export function GapAnalysisView() {
 
   if (!hasProvider) {
     return (
-      <div className="bg-surface rounded-xl border border-border p-8 text-center">
+      <div className="bg-surface rounded-xl border border-border p-5 text-center">
         <p className="text-text-secondary">{t('ai.noProvider')}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Run button + readiness bar */}
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-text-primary">
             {t('dashboard.gapAnalysis')}
@@ -182,7 +182,7 @@ export function GapAnalysisView() {
         </div>
 
         {error && (
-          <div className="mt-4 rounded-lg bg-danger/10 border border-danger/30 p-3 text-sm text-danger">
+          <div className="mt-4 rounded-lg bg-danger/10 border border-danger/30 p-3 text-sm text-danger-text">
             {error}
           </div>
         )}
@@ -213,7 +213,7 @@ export function GapAnalysisView() {
 
       {/* Results table grouped by standard */}
       {standardSummaries.length > 0 && (
-        <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+        <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
           <h4 className="text-sm font-semibold text-text-primary mb-4">
             {t('dashboard.gapAnalysis')} — {t('dashboard.standard')}
           </h4>
@@ -298,7 +298,7 @@ export function GapAnalysisView() {
 
       {/* Critical Gaps section */}
       {results.length > 0 && (
-        <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+        <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-sm font-semibold text-text-primary">
               {t('dashboard.criticalGaps')}
@@ -343,7 +343,7 @@ export function GapAnalysisView() {
                     disabled={generatedReqs.has(`${gap.standard}-${gap.clause}`)}
                     className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                       generatedReqs.has(`${gap.standard}-${gap.clause}`)
-                        ? 'border-success/30 bg-success/10 text-success cursor-default'
+                        ? 'border-success/30 bg-success/10 text-success-text cursor-default'
                         : 'border-border text-text-primary hover:bg-surface-secondary'
                     }`}
                   >
@@ -360,7 +360,7 @@ export function GapAnalysisView() {
 
       {/* Empty state */}
       {results.length === 0 && !loading && !error && (
-        <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <div className="bg-surface rounded-xl border border-border p-5 text-center">
           <p className="text-text-secondary">{t('dashboard.noGapResults')}</p>
         </div>
       )}

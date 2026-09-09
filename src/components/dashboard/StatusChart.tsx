@@ -12,7 +12,7 @@ export function StatusChart({ title, data, type }: Props) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+    <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
       <h3 className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-4">{title}</h3>
       {total === 0 ? (
         <div className="flex items-center justify-center h-40 text-sm text-text-tertiary">{t('common.noData')}</div>

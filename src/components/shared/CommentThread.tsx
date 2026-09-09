@@ -272,7 +272,7 @@ export function CommentThread({ entityType, entityId, projectId }: CommentThread
               <div className="flex flex-col gap-1">
                 <button
                   onClick={() => handleEdit(comment.id)}
-                  className="p-1.5 rounded bg-accent text-white hover:bg-accent-hover transition-colors"
+                  className="p-1.5 rounded bg-accent text-accent-fg hover:bg-accent-hover transition-colors"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>
@@ -310,7 +310,7 @@ export function CommentThread({ entityType, entityId, projectId }: CommentThread
                   </button>
                   <button
                     onClick={() => handleDelete(comment.id)}
-                    className="inline-flex items-center gap-1 text-xs text-text-tertiary hover:text-danger transition-colors"
+                    className="inline-flex items-center gap-1 text-xs text-text-tertiary hover:text-danger-text transition-colors"
                   >
                     <Trash2 className="w-3 h-3" />
                     {t('common.delete')}
@@ -355,7 +355,7 @@ export function CommentThread({ entityType, entityId, projectId }: CommentThread
                 <button
                   onClick={() => handleSubmit(c.id)}
                   disabled={!replyContent.trim()}
-                  className="self-end p-2 rounded-lg bg-accent text-white hover:bg-accent-hover disabled:opacity-50 transition-colors"
+                  className="self-end p-2 rounded-lg bg-accent text-accent-fg hover:bg-accent-hover disabled:opacity-50 transition-colors"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>
@@ -379,7 +379,7 @@ export function CommentThread({ entityType, entityId, projectId }: CommentThread
           <button
             onClick={() => handleSubmit()}
             disabled={!newContent.trim()}
-            className="self-end p-2 rounded-lg bg-accent text-white hover:bg-accent-hover disabled:opacity-50 transition-colors"
+            className="self-end p-2 rounded-lg bg-accent text-accent-fg hover:bg-accent-hover disabled:opacity-50 transition-colors"
           >
             <Send className="w-4 h-4" />
           </button>

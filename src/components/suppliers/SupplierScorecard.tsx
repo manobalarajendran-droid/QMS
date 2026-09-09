@@ -104,7 +104,7 @@ export function SupplierScorecard() {
   };
 
   const qualColors: Record<string, string> = {
-    pending: 'bg-gray-100 text-gray-700',
+    pending: 'bg-surface-tertiary text-text-secondary',
     qualified: 'bg-green-100 text-green-700',
     conditional: 'bg-yellow-100 text-yellow-700',
     disqualified: 'bg-red-100 text-red-700',
@@ -112,10 +112,10 @@ export function SupplierScorecard() {
 
   const scoreColor = (score: number | null) => {
     if (score === null) return 'text-text-tertiary';
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    if (score >= 40) return 'text-orange-600';
-    return 'text-red-600';
+    if (score >= 80) return 'text-success-text';
+    if (score >= 60) return 'text-warning-text';
+    if (score >= 40) return 'text-warning-text';
+    return 'text-danger-text';
   };
 
   if (loading) {
@@ -127,7 +127,7 @@ export function SupplierScorecard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -137,7 +137,7 @@ export function SupplierScorecard() {
         {canEdit && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90 transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t('suppliers.addSupplier')}
@@ -185,7 +185,7 @@ export function SupplierScorecard() {
             </select>
           </div>
           <div className="flex gap-2">
-            <button onClick={handleAddSupplier} className="px-3 py-1.5 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent/90">
+            <button onClick={handleAddSupplier} className="px-3 py-1.5 text-sm font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90">
               {t('common.save')}
             </button>
             <button onClick={() => setShowAddForm(false)} className="px-3 py-1.5 text-sm font-medium text-text-secondary bg-surface border border-border rounded-lg hover:bg-surface-hover">
@@ -197,7 +197,7 @@ export function SupplierScorecard() {
 
       {/* Supplier Cards */}
       {suppliers.length === 0 ? (
-        <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <div className="bg-surface rounded-xl border border-border p-5 text-center">
           <Building2 className="w-10 h-10 text-text-tertiary mx-auto mb-2" />
           <p className="text-text-tertiary">{t('suppliers.noSuppliers')}</p>
         </div>
@@ -333,7 +333,7 @@ export function SupplierScorecard() {
                     className="w-full px-2 py-1.5 rounded-lg border border-border bg-surface text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
                   />
                   <div className="flex gap-2">
-                    <button onClick={() => handleAddAudit(supplier.id)} className="px-2 py-1 text-xs font-medium text-white bg-accent rounded-lg hover:bg-accent/90">
+                    <button onClick={() => handleAddAudit(supplier.id)} className="px-2 py-1 text-xs font-medium text-accent-fg bg-accent rounded-lg hover:bg-accent/90">
                       {t('common.save')}
                     </button>
                     <button onClick={() => setShowAuditForm(null)} className="px-2 py-1 text-xs font-medium text-text-secondary bg-surface border border-border rounded-lg">

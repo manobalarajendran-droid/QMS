@@ -83,7 +83,7 @@ export function StepMetadata({ meta, onChange, onBack, onNext }: Props) {
         <button
           type="submit"
           disabled={!meta.name.trim()}
-          className="px-6 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          className="px-4 py-2 text-sm text-text-inverse bg-accent rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
         >
           {t('common.next')}
         </button>

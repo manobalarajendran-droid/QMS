@@ -130,9 +130,9 @@ export function RiskMatrixView() {
   }, [requirements, hasProvider, project, updateRequirement]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Summary stats */}
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-text-primary">{t('dashboard.riskMatrix')}</h3>
           {unassessedCount > 0 && hasProvider && (
@@ -272,7 +272,7 @@ export function RiskMatrixView() {
       </div>
 
       {/* Selected cell details */}
-      <div className="bg-surface rounded-xl border border-border p-6 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4 shadow-sm">
         {selectedCell ? (
           <>
             <h4 className="text-sm font-semibold text-text-primary mb-3">

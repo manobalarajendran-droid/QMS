@@ -202,7 +202,7 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
                     <option value="true_false">{t('quizzes.trueFalse')}</option>
                     <option value="multi_select">{t('quizzes.multiSelect')}</option>
                   </select>
-                  <button onClick={() => removeQuestion(idx)} className="p-1 text-text-tertiary hover:text-red-500">
+                  <button onClick={() => removeQuestion(idx)} className="p-1 text-text-tertiary hover:text-danger-text">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -269,7 +269,7 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
                               .map((a) => (a > optIdx ? a - 1 : a));
                             updateQuestion(idx, { options: opts, correctAnswers: corrected });
                           }}
-                          className="text-text-tertiary hover:text-red-500"
+                          className="text-text-tertiary hover:text-danger-text"
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>
@@ -307,7 +307,7 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
           <button
             onClick={handleSave}
             disabled={!title.trim() || questions.length === 0}
-            className="px-4 py-2 text-sm bg-accent text-white rounded-lg disabled:opacity-50"
+            className="px-4 py-2 text-sm bg-accent text-accent-fg rounded-lg disabled:opacity-50"
           >
             {t('common.save')}
           </button>
@@ -327,7 +327,7 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
         {canEdit && (
           <button
             onClick={() => { setShowForm(true); setEditQuiz(null); setTitle(''); setPassingScore(80); setQuestions([]); }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent/90"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
           >
             <Plus className="w-4 h-4" />
             {t('quizzes.new')}
@@ -336,7 +336,7 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
       </div>
 
       {quizzes.length === 0 ? (
-        <div className="text-center py-8 text-text-tertiary text-sm">{t('quizzes.empty')}</div>
+        <div className="text-center py-5 text-text-tertiary text-sm">{t('quizzes.empty')}</div>
       ) : (
         <div className="space-y-2">
           {quizzes.map((quiz) => (
@@ -352,7 +352,7 @@ export function QuizBuilder({ courseId, onTakeQuiz }: Props) {
                 {onTakeQuiz && (
                   <button
                     onClick={() => onTakeQuiz(quiz.id)}
-                    className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent text-white rounded"
+                    className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent text-accent-fg rounded"
                   >
                     <Eye className="w-3 h-3" />
                     {t('quizzes.take')}

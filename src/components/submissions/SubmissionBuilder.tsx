@@ -36,7 +36,7 @@ const SUBMISSION_TYPES = [
 ];
 
 const STATUS_COLORS: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+  draft: 'bg-surface-tertiary text-text-secondary',
   in_progress: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
   review: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
   submitted: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
@@ -208,7 +208,7 @@ export function SubmissionBuilder() {
             {canEdit && selectedSubmission.status !== 'submitted' && (
               <button
                 onClick={() => handleGenerate(selectedSubmission.id)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent/90"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
               >
                 <RefreshCw className="w-4 h-4" />
                 {t('submissions.generate')}
@@ -274,7 +274,7 @@ export function SubmissionBuilder() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleSaveSection(idx)}
-                          className="px-3 py-1.5 text-sm bg-accent text-white rounded-lg"
+                          className="px-3 py-1.5 text-sm bg-accent text-accent-fg rounded-lg"
                         >
                           {t('common.save')}
                         </button>
@@ -325,7 +325,7 @@ export function SubmissionBuilder() {
         {canEdit && (
           <button
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent/90"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
           >
             <Plus className="w-4 h-4" />
             {t('submissions.new')}
@@ -339,10 +339,10 @@ export function SubmissionBuilder() {
       {showCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={() => setShowCreate(false)}>
           <div className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-2xl mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-border">
+            <div className="px-4 py-4 border-b border-border">
               <h3 className="text-base font-semibold text-text-primary">{t('submissions.new')}</h3>
             </div>
-            <div className="px-6 py-4 space-y-4">
+            <div className="px-4 py-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-1">{t('submissions.selectType')}</label>
                 <div className="grid grid-cols-2 gap-3">
@@ -374,14 +374,14 @@ export function SubmissionBuilder() {
                 />
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
+            <div className="px-4 py-4 border-t border-border flex justify-end gap-2">
               <button onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm border border-border rounded-lg">
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleCreate}
                 disabled={!createType || !createTitle.trim()}
-                className="px-4 py-2 text-sm bg-accent text-white rounded-lg disabled:opacity-50"
+                className="px-4 py-2 text-sm bg-accent text-accent-fg rounded-lg disabled:opacity-50"
               >
                 {t('common.save')}
               </button>
@@ -420,7 +420,7 @@ export function SubmissionBuilder() {
                       e.stopPropagation();
                       handleDelete(sub.id);
                     }}
-                    className="p-1 text-text-tertiary hover:text-red-500"
+                    className="p-1 text-text-tertiary hover:text-danger-text"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

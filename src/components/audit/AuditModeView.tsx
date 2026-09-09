@@ -84,8 +84,8 @@ export function AuditModeView({ token }: AuditModeViewProps) {
   if (expired) {
     return (
       <div className="min-h-screen bg-surface-secondary flex items-center justify-center p-4">
-        <div className="bg-surface rounded-xl border border-border p-8 max-w-md text-center">
-          <AlertTriangle className="w-12 h-12 text-warning mx-auto mb-4" />
+        <div className="bg-surface rounded-xl border border-border p-5 max-w-md text-center">
+          <AlertTriangle className="w-12 h-12 text-warning-text mx-auto mb-4" />
           <h2 className="text-lg font-bold text-text-primary mb-2">{t('auditMode.expired')}</h2>
           <p className="text-sm text-text-secondary">This audit link is no longer valid. Please request a new link from the project administrator.</p>
         </div>
@@ -96,8 +96,8 @@ export function AuditModeView({ token }: AuditModeViewProps) {
   if (error) {
     return (
       <div className="min-h-screen bg-surface-secondary flex items-center justify-center p-4">
-        <div className="bg-surface rounded-xl border border-border p-8 max-w-md text-center">
-          <AlertTriangle className="w-12 h-12 text-danger mx-auto mb-4" />
+        <div className="bg-surface rounded-xl border border-border p-5 max-w-md text-center">
+          <AlertTriangle className="w-12 h-12 text-danger-text mx-auto mb-4" />
           <h2 className="text-lg font-bold text-text-primary mb-2">Error</h2>
           <p className="text-sm text-text-secondary">{error}</p>
         </div>
@@ -153,7 +153,7 @@ export function AuditModeView({ token }: AuditModeViewProps) {
 
       {/* Header */}
       <header className="bg-surface border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-5">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3">
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-gradient-start to-gradient-end flex items-center justify-center">
@@ -198,9 +198,9 @@ export function AuditModeView({ token }: AuditModeViewProps) {
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-5 py-4">
         {activeTab === 'overview' && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Summary cards */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <SummaryCard label="Requirements" value={requirements.length} />
@@ -211,7 +211,7 @@ export function AuditModeView({ token }: AuditModeViewProps) {
 
             {/* Project info */}
             {project && (
-              <div className="bg-surface rounded-xl border border-border p-6">
+              <div className="bg-surface rounded-xl border border-border p-4">
                 <h3 className="text-sm font-semibold text-text-primary mb-3">Project Details</h3>
                 <dl className="grid grid-cols-2 gap-3 text-sm">
                   <div><dt className="text-text-tertiary">Name</dt><dd className="font-medium text-text-primary">{project.name}</dd></div>
@@ -242,7 +242,7 @@ export function AuditModeView({ token }: AuditModeViewProps) {
         )}
 
         {activeTab === 'traceability' && traceability && (
-          <div className="bg-surface rounded-xl border border-border p-6">
+          <div className="bg-surface rounded-xl border border-border p-4">
             <h3 className="text-sm font-semibold text-text-primary mb-4">Traceability Matrix</h3>
             <div className="text-sm text-text-secondary mb-3">
               {traceability.requirements?.length || 0} requirements, {traceability.tests?.length || 0} tests, {traceability.links?.length || 0} links
@@ -314,7 +314,7 @@ function SummaryCard({ label, value }: { label: string; value: string | number }
 
 function ReadOnlyTable({ title, columns, rows }: { title: string; columns: string[]; rows: string[][] }) {
   return (
-    <div className="bg-surface rounded-xl border border-border p-6">
+    <div className="bg-surface rounded-xl border border-border p-4">
       {title && <h3 className="text-sm font-semibold text-text-primary mb-4">{title}</h3>}
       {rows.length === 0 ? (
         <p className="text-sm text-text-tertiary">No data available.</p>

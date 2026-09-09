@@ -127,21 +127,21 @@ export function NCRWorkflow() {
 
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col p-2">
-      <div className="mb-4 flex items-center justify-between shrink-0 flex-wrap gap-3">
+      <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold text-text-primary">NCR Workflow Board</h2>
         <div className="flex gap-4 items-center flex-wrap">
           <label className="flex items-center gap-2 cursor-pointer text-sm text-text-secondary">
             <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="rounded border-border" />
             Show Archived
           </label>
-          <button onClick={() => setShowForm(true)} className="bg-accent text-white px-4 py-2 rounded-lg font-semibold hover:bg-accent-hover transition-colors shadow-sm flex items-center gap-2">
+          <button onClick={() => setShowForm(true)} className="bg-accent text-accent-fg px-4 py-2 rounded-lg font-semibold hover:bg-accent-hover transition-colors shadow-sm flex items-center gap-2">
             + New NCR
           </button>
         </div>
       </div>
 
       {/* Filters / Search / Sort */}
-      <div className="mb-4 flex flex-wrap items-center gap-3 shrink-0">
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-2">
         <div className="relative">
           <Search className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary" />
           <input
@@ -182,24 +182,35 @@ export function NCRWorkflow() {
       </div>
 
       {/* Kanban Board */}
-      <div className="flex flex-1 gap-6 overflow-x-auto pb-4">
-        {visibleStatuses.map((status) => (
-          <div key={status} className="flex flex-col min-w-[320px] max-w-[320px] bg-surface-secondary rounded-xl border border-border shadow-sm">
-            <div className="p-4 border-b border-border bg-surface/50 flex items-center justify-between rounded-t-xl">
-              <span className="font-semibold text-text-primary">{STATUS_LABELS[status]}</span>
-              <span className="text-xs font-bold bg-surface-hover text-text-secondary px-2.5 py-1 rounded-full border border-border">
-                {filteredRecords.filter((r) => r.status === status).length}
-              </span>
+      {/* `items-start` is doing real work: the columns are flex children of a
+          full-height row, so without it an empty stage stretched to ~700px of
+          blank board. They now size to their cards and only start scrolling
+          when they reach the bottom of the viewport. */}
+      <div className="flex flex-1 items-start gap-3 overflow-x-auto pb-4">
+        {visibleStatuses.map((status) => {
+          const cards = filteredRecords.filter((r) => r.status === status);
+          return (
+            <div key={status} className="flex max-h-full min-w-[300px] max-w-[300px] flex-col rounded-lg border border-border bg-surface-secondary">
+              <div className="flex shrink-0 items-center justify-between gap-2 rounded-t-lg border-b border-border bg-surface/50 px-3 py-2">
+                <span className="truncate text-sm font-semibold text-text-primary">{STATUS_LABELS[status]}</span>
+                <span className="shrink-0 rounded-full border border-border bg-surface-hover px-1.5 text-[11px] font-semibold tabular-nums text-text-secondary">
+                  {cards.length}
+                </span>
+              </div>
+              <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-2.5">
+                {cards.length === 0 ? (
+                  <p className="rounded-lg border border-dashed border-border px-2 py-3 text-center text-xs text-text-tertiary">
+                    Nothing at this stage
+                  </p>
+                ) : (
+                  cards.map((record) => (
+                    <NCRCard key={record.id} record={record} onClick={() => setSelectedRecordId(record.id)} />
+                  ))
+                )}
+              </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-3 space-y-3">
-              {filteredRecords
-                .filter((r) => r.status === status)
-                .map((record) => (
-                  <NCRCard key={record.id} record={record} onClick={() => setSelectedRecordId(record.id)} />
-                ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {selectedRecord && <NCRDetailModal record={selectedRecord} onClose={() => setSelectedRecordId(null)} />}
@@ -361,15 +372,15 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200 print:static print:bg-transparent print:p-0">
-      <div className="bg-surface w-full max-w-6xl h-[90vh] rounded-2xl flex flex-col shadow-2xl border border-border print:h-auto print:max-w-full print:shadow-none print:border-0">
+      <div className="bg-surface w-full max-w-6xl h-[90vh] rounded-lg flex flex-col shadow-2xl border border-border print:h-auto print:max-w-full print:shadow-none print:border-0">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border bg-surface-secondary/50 rounded-t-2xl print:hidden">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-surface-secondary/50 rounded-t-2xl print:hidden">
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h2 className="text-2xl font-bold text-text-primary">{record.ref || 'Draft NCR'}</h2>
               <StatusBadge status={STATUS_LABELS[record.status]} />
               {isOverdue && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger">OVERDUE</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>
               )}
             </div>
             <div className="flex items-center gap-3 text-sm text-text-tertiary flex-wrap">
@@ -412,7 +423,7 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
                   onClose();
                 }
               }}
-              className="p-2 text-danger hover:bg-danger-subtle rounded-full transition-colors"
+              className="p-2 text-danger-text hover:bg-danger-subtle rounded-full transition-colors"
             >
               Delete
             </button>
@@ -421,7 +432,7 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
                 useNCRStore.getState().updateRecord(record.id, { isArchived: !record.isArchived });
                 onClose();
               }}
-              className="p-2 text-amber-500 hover:bg-amber-50 rounded-full transition-colors"
+              className="p-2 text-warning-text hover:bg-amber-50 rounded-full transition-colors"
             >
               {record.isArchived ? 'Unarchive' : 'Archive'}
             </button>
@@ -433,9 +444,9 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
 
         {/* Body */}
         <div className="flex flex-1 overflow-hidden print:block print:overflow-visible">
-          <div className="flex-1 overflow-y-auto p-8 space-y-8 print:overflow-visible">
+          <div className="flex-1 overflow-y-auto p-5 space-y-5 print:overflow-visible">
             {/* General info (closes orphan fields) */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4">
               <InfoField label="Raised By" value={record.raisedBy} />
               <InfoField label="Auditee Name" value={record.auditeeName} />
               <InfoField label="Auditee Dept" value={record.auditeeDept} />
@@ -448,7 +459,7 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-5">
               <section>
                 <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-2">Description</h3>
                 <div className="bg-surface-secondary p-4 rounded-xl border border-border min-h-[100px]">
@@ -465,13 +476,13 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
             </div>
 
             {record.status === 'RootCause' && (
-              <section className="bg-accent-subtle/30 p-6 rounded-xl border border-accent/20">
-                <div className="flex items-center justify-between mb-6">
+              <section className="bg-accent-subtle/30 p-4 rounded-xl border border-accent/20">
+                <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-text-primary">Root Cause Analysis (5-Whys)</h3>
                   {isSpoc ? (
-                    <span className="text-xs font-semibold px-2 py-1 bg-accent text-white rounded-md">SPOC Access</span>
+                    <span className="text-xs font-semibold px-2 py-1 bg-accent text-accent-fg rounded-md">SPOC Access</span>
                   ) : (
-                    <span className="text-xs font-semibold px-2 py-1 bg-danger-subtle text-danger rounded-md">View Only</span>
+                    <span className="text-xs font-semibold px-2 py-1 bg-danger-subtle text-danger-text rounded-md">View Only</span>
                   )}
                 </div>
 
@@ -506,12 +517,12 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
                     {isSpoc ? (
                       <button
                         onClick={handleSaveRCA}
-                        className="bg-accent text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-accent-hover transition-colors shadow-sm flex items-center gap-2"
+                        className="bg-accent text-accent-fg px-4 py-2.5 rounded-lg font-semibold hover:bg-accent-hover transition-colors shadow-sm flex items-center gap-2"
                       >
                         Save Root Cause Notes <ArrowRight className="w-4 h-4" />
                       </button>
                     ) : (
-                      <p className="text-sm text-danger font-medium bg-danger-subtle p-3 rounded-lg border border-border">
+                      <p className="text-sm text-danger-text font-medium bg-danger-subtle p-3 rounded-lg border border-border">
                         You do not have permission to submit Root Cause. This requires SPOC or QA Manager role.
                       </p>
                     )}
@@ -528,7 +539,7 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
             </section>
 
             {record.status === 'Verification' && (
-              <section className="bg-surface-secondary p-6 rounded-xl border border-border">
+              <section className="bg-surface-secondary p-4 rounded-xl border border-border">
                 <h3 className="text-lg font-bold text-text-primary mb-4">Verification & Closure</h3>
                 {isMR ? (
                   <div className="space-y-3">
@@ -546,7 +557,7 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
                           useNCRStore.getState().approveNCR(record.id, user?.name || 'System', verificationReason.trim());
                           setVerificationReason('');
                         }}
-                        className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+                        className="bg-green-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
                       >
                         <CheckCircle className="w-5 h-5" /> Approve & Close NCR
                       </button>
@@ -556,7 +567,7 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
                           useNCRStore.getState().rejectNCR(record.id, user?.name || 'System', verificationReason.trim());
                           setVerificationReason('');
                         }}
-                        className="bg-surface text-text-primary border border-border px-6 py-2.5 rounded-lg font-semibold hover:bg-surface-hover disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+                        className="bg-surface text-text-primary border border-border px-4 py-2.5 rounded-lg font-semibold hover:bg-surface-hover disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
                       >
                         <X className="w-5 h-5" /> Reject (Return to CAPA)
                       </button>
@@ -564,14 +575,14 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
                   </div>
                 ) : (
                   <div className="bg-danger-subtle border border-border p-4 rounded-lg">
-                    <p className="text-sm text-danger font-medium">Only Management Representative (Admin / QA Manager) can verify and close this NCR.</p>
+                    <p className="text-sm text-danger-text font-medium">Only Management Representative (Admin / QA Manager) can verify and close this NCR.</p>
                   </div>
                 )}
               </section>
             )}
 
             {(record.finalDecision || record.verifiedBy) && (
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-4">
                 <InfoField label="Final Decision" value={record.finalDecision} />
                 <InfoField label="Verified By" value={record.verifiedBy} />
                 <InfoField label="Verified Date" value={record.verifiedDate} />
@@ -714,9 +725,9 @@ function NCRFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-surface w-full max-w-3xl rounded-xl p-6 shadow-2xl border border-border my-8">
+      <div className="bg-surface w-full max-w-3xl rounded-xl p-4 shadow-2xl border border-border my-8">
         <h3 className="text-xl font-bold mb-4">{initial ? 'Edit NCR' : 'Create New NCR'}</h3>
-        <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="space-y-6">
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="space-y-4">
           <fieldset>
             <legend className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2">Classification</legend>
             <div className="flex gap-4 flex-wrap">
@@ -833,7 +844,7 @@ function NCRFormModal({
 
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className="px-4 py-2 border border-border rounded-lg hover:bg-surface-hover">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover">{initial ? 'Save Changes' : 'Submit'}</button>
+            <button type="submit" className="px-4 py-2 bg-accent text-accent-fg rounded-lg hover:bg-accent-hover">{initial ? 'Save Changes' : 'Submit'}</button>
           </div>
         </form>
       </div>

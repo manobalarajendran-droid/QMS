@@ -24,8 +24,8 @@ const PRIORITY_COLORS: Record<TaskPriority, string> = {
 const STATUS_COLORS: Record<string, string> = {
   open: 'text-text-secondary',
   in_progress: 'text-accent',
-  completed: 'text-green-500',
-  overdue: 'text-danger',
+  completed: 'text-success-text',
+  overdue: 'text-danger-text',
 };
 
 const LS_KEY = 'qatrial:tasks';
@@ -149,7 +149,7 @@ export function TaskDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -177,11 +177,11 @@ export function TaskDashboard() {
         </div>
         <div className="p-4 bg-surface rounded-xl border border-border">
           <p className="text-xs text-text-tertiary uppercase tracking-wider">{t('tasks.filterOverdue')}</p>
-          <p className="text-2xl font-bold text-danger mt-1">{counts.overdue}</p>
+          <p className="text-2xl font-bold text-danger-text mt-1">{counts.overdue}</p>
         </div>
         <div className="p-4 bg-surface rounded-xl border border-border">
           <p className="text-xs text-text-tertiary uppercase tracking-wider">{t('tasks.filterCompleted')}</p>
-          <p className="text-2xl font-bold text-green-500 mt-1">{counts.completed}</p>
+          <p className="text-2xl font-bold text-success-text mt-1">{counts.completed}</p>
         </div>
       </div>
 
@@ -239,7 +239,7 @@ export function TaskDashboard() {
                     {task.priority}
                   </span>
                   {isOverdue(task) && (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] text-danger font-medium">
+                    <span className="inline-flex items-center gap-0.5 text-[10px] text-danger-text font-medium">
                       <AlertTriangle className="w-3 h-3" />
                       {t('tasks.overdue')}
                     </span>
@@ -261,7 +261,7 @@ export function TaskDashboard() {
                     {task.assigneeName || t('tasks.unassigned')}
                   </span>
                   {task.dueDate && (
-                    <span className={isOverdue(task) ? 'text-danger' : ''}>
+                    <span className={isOverdue(task) ? 'text-danger-text' : ''}>
                       <Clock className="w-3 h-3 inline mr-0.5" />
                       {new Date(task.dueDate).toLocaleDateString()}
                     </span>
@@ -278,7 +278,7 @@ export function TaskDashboard() {
                 {task.status !== 'completed' && (
                   <button
                     onClick={() => handleComplete(task)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-accent text-accent-fg rounded-lg hover:bg-accent-hover transition-colors"
                   >
                     <CheckSquare className="w-3 h-3" />
                     {t('tasks.complete')}
