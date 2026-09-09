@@ -327,7 +327,7 @@ export function BatchRecordForm() {
                   {canEdit && batch.status === 'draft' && (
                     <button
                       onClick={(e) => { e.stopPropagation(); handleStatusChange(batch.id, 'in_progress'); }}
-                      className="px-2 py-1 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                      className="px-2 py-1 text-xs font-medium bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
                     >
                       {t('batches.start')}
                     </button>

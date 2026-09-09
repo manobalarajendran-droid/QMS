@@ -198,7 +198,7 @@ export function FormSubmissions({ templateId }: FormSubmissionsProps) {
                   <div className="flex gap-2 mt-3 pt-3 border-t border-border">
                     <button
                       onClick={() => handleReview(sub.id, 'reviewed')}
-                      className="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="px-3 py-1.5 text-xs bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
                     >
                       {t('forms.markReviewed')}
                     </button>

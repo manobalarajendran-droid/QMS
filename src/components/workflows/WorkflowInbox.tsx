@@ -252,7 +252,7 @@ export function WorkflowInbox() {
                     </button>
                     <button
                       onClick={() => handleAction(exec.id, 'rejected')}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-danger text-danger-fg rounded-lg hover:bg-danger/90 transition-colors"
                     >
                       <XCircle className="w-3.5 h-3.5" />
                       {t('workflows.reject')}
