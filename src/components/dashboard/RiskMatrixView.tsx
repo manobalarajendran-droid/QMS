@@ -5,6 +5,15 @@ import { useProjectStore } from '../../store/useProjectStore';
 import { useLLMStore } from '../../store/useLLMStore';
 import { classifyRisk } from '../../ai/prompts/riskClassification';
 import type { Requirement, RiskLevel, Severity, Likelihood } from '../../types';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
+
+const RISK_VARIANTS: Record<RiskLevel, BadgeVariant> = {
+  critical: 'red',
+  high: 'amber',
+  medium: 'amber',
+  low: 'green',
+};
 
 type CellCoord = { severity: Severity; likelihood: Likelihood };
 
@@ -280,18 +289,11 @@ export function RiskMatrixView() {
                 sev: selectedCell.severity,
                 lik: selectedCell.likelihood,
               })}
-              <span
-                className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                  {
-                    critical: 'bg-red-100 text-red-700',
-                    high: 'bg-orange-100 text-orange-700',
-                    medium: 'bg-yellow-100 text-yellow-700',
-                    low: 'bg-green-100 text-green-700',
-                  }[zoneLabel(selectedCell.severity, selectedCell.likelihood)]
-                }`}
-              >
-                {t(`risk.${zoneLabel(selectedCell.severity, selectedCell.likelihood)}`)}
-              </span>
+              <StatusBadge
+                className="ml-2"
+                variant={RISK_VARIANTS[zoneLabel(selectedCell.severity, selectedCell.likelihood)]}
+                status={t(`risk.${zoneLabel(selectedCell.severity, selectedCell.likelihood)}`)}
+              />
             </h4>
 
             {selectedReqs.length === 0 ? (
@@ -308,18 +310,11 @@ export function RiskMatrixView() {
                     <span className="text-xs font-mono text-text-tertiary">{req.id}</span>
                     <span className="text-sm text-text-primary">{req.title}</span>
                     {req.riskLevel && (
-                      <span
-                        className={`ml-auto inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                          {
-                            critical: 'bg-red-100 text-red-700',
-                            high: 'bg-orange-100 text-orange-700',
-                            medium: 'bg-yellow-100 text-yellow-700',
-                            low: 'bg-green-100 text-green-700',
-                          }[req.riskLevel]
-                        }`}
-                      >
-                        {t(`risk.${req.riskLevel}`)}
-                      </span>
+                      <StatusBadge
+                        className="ml-auto"
+                        variant={RISK_VARIANTS[req.riskLevel]}
+                        status={t(`risk.${req.riskLevel}`)}
+                      />
                     )}
                   </div>
                 ))}

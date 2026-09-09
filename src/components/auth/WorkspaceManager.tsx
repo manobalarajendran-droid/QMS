@@ -31,7 +31,7 @@ function roleBadgeClass(role: string) {
     case 'reviewer':
       return 'bg-emerald-500/10 text-success-text border-emerald-500/20';
     case 'auditor':
-      return 'bg-amber-500/10 text-amber-700 border-amber-500/20';
+      return 'bg-amber-500/10 text-warning-text border-amber-500/20';
     case 'editor':
       return 'bg-accent-subtle text-accent-text border-accent/20';
     default:

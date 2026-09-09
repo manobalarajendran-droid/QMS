@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GitBranch, AlertTriangle, Search, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { VARIANT_STYLES } from '../shared/statusBadgeUtils';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
 
 interface GraphNode {
   id: string;
@@ -39,13 +41,13 @@ interface WhatIfResult {
   };
 }
 
-const TYPE_COLORS: Record<string, string> = {
-  requirement: 'bg-blue-100 text-blue-700 border-blue-200',
-  test: 'bg-green-100 text-green-700 border-green-200',
-  risk: 'bg-red-100 text-red-700 border-red-200',
-  capa: 'bg-amber-100 text-amber-700 border-amber-200',
-  evidence: 'bg-purple-100 text-purple-700 border-purple-200',
-  approval: 'bg-teal-100 text-teal-700 border-teal-200',
+const TYPE_VARIANT: Record<string, BadgeVariant> = {
+  requirement: 'blue',
+  test: 'green',
+  risk: 'red',
+  capa: 'amber',
+  evidence: 'blue',
+  approval: 'blue',
 };
 
 export function ImpactAnalysis() {
@@ -184,10 +186,10 @@ export function ImpactAnalysis() {
           {(whatIf.impact.summary.revalidationNeeded || whatIf.impact.summary.retestingNeeded) && (
             <div className="mt-3 flex gap-2">
               {whatIf.impact.summary.retestingNeeded && (
-                <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">{t('impact.retestingNeeded')}</span>
+                <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${VARIANT_STYLES.red}`}>{t('impact.retestingNeeded')}</span>
               )}
               {whatIf.impact.summary.revalidationNeeded && (
-                <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">{t('impact.revalidationNeeded')}</span>
+                <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${VARIANT_STYLES.red}`}>{t('impact.revalidationNeeded')}</span>
               )}
             </div>
           )}
@@ -201,7 +203,7 @@ export function ImpactAnalysis() {
 
           {/* Root node */}
           {rootNode && (
-            <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border ${TYPE_COLORS[rootNode.type] || 'bg-surface-tertiary text-text-secondary border-gray-200'}`}>
+            <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border ${TYPE_VARIANT[rootNode.type] ? VARIANT_STYLES[TYPE_VARIANT[rootNode.type]] : VARIANT_STYLES.gray}`}>
               <span className="text-xs font-bold uppercase">{rootNode.type}</span>
               <span className="text-sm">{rootNode.label}</span>
               {rootNode.status && (
@@ -223,7 +225,7 @@ export function ImpactAnalysis() {
                   {typeNodes.map((node) => (
                     <div
                       key={node.id}
-                      className={`inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-sm mr-2 mb-1 ${TYPE_COLORS[node.type] || 'bg-surface-tertiary text-text-secondary border-gray-200'}`}
+                      className={`inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border text-sm mr-2 mb-1 ${TYPE_VARIANT[node.type] ? VARIANT_STYLES[TYPE_VARIANT[node.type]] : VARIANT_STYLES.gray}`}
                     >
                       <span>{node.label}</span>
                       {node.status && (

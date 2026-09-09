@@ -1,5 +1,13 @@
 import { useState } from 'react';
 import { FileText, Search, Plus, Download } from 'lucide-react';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
+
+const LEVEL_VARIANTS: Record<string, BadgeVariant> = {
+  L1: 'amber',
+  L2: 'blue',
+  L3: 'green',
+};
 
 
 // Mock data to replicate v12 logic in standalone mode
@@ -83,18 +91,15 @@ export function DMLView() {
                   <td className="px-4 py-3 font-mono text-accent-text">{d.no}</td>
                   <td className="px-4 py-3 font-medium text-text-primary">{d.title}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${
-                      d.lv === 'L1' ? 'bg-amber-100 text-amber-800' :
-                      d.lv === 'L2' ? 'bg-blue-100 text-blue-800' :
-                      d.lv === 'L3' ? 'bg-green-100 text-green-800' :
-                      'bg-surface-tertiary text-text-primary'
-                    }`}>
-                      {d.lv}
-                    </span>
+                    <StatusBadge
+                      className="font-bold"
+                      variant={LEVEL_VARIANTS[d.lv] || 'gray'}
+                      status={d.lv}
+                    />
                   </td>
                   <td className="px-4 py-3">{d.dept}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-bold uppercase">{d.status}</span>
+                    <StatusBadge className="font-bold uppercase" status={d.status} />
                   </td>
                   <td className="px-4 py-3">{d.rev}</td>
                 </tr>

@@ -6,7 +6,8 @@ import { useProjectStore } from '../../store/useProjectStore';
 import { useLLMStore } from '../../store/useLLMStore';
 import { useGapStore } from '../../store/useGapStore';
 import { analyzeGaps } from '../../ai/prompts/gapAnalysis';
-import type { AIGapAnalysis, GapStatus } from '../../types';
+import { resolveStatusVariant, VARIANT_STYLES } from '../shared/statusBadgeUtils';
+import type { AIGapAnalysis } from '../../types';
 
 interface StandardSummary {
   standard: string;
@@ -15,12 +16,6 @@ interface StandardSummary {
   partial: number;
   missing: number;
 }
-
-const STATUS_COLORS: Record<GapStatus, { bg: string; text: string; bar: string }> = {
-  covered: { bg: 'bg-green-100', text: 'text-green-700', bar: 'bg-success' },
-  partial: { bg: 'bg-amber-100', text: 'text-amber-700', bar: 'bg-warning' },
-  missing: { bg: 'bg-red-100', text: 'text-red-700', bar: 'bg-danger' },
-};
 
 export function GapAnalysisView() {
   const { t } = useTranslation();
@@ -325,7 +320,7 @@ export function GapAnalysisView() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span
-                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[gap.status].bg} ${STATUS_COLORS[gap.status].text}`}
+                        className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[11px] font-medium leading-tight ${VARIANT_STYLES[resolveStatusVariant(gap.status)]}`}
                       >
                         {t(`ai.gapStatus.${gap.status}`)}
                       </span>

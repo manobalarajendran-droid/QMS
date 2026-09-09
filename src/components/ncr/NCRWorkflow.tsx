@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useAuthStore } from '../../store/useAuthStore';
 import { PTA_DEPARTMENTS } from '../../types';
 import { StatusBadge } from '../shared/StatusBadge';
+import { VARIANT_STYLES } from '../shared/statusBadgeUtils';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { ActionPlanTable } from '../shared/ActionPlanTable';
 import type { ActionPlanRow } from '../shared/ActionPlanTable';
@@ -239,7 +240,7 @@ function NCRCard({ record, onClick }: { record: NCRRecord; onClick: () => void }
       <div className="flex justify-between items-start mb-2">
         <span className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors">{record.ref || 'Draft'}</span>
         {slaInfo && (
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${slaInfo.colorClass}`}>
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${VARIANT_STYLES[slaInfo.variant]}`}>
             <Clock className="w-3 h-3" />
             {slaInfo.daysLeft > 0 ? `${slaInfo.daysLeft}d left` : 'Overdue'}
           </span>
@@ -280,14 +281,14 @@ function calculateSLA(record: NCRRecord) {
   const msLeft = deadlineDate.getTime() - now.getTime();
   const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
 
-  let colorClass = 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800/50';
+  let variant: 'green' | 'red' | 'amber' = 'green';
   if (daysLeft < 0) {
-    colorClass = 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800/50';
+    variant = 'red';
   } else if (daysLeft <= 3) {
-    colorClass = 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50';
+    variant = 'amber';
   }
 
-  return { daysLeft, colorClass, deadlineDate };
+  return { daysLeft, variant, deadlineDate };
 }
 
 function InfoField({ label, value }: { label: string; value?: string }) {

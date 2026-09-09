@@ -4,6 +4,8 @@ import { Building2, Plus, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
+import { StatusBadge } from '../shared/StatusBadge';
+import { resolveStatusVariant } from '../shared/statusBadgeUtils';
 
 interface Supplier {
   id: string;
@@ -96,18 +98,11 @@ export function SupplierScorecard() {
     }
   };
 
-  const riskColors: Record<string, string> = {
-    low: 'bg-green-100 text-green-700',
-    medium: 'bg-yellow-100 text-yellow-700',
-    high: 'bg-orange-100 text-orange-700',
-    critical: 'bg-red-100 text-red-700',
-  };
-
-  const qualColors: Record<string, string> = {
-    pending: 'bg-surface-tertiary text-text-secondary',
-    qualified: 'bg-green-100 text-green-700',
-    conditional: 'bg-yellow-100 text-yellow-700',
-    disqualified: 'bg-red-100 text-red-700',
+  const riskVariant = (riskLevel: string): 'green' | 'amber' | 'red' | 'gray' => {
+    if (riskLevel === 'low') return 'green';
+    if (riskLevel === 'critical') return 'red';
+    if (riskLevel === 'medium' || riskLevel === 'high') return 'amber';
+    return 'gray';
   };
 
   const scoreColor = (score: number | null) => {
@@ -211,12 +206,16 @@ export function SupplierScorecard() {
                   <p className="text-xs text-text-tertiary capitalize">{t(`suppliers.cat_${supplier.category}`)}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${riskColors[supplier.riskLevel]}`}>
-                    {t(`risk.${supplier.riskLevel}`)}
-                  </span>
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${qualColors[supplier.qualificationStatus]}`}>
-                    {t(`suppliers.qual_${supplier.qualificationStatus}`)}
-                  </span>
+                  <StatusBadge
+                    status={t(`risk.${supplier.riskLevel}`)}
+                    variant={riskVariant(supplier.riskLevel)}
+                    className="rounded-full"
+                  />
+                  <StatusBadge
+                    status={t(`suppliers.qual_${supplier.qualificationStatus}`)}
+                    variant={resolveStatusVariant(supplier.qualificationStatus)}
+                    className="rounded-full"
+                  />
                 </div>
               </div>
 

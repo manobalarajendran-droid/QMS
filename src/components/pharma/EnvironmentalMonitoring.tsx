@@ -9,6 +9,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { getProjectId } from '../../lib/projectUtils';
+import { VARIANT_STYLES } from '../shared/statusBadgeUtils';
 
 interface MonitoringPointData {
   id: string;
@@ -274,7 +275,7 @@ export function EnvironmentalMonitoring() {
                             <td className="px-3 py-1.5 text-center">
                               {r.excursion && (
                                 <span className={`inline-flex px-1.5 py-0.5 rounded text-xs font-medium ${
-                                  r.excursionType === 'action' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                                  VARIANT_STYLES[r.excursionType === 'action' ? 'red' : 'amber']
                                 }`}>
                                   {r.excursionType}
                                 </span>

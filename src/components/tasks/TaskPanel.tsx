@@ -4,6 +4,7 @@ import { CheckSquare, Plus, Clock, AlertTriangle, X } from 'lucide-react';
 import { useAppMode } from '../../hooks/useAppMode';
 import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
+import { VARIANT_STYLES } from '../shared/statusBadgeUtils';
 import type { QTask, TaskPriority, TaskStatus } from '../../types';
 
 interface TaskPanelProps {
@@ -12,11 +13,11 @@ interface TaskPanelProps {
   projectId: string;
 }
 
-const PRIORITY_COLORS: Record<TaskPriority, string> = {
-  low: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  high: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-  critical: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+const PRIORITY_VARIANT: Record<TaskPriority, 'green' | 'amber' | 'red'> = {
+  low: 'green',
+  medium: 'amber',
+  high: 'amber',
+  critical: 'red',
 };
 
 const STATUS_CYCLE: TaskStatus[] = ['open', 'in_progress', 'completed'];
@@ -354,7 +355,7 @@ export function TaskPanel({ entityType, entityId, projectId }: TaskPanelProps) {
               </div>
             </div>
 
-            <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${PRIORITY_COLORS[task.priority]}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${VARIANT_STYLES[PRIORITY_VARIANT[task.priority]]}`}>
               {task.priority}
             </span>
 

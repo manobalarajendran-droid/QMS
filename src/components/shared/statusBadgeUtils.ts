@@ -20,24 +20,24 @@ export const TEST_COLORS: Record<TestStatus, string> = {
 export function resolveStatusVariant(status?: string): BadgeVariant {
   const s = (status || '').toLowerCase().trim();
 
-  // Green: Active, Closed, Achieved, Published, Implemented, Approved, Completed, Passed, Valid, Report Issued
-  if (['active', 'closed', 'achieved', 'completed', 'published', 'implemented', 'approved', 'passed', 'valid', 'report issued'].includes(s)) {
+  // Green: Active, Closed, Achieved, Published, Implemented, Approved, Completed, Passed, Valid, Report Issued, Resolved
+  if (['active', 'closed', 'achieved', 'completed', 'published', 'implemented', 'approved', 'passed', 'valid', 'report issued', 'resolved', 'released', 'submitted', 'qualified', 'covered'].includes(s)) {
     return 'green';
   }
   // Amber: In Progress, Under Review, Pending Review, Ongoing, Due Soon, Due, Conditional, Reviewed, CAPA Planned, Acknowledged, Pending Submission
   if ([
-    'in progress', 'under review', 'underreview', 'pending review', 'pending qa approval',
-    'reviewed', 'capa_planned', 'capa_inprogress', 'corrective action pending',
-    'ongoing', 'due soon', 'due', 'conditional', 'acknowledged', 'pending submission'
+    'in progress', 'in_progress', 'under review', 'underreview', 'pending review', 'pending qa approval', 'review',
+    'reviewed', 'capa_planned', 'capa_inprogress', 'capa planned', 'capa in progress', 'corrective action pending',
+    'ongoing', 'due soon', 'due', 'conditional', 'acknowledged', 'pending submission', 'partial'
   ].includes(s)) {
     return 'amber';
   }
   // Red: Open, Overdue, Rejected, Not Achieved, Failed, Scrapped, Cancelled, Logged, Out of Service
-  if (['open', 'overdue', 'rejected', 'not achieved', 'failed', 'scrapped', 'cancelled', 'logged', 'out of service', 'delayed'].includes(s)) {
+  if (['open', 'overdue', 'rejected', 'not achieved', 'failed', 'scrapped', 'cancelled', 'logged', 'out of service', 'delayed', 'terminated', 'disqualified', 'missing'].includes(s)) {
     return 'red';
   }
   // Blue: Under Investigation, Root Cause, Investigation, Scheduled, Mobilized, Pending Evaluation, Under Evaluation
-  if (['under investigation', 'investigation', 'rootcause', 'scheduled', 'mobilized', 'pending evaluation', 'under evaluation'].includes(s)) {
+  if (['under investigation', 'investigation', 'investigating', 'rootcause', 'root cause analysis', 'scheduled', 'mobilized', 'pending evaluation', 'under evaluation'].includes(s)) {
     return 'blue';
   }
   // Gray: Draft, Not Started, Obsolete, Archived, Planned, Not Run

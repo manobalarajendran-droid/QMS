@@ -9,6 +9,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
+import { resolveStatusVariant, VARIANT_STYLES } from '../shared/statusBadgeUtils';
 
 interface Study {
   id: string;
@@ -38,12 +40,6 @@ const TYPE_LABELS: Record<string, string> = {
   accelerated: 'Accelerated',
   intermediate: 'Intermediate',
   stress: 'Stress',
-};
-
-const STATUS_COLORS: Record<string, string> = {
-  active: 'bg-green-100 text-green-700',
-  completed: 'bg-blue-100 text-blue-700',
-  terminated: 'bg-red-100 text-red-700',
 };
 
 export function StabilityStudy() {
@@ -194,9 +190,11 @@ export function StabilityStudy() {
                     <span className="text-xs text-text-tertiary ml-2">{TYPE_LABELS[study.studyType] || study.studyType}</span>
                   </div>
                   <span className="text-xs text-text-secondary">{study.conditions}</span>
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[study.status] || ''}`}>
-                    {t(`stability.status_${study.status}`)}
-                  </span>
+                  <StatusBadge
+                    status={t(`stability.status_${study.status}`)}
+                    variant={resolveStatusVariant(study.status)}
+                    className="rounded-full"
+                  />
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-text-tertiary">
@@ -250,12 +248,12 @@ export function StabilityStudy() {
                               </td>
                               <td className="px-3 py-1.5 text-center">
                                 {sample.oosFlag && (
-                                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-100 text-red-700 text-xs font-medium">
+                                  <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium ${VARIANT_STYLES.red}`}>
                                     <AlertTriangle className="w-3 h-3" /> OOS
                                   </span>
                                 )}
                                 {sample.ootFlag && !sample.oosFlag && (
-                                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 text-xs font-medium">
+                                  <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-medium ${VARIANT_STYLES.amber}`}>
                                     <AlertTriangle className="w-3 h-3" /> OOT
                                   </span>
                                 )}

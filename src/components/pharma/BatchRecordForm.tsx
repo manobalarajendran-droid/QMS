@@ -6,6 +6,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
+import { resolveStatusVariant, VARIANT_STYLES } from '../shared/statusBadgeUtils';
 
 interface BatchStep {
   id: string;
@@ -198,14 +200,6 @@ export function BatchRecordForm() {
     }
   };
 
-  const statusColors: Record<string, string> = {
-    draft: 'bg-surface-tertiary text-text-secondary',
-    in_progress: 'bg-blue-100 text-blue-700',
-    review: 'bg-purple-100 text-purple-700',
-    released: 'bg-green-100 text-green-700',
-    rejected: 'bg-red-100 text-red-700',
-  };
-
   const toggleExpand = (id: string) => {
     if (expandedId === id) {
       setExpandedId(null);
@@ -315,9 +309,11 @@ export function BatchRecordForm() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[batch.status]}`}>
-                    {t(`batches.status_${batch.status}`)}
-                  </span>
+                  <StatusBadge
+                    status={t(`batches.status_${batch.status}`)}
+                    variant={resolveStatusVariant(batch.status)}
+                    className="rounded-full"
+                  />
                   {batch.yieldExpected && batch.yieldActual && (
                     <span className="text-xs text-text-secondary">
                       {t('batches.yield')}: {batch.yieldActual}/{batch.yieldExpected}
@@ -399,7 +395,7 @@ export function BatchRecordForm() {
                               <span className="ml-2 text-text-secondary">{step.instruction}</span>
                             </div>
                             {step.deviation && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${VARIANT_STYLES.red}`}>
                                 <AlertTriangle className="w-3 h-3" />
                                 {t('batches.deviation')}
                               </span>

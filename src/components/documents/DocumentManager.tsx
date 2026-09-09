@@ -6,6 +6,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
 
 interface DocumentVersion {
   id: string;
@@ -147,21 +149,21 @@ export function DocumentManager() {
     }
   };
 
-  const statusColors: Record<string, string> = {
-    draft: 'bg-surface-tertiary text-text-secondary',
-    in_review: 'bg-purple-100 text-purple-700',
-    approved: 'bg-blue-100 text-blue-700',
-    effective: 'bg-green-100 text-green-700',
-    superseded: 'bg-yellow-100 text-yellow-700',
-    retired: 'bg-red-100 text-red-700',
+  const statusVariants: Record<string, BadgeVariant> = {
+    draft: 'gray',
+    in_review: 'blue',
+    approved: 'blue',
+    effective: 'green',
+    superseded: 'amber',
+    retired: 'red',
   };
 
-  const typeColors: Record<string, string> = {
-    sop: 'bg-blue-100 text-blue-700',
-    work_instruction: 'bg-purple-100 text-purple-700',
-    policy: 'bg-green-100 text-green-700',
-    form: 'bg-orange-100 text-orange-700',
-    specification: 'bg-red-100 text-red-700',
+  const typeVariants: Record<string, BadgeVariant> = {
+    sop: 'blue',
+    work_instruction: 'blue',
+    policy: 'green',
+    form: 'amber',
+    specification: 'red',
   };
 
   const toggleExpand = (id: string) => {
@@ -274,15 +276,17 @@ export function DocumentManager() {
                   <tr className="border-b border-border hover:bg-surface-hover transition-colors">
                     <td className="px-4 py-3 text-text-primary font-medium">{doc.title}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${typeColors[doc.type] || 'bg-surface-tertiary text-text-secondary'}`}>
-                        {t(`documents.type_${doc.type}`)}
-                      </span>
+                      <StatusBadge
+                        variant={typeVariants[doc.type] || 'gray'}
+                        status={t(`documents.type_${doc.type}`)}
+                      />
                     </td>
                     <td className="px-4 py-3 text-text-secondary">v{doc.currentVersion}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[doc.status]}`}>
-                        {t(`documents.status_${doc.status}`)}
-                      </span>
+                      <StatusBadge
+                        variant={statusVariants[doc.status] || 'gray'}
+                        status={t(`documents.status_${doc.status}`)}
+                      />
                     </td>
                     <td className="px-4 py-3 text-text-secondary text-xs">
                       {new Date(doc.updatedAt).toLocaleDateString()}

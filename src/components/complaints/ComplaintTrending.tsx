@@ -11,6 +11,14 @@ import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { ComplaintForm } from './ComplaintForm';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
+
+const SEVERITY_VARIANTS: Record<string, BadgeVariant> = {
+  critical: 'red',
+  major: 'amber',
+  minor: 'amber',
+};
 
 const SEVERITY_COLORS: Record<string, string> = {
   minor: '#eab308',
@@ -226,32 +234,20 @@ export function ComplaintTrending() {
                 <tr key={comp.id} className="border-b border-border hover:bg-surface-hover transition-colors">
                   <td className="px-4 py-3 text-text-primary font-medium">{comp.productName}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                      comp.severity === 'critical' ? 'bg-red-100 text-red-700' :
-                      comp.severity === 'major' ? 'bg-orange-100 text-orange-700' :
-                      'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {t(`complaints.sev_${comp.severity}`)}
-                    </span>
+                    <StatusBadge
+                      variant={SEVERITY_VARIANTS[comp.severity] || 'gray'}
+                      status={t(`complaints.sev_${comp.severity}`)}
+                    />
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-                      comp.investigationStatus === 'closed' ? 'bg-green-100 text-green-700' :
-                      comp.investigationStatus === 'resolved' ? 'bg-blue-100 text-blue-700' :
-                      comp.investigationStatus === 'investigating' ? 'bg-purple-100 text-purple-700' :
-                      'bg-surface-tertiary text-text-secondary'
-                    }`}>
-                      {t(`complaints.status_${comp.investigationStatus}`)}
-                    </span>
+                    <StatusBadge status={t(`complaints.status_${comp.investigationStatus}`)} />
                   </td>
                   <td className="px-4 py-3 text-text-secondary">
                     {new Date(comp.reportDate).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
                     {comp.patientImpact && (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                        {t('common.yes')}
-                      </span>
+                      <StatusBadge variant="red" status={t('common.yes')} />
                     )}
                   </td>
                   <td className="px-4 py-3">

@@ -5,6 +5,7 @@ import { GraduationCap, Plus, AlertCircle, CheckCircle2, Clock } from 'lucide-re
 import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
+import { VARIANT_STYLES } from '../shared/statusBadgeUtils';
 
 interface ComplianceData {
   planId: string;
@@ -223,17 +224,17 @@ export function TrainingDashboard() {
                       return (
                         <td key={course.id} className="text-center px-3 py-2">
                           {cell.completedCount > 0 ? (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs">
+                            <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs ${VARIANT_STYLES.green}`}>
                               <CheckCircle2 className="w-3 h-3" />
                               {cell.completedCount}
                             </span>
                           ) : cell.assignedCount > 0 ? (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs">
+                            <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs ${VARIANT_STYLES.blue}`}>
                               <Clock className="w-3 h-3" />
                               {cell.assignedCount}
                             </span>
                           ) : cell.expiredCount > 0 ? (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 text-xs">
+                            <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs ${VARIANT_STYLES.red}`}>
                               <AlertCircle className="w-3 h-3" />
                               {cell.expiredCount}
                             </span>

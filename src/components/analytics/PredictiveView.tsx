@@ -7,6 +7,7 @@ import {
 import { useProjectStore } from '../../store/useProjectStore';
 import { apiFetch } from '../../lib/apiClient';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
 
 interface FailureRisk {
   requirementId: string;
@@ -283,15 +284,11 @@ export function PredictiveView() {
                   <div className="flex items-center gap-2 mb-2">
                     <RotateCcw className="w-4 h-4 text-warning-text" />
                     <h4 className="text-sm font-semibold text-text-primary">{pattern.rootCause}</h4>
-                    <span className={`ml-auto px-2 py-0.5 text-xs rounded-full font-medium ${
-                      pattern.severity === 'high'
-                        ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                        : pattern.severity === 'medium'
-                        ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                        : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                    }`}>
-                      {pattern.frequency}x {t('predictive.in6Months')}
-                    </span>
+                    <StatusBadge
+                      className="ml-auto"
+                      variant={pattern.severity === 'high' ? 'red' : pattern.severity === 'medium' ? 'amber' : 'blue'}
+                      status={`${pattern.frequency}x ${t('predictive.in6Months')}`}
+                    />
                   </div>
                   <div className="space-y-1">
                     {pattern.recentCapas.slice(0, 5).map((capa) => (

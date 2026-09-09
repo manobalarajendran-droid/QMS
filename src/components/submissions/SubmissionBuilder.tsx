@@ -6,6 +6,7 @@ import { useProjectStore } from '../../store/useProjectStore';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
 
 interface SubmissionSection {
   name: string;
@@ -34,13 +35,6 @@ const SUBMISSION_TYPES = [
   { id: 'pmda_sted', label: 'PMDA STED', authority: 'PMDA', description: 'Summary Technical Documentation for Japan' },
   { id: 'ectd_module3', label: 'eCTD Module 3', authority: 'EMA', description: 'Quality module for pharmaceutical submissions' },
 ];
-
-const STATUS_COLORS: Record<string, string> = {
-  draft: 'bg-surface-tertiary text-text-secondary',
-  in_progress: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-  review: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-  submitted: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-};
 
 export function SubmissionBuilder() {
   const { t } = useTranslation();
@@ -200,9 +194,7 @@ export function SubmissionBuilder() {
               {t('common.back')}
             </button>
             <h2 className="text-lg font-semibold text-text-primary">{selectedSubmission.title}</h2>
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[selectedSubmission.status] || ''}`}>
-              {selectedSubmission.status}
-            </span>
+            <StatusBadge status={selectedSubmission.status} className="rounded-full" />
           </div>
           <div className="flex items-center gap-2">
             {canEdit && selectedSubmission.status !== 'submitted' && (
@@ -411,9 +403,7 @@ export function SubmissionBuilder() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[sub.status] || ''}`}>
-                  {sub.status}
-                </span>
+                <StatusBadge status={sub.status} className="rounded-full" />
                 {canEdit && (
                   <button
                     onClick={(e) => {

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, TrendingDown, Activity, BarChart3, Building2 } from 'lucide-react';
+import { StatusBadge } from '../shared/StatusBadge';
 
 interface Anomaly {
   type: 'deviation_spike' | 'yield_drop' | 'oos_trend' | 'complaint_spike' | 'supplier_degradation';
@@ -34,9 +35,6 @@ export function AnomalyCard({ anomaly, onInvestigate }: { anomaly: Anomaly; onIn
 
   const isCritical = anomaly.severity === 'critical';
   const borderColor = isCritical ? 'border-l-red-500' : 'border-l-amber-500';
-  const severityBadge = isCritical
-    ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-    : 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
 
   const iconColor = isCritical
     ? 'text-danger-text'
@@ -51,9 +49,10 @@ export function AnomalyCard({ anomaly, onInvestigate }: { anomaly: Anomaly; onIn
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${severityBadge}`}>
-                {isCritical ? t('analytics.critical') : t('analytics.warning')}
-              </span>
+              <StatusBadge
+                variant={isCritical ? 'red' : 'amber'}
+                status={isCritical ? t('analytics.critical') : t('analytics.warning')}
+              />
               <span className="text-xs text-text-tertiary">
                 {t(typeLabels[anomaly.type] || 'analytics.typeDeviation')}
               </span>

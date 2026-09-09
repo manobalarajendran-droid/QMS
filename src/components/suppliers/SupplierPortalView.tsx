@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart3, ClipboardCheck, AlertTriangle, FileText, Upload, Send, Clock, Shield, CheckCircle } from 'lucide-react';
 import { getApiBase } from '../../lib/apiClient';
+import { StatusBadge } from '../shared/StatusBadge';
+import { resolveStatusVariant } from '../shared/statusBadgeUtils';
 
 interface PortalDashboard {
   supplier: { name: string; category: string; qualificationStatus: string };
@@ -178,13 +180,6 @@ export function SupplierPortalView({ token }: { token: string }) {
     return 'text-danger-text';
   };
 
-  const qualColors: Record<string, string> = {
-    pending: 'bg-surface-tertiary text-text-secondary',
-    qualified: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-    conditional: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-    disqualified: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-surface-secondary flex items-center justify-center">
@@ -315,9 +310,11 @@ export function SupplierPortalView({ token }: { token: string }) {
 
                 {/* Qualification Status */}
                 <div className="text-center">
-                  <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${qualColors[dashboard.scorecard.qualificationStatus] || qualColors.pending}`}>
-                    {t(`suppliers.qual_${dashboard.scorecard.qualificationStatus}`)}
-                  </span>
+                  <StatusBadge
+                    status={t(`suppliers.qual_${dashboard.scorecard.qualificationStatus}`)}
+                    variant={resolveStatusVariant(dashboard.scorecard.qualificationStatus)}
+                    className="rounded-full text-sm px-3 py-1"
+                  />
                   <div className="text-xs text-text-tertiary mt-2">{t('supplierPortal.qualificationStatus')}</div>
                 </div>
               </div>
@@ -367,13 +364,7 @@ export function SupplierPortalView({ token }: { token: string }) {
                         <span className="text-xs px-2 py-0.5 rounded-full bg-surface-secondary text-text-secondary capitalize">
                           {audit.auditType.replace('_', ' ')}
                         </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${
-                          audit.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
-                          audit.status === 'scheduled' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' :
-                          'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
-                        }`}>
-                          {audit.status}
-                        </span>
+                        <StatusBadge status={audit.status} className="rounded-full capitalize" />
                       </div>
                       <p className="text-xs text-text-tertiary mt-1">{t('supplierPortal.auditor')}: {audit.auditor}</p>
                       {audit.findings && (
@@ -407,13 +398,11 @@ export function SupplierPortalView({ token }: { token: string }) {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          action.classification === 'critical' ? 'bg-red-100 text-red-700' :
-                          action.classification === 'major' ? 'bg-orange-100 text-orange-700' :
-                          'bg-yellow-100 text-yellow-700'
-                        }`}>
-                          {action.classification}
-                        </span>
+                        <StatusBadge
+                          status={action.classification}
+                          variant={action.classification === 'critical' ? 'red' : 'amber'}
+                          className="rounded-full"
+                        />
                         <span className="text-xs text-text-tertiary">{action.area}</span>
                       </div>
                       <p className="text-sm text-text-primary mt-1">{action.description}</p>
@@ -423,11 +412,7 @@ export function SupplierPortalView({ token }: { token: string }) {
                         </p>
                       )}
                     </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      action.status === 'open' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {action.status}
-                    </span>
+                    <StatusBadge status={action.status} className="rounded-full" />
                   </div>
 
                   {action.response && (

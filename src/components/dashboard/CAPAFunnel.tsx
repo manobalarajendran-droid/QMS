@@ -6,6 +6,8 @@ import { useProjectStore } from '../../store/useProjectStore';
 import { useLLMStore } from '../../store/useLLMStore';
 import { suggestCAPA } from '../../ai/prompts/capaSuggestion';
 import type { CAPAResult } from '../../ai/prompts/capaSuggestion';
+import { StatusBadge } from '../shared/StatusBadge';
+import { resolveStatusVariant } from '../shared/statusBadgeUtils';
 
 type CAPAStatus = 'open' | 'in_progress' | 'resolved';
 
@@ -107,17 +109,6 @@ export function CAPAFunnel() {
     }));
   }, []);
 
-  const getStatusColor = (status: CAPAStatus): string => {
-    switch (status) {
-      case 'open':
-        return 'bg-red-100 text-red-700';
-      case 'in_progress':
-        return 'bg-amber-100 text-amber-700';
-      case 'resolved':
-        return 'bg-green-100 text-green-700';
-    }
-  };
-
   const getStatusLabel = (status: CAPAStatus): string => {
     switch (status) {
       case 'open':
@@ -184,11 +175,7 @@ export function CAPAFunnel() {
                 <div key={test.id} className="px-4 py-4">
                   <div className="flex items-center gap-4">
                     {/* Status indicator */}
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(status)}`}
-                    >
-                      {getStatusLabel(status)}
-                    </span>
+                    <StatusBadge variant={resolveStatusVariant(status)} status={getStatusLabel(status)} />
 
                     {/* Test info */}
                     <div className="flex-1 min-w-0">

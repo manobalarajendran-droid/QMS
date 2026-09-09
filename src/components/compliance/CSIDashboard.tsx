@@ -9,6 +9,7 @@ import { useAuditStore } from '../../store/useAuditStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useAuth } from '../../hooks/useAuth';
 import { StatusBadge } from '../shared/StatusBadge';
+import { VARIANT_STYLES, resolveStatusVariant } from '../shared/statusBadgeUtils';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
 import { CommentThread } from '../shared/CommentThread';
@@ -160,16 +161,18 @@ export function CSIDashboard() {
               >
                 <div className="flex justify-between items-start">
                   <span className="font-semibold text-text-primary text-sm truncate">{r.cl} {r.isArchived ? '(Archived)' : ''}</span>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${score >= 85 ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60' : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/60'}`}>{score}%</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${VARIANT_STYLES[score >= 85 ? 'green' : 'amber']}`}>{score}%</span>
                 </div>
                 <div className="text-xs text-text-tertiary mt-1 truncate">{r.proj}</div>
                 {r.followUp && (
                   <div className="flex items-center gap-1.5 mt-1.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60">
-                      Follow-up: {r.followUp.status}
-                    </span>
+                    <StatusBadge
+                      className="text-[10px] font-bold uppercase tracking-wide"
+                      variant={resolveStatusVariant(r.followUp.status)}
+                      status={`Follow-up: ${r.followUp.status}`}
+                    />
                     {overdue && (
-                      <span className="flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-red-600 text-white">
+                      <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded border ${VARIANT_STYLES.red}`}>
                         <AlertTriangle className="w-2.5 h-2.5" /> Overdue
                       </span>
                     )}
@@ -404,7 +407,7 @@ function CSIFollowUpPanel({
           <AlertTriangle className="w-4 h-4" /> Corrective Action Follow-up
         </h4>
         {overdue && (
-          <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded bg-red-600 text-white">Overdue</span>
+          <StatusBadge className="uppercase tracking-wide" variant="red" status="Overdue" />
         )}
       </div>
 

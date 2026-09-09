@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useRequirementsStore } from '../../store/useRequirementsStore';
 import { useTestsStore } from '../../store/useTestsStore';
 import { isApproved } from '../../lib/approvalHelpers';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
 
 interface EvidenceRow {
   reqId: string;
@@ -19,10 +21,10 @@ function scoreColor(score: number): string {
   return 'bg-red-50 border-red-200';
 }
 
-function scoreBadgeColor(score: number): string {
-  if (score === 100) return 'bg-green-100 text-green-700';
-  if (score > 0) return 'bg-amber-100 text-amber-700';
-  return 'bg-red-100 text-red-700';
+function scoreBadgeVariant(score: number): BadgeVariant {
+  if (score === 100) return 'green';
+  if (score > 0) return 'amber';
+  return 'red';
 }
 
 function progressBarColor(score: number): string {
@@ -157,11 +159,7 @@ export function EvidenceCompleteness() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${scoreBadgeColor(row.evidenceScore)}`}
-                      >
-                        {row.evidenceScore}%
-                      </span>
+                      <StatusBadge variant={scoreBadgeVariant(row.evidenceScore)} status={`${row.evidenceScore}%`} />
                     </td>
                   </tr>
                 ))}

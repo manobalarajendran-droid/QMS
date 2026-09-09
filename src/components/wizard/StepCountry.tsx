@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { COUNTRY_REGISTRY } from '../../templates/registry';
 import { DEMO_COUNTRY_CODES, getDemoProject } from '../../lib/demoProjects';
 import type { DemoProject } from '../../lib/demoProjects';
+import { VARIANT_STYLES } from '../shared/statusBadgeUtils';
 
 interface Props {
   selected: string | null;
@@ -90,7 +91,7 @@ export function StepCountry({ selected, onSelect, onNext, onLoadDemo }: Props) {
                       {/* Demo badge */}
                       {hasDemo && (
                         <span
-                          className="relative inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 cursor-help"
+                          className={`relative inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-semibold rounded-full cursor-help ${VARIANT_STYLES.amber}`}
                           onMouseEnter={() => setHoveredDemo(country.code)}
                           onMouseLeave={() => setHoveredDemo(null)}
                         >

@@ -1,6 +1,7 @@
 ﻿import { useState, useMemo } from 'react';
 import { useDMLStore } from '../../store/useDMLStore';
 import { ShieldCheck, FileText, ChevronDown, ChevronRight, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+import { StatusBadge } from '../shared/StatusBadge';
 
 const ISO_CLAUSES = [
   { id: '4', title: 'Context of the Organization', sub: ['4.1 Context', '4.2 Interested Parties', '4.3 Scope', '4.4 QMS & Processes'] },
@@ -136,14 +137,7 @@ export function ComplianceMap() {
                         </div>
                       </div>
                       <div className="shrink-0">
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          doc.status === 'Published' ? 'bg-green-100 text-green-700' :
-                          doc.status === 'Approved' ? 'bg-blue-100 text-blue-700' :
-                          doc.status === 'UnderReview' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-surface-tertiary text-text-secondary'
-                        }`}>
-                          {doc.status}
-                        </span>
+                        <StatusBadge status={doc.status} />
                       </div>
                     </div>
                   ))}

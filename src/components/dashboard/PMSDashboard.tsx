@@ -6,6 +6,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
 
 interface PMSSummary {
   totalEntries: number;
@@ -43,6 +45,14 @@ const TYPE_COLORS: Record<string, string> = {
   field_action: 'bg-amber-100 text-amber-700',
   customer_feedback: 'bg-green-100 text-green-700',
   capa_summary: 'bg-purple-100 text-purple-700',
+};
+
+const TYPE_VARIANTS: Record<string, BadgeVariant> = {
+  complaint_summary: 'red',
+  literature: 'blue',
+  field_action: 'amber',
+  customer_feedback: 'green',
+  capa_summary: 'blue',
 };
 
 export function PMSDashboard() {
@@ -210,9 +220,10 @@ export function PMSDashboard() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-text-primary">{entry.title}</span>
-                      <span className={`inline-flex px-1.5 py-0.5 rounded text-xs ${TYPE_COLORS[entry.entryType] || ''}`}>
-                        {t(`pms.type_${entry.entryType}`)}
-                      </span>
+                      <StatusBadge
+                        variant={TYPE_VARIANTS[entry.entryType] || 'gray'}
+                        status={t(`pms.type_${entry.entryType}`)}
+                      />
                       {entry.severity && (
                         <span className="text-xs text-text-tertiary">({entry.severity})</span>
                       )}

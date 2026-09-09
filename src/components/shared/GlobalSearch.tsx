@@ -4,6 +4,8 @@ import { Search, X } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
 import { apiFetch } from '../../lib/apiClient';
 import { getProjectId } from '../../lib/projectUtils';
+import { VARIANT_STYLES } from './statusBadgeUtils';
+import type { BadgeVariant } from './statusBadgeUtils';
 
 interface SearchResult {
   type: string;
@@ -13,13 +15,13 @@ interface SearchResult {
   score: number;
 }
 
-const TYPE_BADGES: Record<string, { label: string; color: string }> = {
-  requirement: { label: 'REQ', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' },
-  test: { label: 'TEST', color: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
-  capa: { label: 'CAPA', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300' },
-  complaint: { label: 'COMP', color: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
-  deviation: { label: 'DEV', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300' },
-  document: { label: 'DOC', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' },
+const TYPE_BADGES: Record<string, { label: string; variant: BadgeVariant }> = {
+  requirement: { label: 'REQ', variant: 'blue' },
+  test: { label: 'TEST', variant: 'green' },
+  capa: { label: 'CAPA', variant: 'amber' },
+  complaint: { label: 'COMP', variant: 'red' },
+  deviation: { label: 'DEV', variant: 'amber' },
+  document: { label: 'DOC', variant: 'blue' },
 };
 
 function highlightMatch(text: string, query: string): React.ReactNode {
@@ -182,7 +184,7 @@ export function GlobalSearch() {
                             className="w-full text-left px-4 py-2 hover:bg-surface-hover transition-colors flex items-start gap-3"
                           >
                             {badge && (
-                              <span className={`px-1.5 py-0.5 rounded text-xs font-medium shrink-0 mt-0.5 ${badge.color}`}>
+                              <span className={`px-1.5 py-0.5 rounded text-xs font-medium shrink-0 mt-0.5 ${VARIANT_STYLES[badge.variant]}`}>
                                 {badge.label}
                               </span>
                             )}

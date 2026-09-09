@@ -6,6 +6,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { apiFetch } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
 
 interface AuditData {
   id: string;
@@ -33,18 +35,18 @@ interface FindingData {
   response: string | null;
 }
 
-const STATUS_CONFIG: Record<string, { color: string; icon: any }> = {
-  scheduled: { color: 'bg-blue-100 text-blue-700', icon: Clock },
-  in_progress: { color: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
-  completed: { color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  cancelled: { color: 'bg-surface-tertiary text-text-secondary', icon: XCircle },
+const STATUS_ICONS: Record<string, any> = {
+  scheduled: Clock,
+  in_progress: AlertTriangle,
+  completed: CheckCircle2,
+  cancelled: XCircle,
 };
 
-const CLASSIFICATION_COLORS: Record<string, string> = {
-  observation: 'bg-surface-tertiary text-text-secondary',
-  minor: 'bg-amber-100 text-amber-700',
-  major: 'bg-orange-100 text-orange-700',
-  critical: 'bg-red-100 text-red-700',
+const CLASSIFICATION_VARIANTS: Record<string, BadgeVariant> = {
+  observation: 'gray',
+  minor: 'amber',
+  major: 'amber',
+  critical: 'red',
 };
 
 export function AuditSchedule() {
@@ -170,8 +172,7 @@ export function AuditSchedule() {
       ) : (
         <div className="space-y-3">
           {audits.map((audit) => {
-            const config = STATUS_CONFIG[audit.status] || STATUS_CONFIG.scheduled;
-            const StatusIcon = config.icon;
+            const StatusIcon = STATUS_ICONS[audit.status] || STATUS_ICONS.scheduled;
 
             return (
               <div
@@ -190,12 +191,10 @@ export function AuditSchedule() {
                     <div className="text-left">
                       <span className="text-sm font-medium text-text-primary">{audit.title}</span>
                       {audit.overdue && (
-                        <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">{t('auditRecords.overdue')}</span>
+                        <StatusBadge className="ml-2" variant="red" status={t('auditRecords.overdue')} />
                       )}
                     </div>
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
-                      {t(`auditRecords.status_${audit.status}`)}
-                    </span>
+                    <StatusBadge status={t(`auditRecords.status_${audit.status}`)} />
                     <span className="text-xs px-2 py-0.5 rounded bg-surface-secondary text-text-secondary">{audit.type}</span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -256,9 +255,11 @@ export function AuditSchedule() {
                         <div className="space-y-2">
                           {audit.findings.map((finding) => (
                             <div key={finding.id} className="flex items-start gap-3 p-2 rounded-lg bg-surface-secondary">
-                              <span className={`inline-flex px-1.5 py-0.5 rounded text-xs font-medium shrink-0 ${CLASSIFICATION_COLORS[finding.classification] || ''}`}>
-                                {t(`auditRecords.class_${finding.classification}`)}
-                              </span>
+                              <StatusBadge
+                                className="shrink-0"
+                                variant={CLASSIFICATION_VARIANTS[finding.classification] || 'gray'}
+                                status={t(`auditRecords.class_${finding.classification}`)}
+                              />
                               <div className="flex-1 min-w-0">
                                 <p className="text-xs text-text-primary">{finding.description}</p>
                                 <p className="text-xs text-text-tertiary mt-0.5">
@@ -267,11 +268,7 @@ export function AuditSchedule() {
                                   {finding.dueDate && ` - Due: ${new Date(finding.dueDate).toLocaleDateString()}`}
                                 </p>
                               </div>
-                              <span className={`inline-flex px-1.5 py-0.5 rounded text-xs ${
-                                finding.status === 'closed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
-                              }`}>
-                                {finding.status}
-                              </span>
+                              <StatusBadge status={finding.status} />
                             </div>
                           ))}
                         </div>

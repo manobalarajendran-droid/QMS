@@ -3,19 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { useProjectStore } from '../../store/useProjectStore';
 import { useRequirementsStore } from '../../store/useRequirementsStore';
 import { useTestsStore } from '../../store/useTestsStore';
+import { StatusBadge } from '../shared/StatusBadge';
+import type { BadgeVariant } from '../shared/statusBadgeUtils';
 
 type ProjectHealth = 'on_track' | 'at_risk' | 'blocked';
 
-function getHealthColor(health: ProjectHealth): string {
-  switch (health) {
-    case 'on_track':
-      return 'bg-green-100 text-green-700';
-    case 'at_risk':
-      return 'bg-amber-100 text-amber-700';
-    case 'blocked':
-      return 'bg-red-100 text-red-700';
-  }
-}
+const HEALTH_VARIANTS: Record<ProjectHealth, BadgeVariant> = {
+  on_track: 'green',
+  at_risk: 'amber',
+  blocked: 'red',
+};
 
 function getHealthBarColor(health: ProjectHealth): string {
   switch (health) {
@@ -168,11 +165,10 @@ export function PortfolioDashboard() {
                     </div>
                   </td>
                   <td className="px-4 py-4 text-center">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getHealthColor(projectData.health)}`}
-                    >
-                      {t(`dashboard.portfolioHealth_${projectData.health}`)}
-                    </span>
+                    <StatusBadge
+                      variant={HEALTH_VARIANTS[projectData.health]}
+                      status={t(`dashboard.portfolioHealth_${projectData.health}`)}
+                    />
                   </td>
                   <td className="px-4 py-4 text-center text-sm text-text-secondary">
                     {projectData.totalReqs}

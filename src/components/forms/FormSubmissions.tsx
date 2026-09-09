@@ -4,6 +4,7 @@ import { CheckCircle, Clock, Eye, ThumbsUp, Search, Loader2 } from 'lucide-react
 import { useProjectStore } from '../../store/useProjectStore';
 import { apiFetch } from '../../lib/apiClient';
 import { getProjectId } from '../../lib/projectUtils';
+import { StatusBadge } from '../shared/StatusBadge';
 
 interface Submission {
   id: string;
@@ -158,17 +159,7 @@ export function FormSubmissions({ templateId }: FormSubmissionsProps) {
                   })}
                 </p>
               </div>
-              <span
-                className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                  sub.status === 'approved'
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                    : sub.status === 'reviewed'
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                    : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                }`}
-              >
-                {sub.status}
-              </span>
+              <StatusBadge status={sub.status} />
               <Eye className="w-4 h-4 text-text-tertiary" />
             </div>
 
