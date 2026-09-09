@@ -110,7 +110,7 @@ export function WorkflowStatus({ steps, currentStep, status, actions, restartCou
             <div key={i} className="flex items-center">
               <div className="flex flex-col items-center min-w-[80px]">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  stepStatus === 'completed' ? 'bg-green-500 text-white' :
+                  stepStatus === 'completed' ? 'bg-success text-success-fg' :
                   stepStatus === 'active' ? 'bg-accent text-accent-fg' :
                   stepStatus === 'rejected' ? 'bg-red-500 text-white' :
                   stepStatus === 'skipped' ? 'bg-border text-text-tertiary border-2 border-dashed border-border' :

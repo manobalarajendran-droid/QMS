@@ -155,7 +155,7 @@ export function KPIBuilder({ dashboardId, widgetId, existingWidget, onSaved, onC
               step === s
                 ? 'bg-accent text-accent-fg'
                 : step > s
-                ? 'bg-green-500 text-white'
+                ? 'bg-success text-success-fg'
                 : 'bg-surface-secondary text-text-tertiary border border-border'
             }`}
           >

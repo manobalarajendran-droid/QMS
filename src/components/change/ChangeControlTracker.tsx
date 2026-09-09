@@ -350,7 +350,7 @@ export function ChangeControlTracker() {
                       ) : canEdit ? (
                         <button
                           onClick={() => handleVerifyEffectiveness(cc.id)}
-                          className="text-sm px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                          className="text-sm px-3 py-1.5 bg-success text-success-fg rounded-lg hover:bg-success/90 transition-colors"
                         >
                           {t('changeControl.verifyEffectiveness')}
                         </button>

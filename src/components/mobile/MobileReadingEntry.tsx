@@ -131,7 +131,7 @@ export function MobileReadingEntry({ points, onSaveReading, onBack }: MobileRead
             disabled={!value || isNaN(parseFloat(value))}
             className={`w-full py-4 rounded-xl text-lg font-medium transition-all ${
               saved
-                ? 'bg-green-500 text-white'
+                ? 'bg-success text-success-fg'
                 : 'bg-accent text-accent-fg hover:bg-accent-hover disabled:opacity-50'
             }`}
           >

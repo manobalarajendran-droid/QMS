@@ -224,7 +224,7 @@ export function SubmissionBuilder() {
             {canApprove && selectedSubmission.status !== 'submitted' && (
               <button
                 onClick={() => handleSubmit(selectedSubmission.id)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-success text-success-fg rounded-lg hover:bg-success/90"
               >
                 <Send className="w-4 h-4" />
                 {t('submissions.submit')}

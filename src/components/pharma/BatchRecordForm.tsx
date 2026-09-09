@@ -343,7 +343,7 @@ export function BatchRecordForm() {
                   {canApprove && batch.status === 'review' && (
                     <button
                       onClick={(e) => { e.stopPropagation(); setReleasingId(batch.id); }}
-                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-lg hover:bg-green-600"
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-success text-success-fg rounded-lg hover:bg-success/90"
                     >
                       <Lock className="w-3 h-3" />
                       {t('batches.release')}
@@ -370,7 +370,7 @@ export function BatchRecordForm() {
                     />
                     <button
                       onClick={() => handleRelease(batch.id)}
-                      className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                      className="px-3 py-1.5 text-sm font-medium bg-success text-success-fg rounded-lg hover:bg-success/90"
                     >
                       {t('batches.confirmRelease')}
                     </button>

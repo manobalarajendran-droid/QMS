@@ -557,7 +557,7 @@ function NCRDetailModal({ record, onClose }: { record: NCRRecord; onClose: () =>
                           useNCRStore.getState().approveNCR(record.id, user?.name || 'System', verificationReason.trim());
                           setVerificationReason('');
                         }}
-                        className="bg-green-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+                        className="bg-success text-success-fg px-4 py-2.5 rounded-lg font-semibold hover:bg-success/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
                       >
                         <CheckCircle className="w-5 h-5" /> Approve & Close NCR
                       </button>

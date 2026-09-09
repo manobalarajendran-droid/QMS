@@ -250,7 +250,7 @@ export function ImportV12() {
             <li className="flex justify-between border-b pb-2"><span>Evidence Files:</span> <span className="font-semibold">{preview.evfile}</span></li>
           </ul>
           
-          <button onClick={handleImport} disabled={loading} className="px-4 py-2 bg-green-600 text-white rounded-lg disabled:opacity-50 font-medium">
+          <button onClick={handleImport} disabled={loading} className="px-4 py-2 bg-success text-success-fg rounded-lg disabled:opacity-50 font-medium">
             Import All
           </button>
         </div>

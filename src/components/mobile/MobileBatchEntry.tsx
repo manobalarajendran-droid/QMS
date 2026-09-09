@@ -156,7 +156,7 @@ export function MobileBatchEntry({
           onClick={handleSave}
           className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-base font-medium transition-all ${
             saved
-              ? 'bg-green-500 text-white'
+              ? 'bg-success text-success-fg'
               : 'bg-accent text-accent-fg hover:bg-accent-hover'
           }`}
         >
@@ -167,7 +167,7 @@ export function MobileBatchEntry({
         {isLast ? (
           <button
             onClick={onComplete}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-green-600 text-white font-medium text-base hover:bg-green-700 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-success text-success-fg font-medium text-base hover:bg-success/90 transition-colors"
           >
             {t('mobile.finishBatch')}
           </button>

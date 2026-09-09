@@ -406,7 +406,7 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
                     useDCRStore.getState().approveDCR(record.id, user?.name || 'System', gateReason.trim());
                     setGateReason('');
                   }}
-                  className="bg-green-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+                  className="bg-success text-success-fg px-4 py-2.5 rounded-lg font-semibold hover:bg-success/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
                 >
                   <CheckCircle className="w-5 h-5" /> Approve &amp; Sync to DML
                 </button>

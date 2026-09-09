@@ -204,7 +204,7 @@ export function FormSubmissions({ templateId }: FormSubmissionsProps) {
                     </button>
                     <button
                       onClick={() => handleReview(sub.id, 'approved')}
-                      className="px-3 py-1.5 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      className="px-3 py-1.5 text-xs bg-success text-success-fg rounded-lg hover:bg-success/90"
                     >
                       {t('forms.approve')}
                     </button>
@@ -214,7 +214,7 @@ export function FormSubmissions({ templateId }: FormSubmissionsProps) {
                   <div className="flex gap-2 mt-3 pt-3 border-t border-border">
                     <button
                       onClick={() => handleReview(sub.id, 'approved')}
-                      className="px-3 py-1.5 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      className="px-3 py-1.5 text-xs bg-success text-success-fg rounded-lg hover:bg-success/90"
                     >
                       {t('forms.approve')}
                     </button>
