@@ -335,7 +335,7 @@ export function BatchRecordForm() {
                   {canEdit && batch.status === 'in_progress' && (
                     <button
                       onClick={(e) => { e.stopPropagation(); handleStatusChange(batch.id, 'review'); }}
-                      className="px-2 py-1 text-xs font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600"
+                      className="px-2 py-1 text-xs font-medium bg-accent text-accent-fg rounded-lg hover:bg-accent/90"
                     >
                       {t('batches.submitForReview')}
                     </button>
