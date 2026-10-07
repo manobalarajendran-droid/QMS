@@ -1,0 +1,22 @@
+name = "planttech-qms"
+compatibility_date = "2026-09-10"
+
+# A static site with no server code behind it. Everything the browser needs is
+# in `dist`, which `npm run build` produces.
+#
+# This used to say `pages_build_output_dir`. Cloudflare has folded Pages into
+# Workers, and Wrangler now refuses the old field on a new project, so the same
+# folder is served as Worker assets instead. The old file is kept next to this
+# one as wrangler.toml.pages-backup.
+[assets]
+directory = "./dist"
+
+# The app reads its own address for the auditor link (/audit/{token}) and the
+# supplier portal (/supplier/{token}). Those are not real files, so anything
+# that is not a file has to be answered with the app itself rather than a 404.
+not_found_handling = "single-page-application"
+
+# There used to be a `public/_redirects` holding `/*  /index.html  200`, which is
+# how Pages was told the same thing. Workers rejects that rule as a loop, because
+# it strips `/index.html` and then matches itself again. The line above replaces
+# it. The old file is kept at the top of the project as `_redirects.pages-backup`.

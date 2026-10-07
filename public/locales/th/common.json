@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "โครงการใหม่"
+  },
+  "common": {
+    "back": "ย้อนกลับ",
+    "next": "ถัดไป",
+    "cancel": "ยกเลิก",
+    "save": "บันทึก",
+    "delete": "ลบ",
+    "search": "ค้นหา...",
+    "all": "ทั้งหมด",
+    "noData": "ไม่มีข้อมูล",
+    "none": "ไม่มี",
+    "loading": "กำลังโหลด...",
+    "confirm": "ยืนยัน",
+    "close": "ปิด",
+    "edit": "แก้ไข",
+    "add": "เพิ่ม",
+    "remove": "ลบออก",
+    "yes": "ใช่",
+    "no": "ไม่",
+    "required": "จำเป็น",
+    "optional": "ไม่บังคับ",
+    "actions": "การดำเนินการ",
+    "settings": "การตั้งค่า"
+  },
+  "statuses": {
+    "Draft": "ร่าง",
+    "Active": "ใช้งาน",
+    "Closed": "ปิด",
+    "Not Run": "ยังไม่ทำ",
+    "Passed": "ผ่าน",
+    "Failed": "ไม่ผ่าน",
+    "Approved": "อนุมัติแล้ว"
+  },
+  "risk": {
+    "critical": "ร้ายแรง",
+    "high": "สูง",
+    "medium": "กลาง",
+    "low": "ต่ำ",
+    "severity": "ความรุนแรง",
+    "likelihood": "โอกาสเกิด",
+    "detectability": "ความสามารถในการตรวจจับ",
+    "riskScore": "คะแนนความเสี่ยง",
+    "riskLevel": "ระดับความเสี่ยง",
+    "mitigation": "การบรรเทา",
+    "residualRisk": "ความเสี่ยงคงเหลือ"
+  },
+  "ai": {
+    "generateTests": "สร้างกรณีทดสอบ",
+    "generating": "กำลังสร้าง...",
+    "generatedTests": "กรณีทดสอบที่ AI สร้างสำหรับ {{reqId}}",
+    "accept": "ยอมรับ",
+    "reject": "ปฏิเสธ",
+    "acceptAll": "ยอมรับทั้งหมด ({{count}})",
+    "acceptHighConfidence": "ยอมรับความมั่นใจสูง ({{count}})",
+    "confidence": "ความมั่นใจ",
+    "classifyRisk": "จำแนกความเสี่ยง",
+    "classifyAll": "จำแนกทั้งหมดที่ยังไม่ประเมิน ({{count}})",
+    "gapAnalysis": "เรียกใช้การวิเคราะห์ช่องว่าง",
+    "gapStatus": {
+      "covered": "ครอบคลุม",
+      "partial": "บางส่วน",
+      "missing": "ขาดหาย"
+    },
+    "generateReqsForGaps": "สร้าง Requirements สำหรับช่องว่างทั้งหมด",
+    "noProvider": "ยังไม่ได้กำหนดค่าผู้ให้บริการ AI ไปที่การตั้งค่าเพื่อเพิ่ม",
+    "providerSettings": "ผู้ให้บริการ LLM",
+    "addProvider": "เพิ่มผู้ให้บริการ",
+    "testConnection": "ทดสอบ",
+    "connected": "เชื่อมต่อแล้ว",
+    "unreachable": "เข้าถึงไม่ได้",
+    "avgLatency": "เวลาแฝงเฉลี่ย: {{ms}}ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "การใช้โทเค็น (เดือนนี้)",
+    "inputTokens": "อินพุต",
+    "outputTokens": "เอาต์พุต"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "ดู Audit Trail",
+    "exportCSV": "ส่งออก Trail (CSV)",
+    "exportPDF": "ส่งออก Trail (PDF)",
+    "viewDiff": "ดูความแตกต่าง",
+    "createdBy": "สร้างโดย {{name}}",
+    "modifiedBy": "แก้ไขโดย {{name}}",
+    "signedBy": "ลงนาม: {{meaning}} โดย {{name}}",
+    "reason": "เหตุผล",
+    "actions": {
+      "create": "สร้างแล้ว",
+      "update": "แก้ไขแล้ว",
+      "delete": "ลบแล้ว",
+      "status_change": "สถานะเปลี่ยน",
+      "link": "เชื่อมโยงแล้ว",
+      "unlink": "ยกเลิกเชื่อมโยง",
+      "approve": "อนุมัติแล้ว",
+      "reject": "ปฏิเสธแล้ว",
+      "sign": "ลงนามแล้ว",
+      "export": "ส่งออกแล้ว",
+      "generate_report": "สร้างรายงานแล้ว"
+    }
+  },
+  "signature": {
+    "title": "ลายเซ็นอิเล็กทรอนิกส์",
+    "meaning": "ความหมายของลายเซ็น",
+    "authored": "ข้าพเจ้าเป็นผู้เขียน",
+    "reviewed": "ข้าพเจ้าได้ตรวจสอบแล้ว",
+    "approved": "ข้าพเจ้าอนุมัติ",
+    "verified": "ข้าพเจ้าได้ยืนยันแล้ว",
+    "rejected": "ข้าพเจ้าปฏิเสธ",
+    "reasonLabel": "เหตุผลในการลงนาม",
+    "reasonPlaceholder": "ป้อนเหตุผล...",
+    "authenticate": "ยืนยันตัวตน",
+    "password": "รหัสผ่าน",
+    "signAndApply": "ลงนามและนำไปใช้",
+    "disclaimer": "การลงนามเป็นการยืนยันว่าบันทึกนี้ถูกต้องและสมบูรณ์"
+  },
+  "changeControl": {
+    "approvalRequired": "ต้องการอนุมัติ",
+    "pendingApproval": "รอการอนุมัติ",
+    "revertedToDraft": "กลับเป็นร่าง — ต้องอนุมัติใหม่",
+    "approve": "อนุมัติ",
+    "reject": "ปฏิเสธ",
+    "rejectReason": "เหตุผลในการปฏิเสธ"
+  },
+  "theme": {
+    "light": "โหมดสว่าง",
+    "dark": "โหมดมืด"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "Nuevo proyecto"
+  },
+  "common": {
+    "back": "Atrás",
+    "next": "Siguiente",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "search": "Buscar...",
+    "all": "Todos",
+    "noData": "Sin datos",
+    "none": "Ninguno",
+    "loading": "Cargando...",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "edit": "Editar",
+    "add": "Añadir",
+    "remove": "Eliminar",
+    "yes": "Sí",
+    "no": "No",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "actions": "Acciones",
+    "settings": "Configuración"
+  },
+  "statuses": {
+    "Draft": "Borrador",
+    "Active": "Activo",
+    "Closed": "Cerrado",
+    "Not Run": "No ejecutado",
+    "Passed": "Aprobado",
+    "Failed": "Fallido",
+    "Approved": "Aprobado"
+  },
+  "risk": {
+    "critical": "Crítico",
+    "high": "Alto",
+    "medium": "Medio",
+    "low": "Bajo",
+    "severity": "Severidad",
+    "likelihood": "Probabilidad",
+    "detectability": "Detectabilidad",
+    "riskScore": "Puntuación de riesgo",
+    "riskLevel": "Nivel de riesgo",
+    "mitigation": "Mitigación",
+    "residualRisk": "Riesgo residual"
+  },
+  "ai": {
+    "generateTests": "Generar casos de test",
+    "generating": "Generando...",
+    "generatedTests": "Casos de test generados por IA para {{reqId}}",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "acceptAll": "Aceptar todos ({{count}})",
+    "acceptHighConfidence": "Aceptar alta confianza ({{count}})",
+    "confidence": "Confianza",
+    "classifyRisk": "Clasificar riesgo",
+    "classifyAll": "Clasificar todos los no evaluados ({{count}})",
+    "gapAnalysis": "Ejecutar análisis de brechas",
+    "gapStatus": {
+      "covered": "Cubierto",
+      "partial": "Parcial",
+      "missing": "Faltante"
+    },
+    "generateReqsForGaps": "Generar Requirements para todas las brechas",
+    "noProvider": "No hay proveedor de IA configurado. Ve a Configuración para añadir uno.",
+    "providerSettings": "Proveedores LLM",
+    "addProvider": "Añadir proveedor",
+    "testConnection": "Probar",
+    "connected": "Conectado",
+    "unreachable": "Inaccesible",
+    "avgLatency": "Latencia media: {{ms}} ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "Uso de tokens (este mes)",
+    "inputTokens": "entrada",
+    "outputTokens": "salida"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "Ver Audit Trail",
+    "exportCSV": "Exportar trail (CSV)",
+    "exportPDF": "Exportar trail (PDF)",
+    "viewDiff": "Ver diferencias",
+    "createdBy": "Creado por {{name}}",
+    "modifiedBy": "Modificado por {{name}}",
+    "signedBy": "Firmado: {{meaning}} por {{name}}",
+    "reason": "Motivo",
+    "actions": {
+      "create": "Creado",
+      "update": "Modificado",
+      "delete": "Eliminado",
+      "status_change": "Estado cambiado",
+      "link": "Vinculado",
+      "unlink": "Desvinculado",
+      "approve": "Aprobado",
+      "reject": "Rechazado",
+      "sign": "Firmado",
+      "export": "Exportado",
+      "generate_report": "Informe generado"
+    }
+  },
+  "signature": {
+    "title": "Firma electrónica",
+    "meaning": "Significado de la firma",
+    "authored": "He redactado esto",
+    "reviewed": "He revisado esto",
+    "approved": "Apruebo esto",
+    "verified": "He verificado esto",
+    "rejected": "Rechazo esto",
+    "reasonLabel": "Motivo de la firma",
+    "reasonPlaceholder": "Introduce el motivo...",
+    "authenticate": "Autenticarse",
+    "password": "Contraseña",
+    "signAndApply": "Firmar y aplicar",
+    "disclaimer": "Al firmar, confirmas que este registro es exacto y completo."
+  },
+  "changeControl": {
+    "approvalRequired": "Aprobación requerida",
+    "pendingApproval": "Pendiente de aprobación",
+    "revertedToDraft": "Revertido a borrador — se necesita nueva aprobación",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "rejectReason": "Motivo del rechazo"
+  },
+  "theme": {
+    "light": "Modo claro",
+    "dark": "Modo oscuro"
+  }
+}

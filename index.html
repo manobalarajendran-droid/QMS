@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>PTA QMS Dashboard</title>
+  </head>
+  <body>
+    <div id="root">
+      <div id="qms-boot" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0b1523; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #94a3b8;">
+        <div style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 1.25rem; padding: 2.25rem 3rem; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
+          <div style="width: 2.5rem; height: 2.5rem; border: 3px solid rgba(45, 212, 191, 0.2); border-top-color: #2dd4bf; border-radius: 50%; animation: qms-spin 0.8s linear infinite;"></div>
+          <div style="font-size: 0.9375rem; font-weight: 600; color: #f8fafc; letter-spacing: 0.025em;">Plant-Tech Arabia QMS</div>
+          <div style="font-size: 0.75rem; color: #64748b;">Initializing Quality Management System...</div>
+        </div>
+      </div>
+      <style>
+        @keyframes qms-spin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+    </div>
+
+    <!--
+      Boot watchdog. Runs before any bundle loads, so it still works in the one case
+      nothing else can cover: when the app's own JavaScript never executes at all —
+      a stale HTML shell pointing at a deleted asset hash, a 404 on the entry chunk,
+      or a poisoned service-worker cache. Without it the page sits on this spinner
+      forever, or reloads in a tight loop.
+
+      Recovery is capped, so it can never loop. Once the budget is spent it shows a
+      real message with a manual retry instead of a dead screen.
+    -->
+    <script>
+      (function () {
+        var KEY = 'qms:boot-recovery';
+        var MAX_ATTEMPTS = 2;
+        var BOOT_TIMEOUT_MS = 15000;
+        var navigated = false;
+
+        function readAttempts() {
+          try { return parseInt(sessionStorage.getItem(KEY) || '0', 10) || 0; } catch (e) { return 0; }
+        }
+        function writeAttempts(n) {
+          try { sessionStorage.setItem(KEY, String(n)); } catch (e) { /* private mode */ }
+        }
+        function clearAttempts() {
+          try { sessionStorage.removeItem(KEY); } catch (e) { /* private mode */ }
+        }
+
+        function reloadOnce() {
+          if (navigated) return;
+          navigated = true;
+          try {
+            var url = new URL(window.location.href);
+            url.searchParams.set('__boot', String(Date.now()));
+            window.location.replace(url.toString());
+          } catch (e) {
+            window.location.reload();
+          }
+        }
+
+        // Drop every cached copy of the app, then reload against the live server.
+        function purgeAndReload() {
+          var jobs = [];
+          try {
+            if ('serviceWorker' in navigator) {
+              jobs.push(
+                navigator.serviceWorker.getRegistrations()
+                  .then(function (regs) {
+                    return Promise.all(regs.map(function (r) { return r.unregister(); }));
+                  })
+                  .catch(function () {})
+              );
+            }
+            if (window.caches && caches.keys) {
+              jobs.push(
+                caches.keys()
+                  .then(function (keys) {
+                    return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+                  })
+                  .catch(function () {})
+              );
+            }
+          } catch (e) { /* ignore */ }
+
+          Promise.all(jobs).then(reloadOnce, reloadOnce);
+          setTimeout(reloadOnce, 4000); // never hang waiting on the purge
+        }
+
+        // Rendered as an overlay on top of <body>, never into #root. React may
+        // already own #root - replacing its children behind React's back makes
+        // React throw on its next DOM update ("removeChild ... not a child").
+        function showFailure(reason) {
+          if (document.getElementById('qms-boot-failure')) return;
+          var q = String.fromCharCode(39);
+          var overlay = document.createElement('div');
+          overlay.id = 'qms-boot-failure';
+          overlay.setAttribute('style',
+            'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;' +
+            'background:#0b1523;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,' + q + 'Segoe UI' + q + ',Roboto,sans-serif;padding:1.5rem;');
+          overlay.innerHTML =
+            '<div style="max-width:30rem;width:100%;background:rgba(15,23,42,0.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.12);border-radius:1.25rem;padding:2.25rem;text-align:center;box-shadow:0 25px 50px -12px rgba(0,0,0,0.6);">' +
+              '<div style="width:3rem;height:3rem;margin:0 auto 1.25rem;border-radius:9999px;background:rgba(248,113,113,0.12);color:#f87171;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;">!</div>' +
+              '<div style="font-size:1rem;font-weight:600;color:#f8fafc;margin-bottom:0.5rem;">The app could not finish loading</div>' +
+              '<div style="font-size:0.8125rem;color:#94a3b8;line-height:1.6;margin-bottom:1.5rem;">Some application files could not be downloaded. Clearing the cache and retrying usually fixes it. Your saved quality records are stored separately and are not affected.</div>' +
+              '<button id="qms-boot-retry" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.625rem 1.25rem;background:#2dd4bf;color:#042f2e;border:none;border-radius:0.625rem;font-size:0.8125rem;font-weight:600;cursor:pointer;">Clear cache &amp; retry</button>' +
+              '<div style="font-size:0.6875rem;color:#475569;margin-top:1.25rem;">Reason: ' + String(reason || 'unknown') + '</div>' +
+            '</div>';
+          (document.body || document.documentElement).appendChild(overlay);
+          var btn = document.getElementById('qms-boot-retry');
+          if (btn) {
+            btn.addEventListener('click', function () {
+              clearAttempts();
+              navigated = false;
+              purgeAndReload();
+            });
+          }
+        }
+
+        var api = {
+          booted: false,
+          // Set by the app bundle the moment it starts executing. Proves the
+          // entry chunk downloaded and ran, which separates "this deployment is
+          // broken" from "this render is just slow".
+          scriptLoaded: false,
+          markScriptLoaded: function () {
+            api.scriptLoaded = true;
+          },
+          // Returns false when the attempt budget is spent, so callers stop retrying.
+          recover: function (reason) {
+            if (api.booted || navigated) return false;
+            var n = readAttempts();
+            if (n >= MAX_ATTEMPTS) {
+              showFailure(reason);
+              return false;
+            }
+            writeAttempts(n + 1);
+            purgeAndReload();
+            return true;
+          },
+          markBooted: function () {
+            api.booted = true;
+            clearAttempts();
+          },
+          // Unconditional, user-initiated recovery. The browser permanently
+          // records a module URL that failed to load, so a chunk that 404s can
+          // never be re-imported in the same document - reloading is the only
+          // way back. Not budget-capped: a person clicked a button.
+          hardReset: function () {
+            clearAttempts();
+            navigated = false;
+            purgeAndReload();
+          }
+        };
+        window.__QMS_BOOT__ = api;
+
+        // A script or stylesheet that 404s during boot means the shell is stale.
+        window.addEventListener('error', function (event) {
+          var el = event && event.target;
+          if (!el || api.booted) return;
+          if (el.tagName === 'SCRIPT' || el.tagName === 'LINK') {
+            api.recover('asset-404');
+          }
+        }, true);
+
+        // Nothing mounted in time. If the bundle never even ran, the deployment
+        // this page was served is broken and a purge-and-reload is the fix. If it
+        // did run, the app is alive and merely slow — reloading a working app on a
+        // slow connection would be worse than waiting, and its own error handling
+        // already covers real failures from here.
+        setTimeout(function () {
+          if (api.booted || api.scriptLoaded) return;
+          api.recover('boot-timeout');
+        }, BOOT_TIMEOUT_MS);
+      })();
+    </script>
+
+    <!--
+      Saved-data rename: moves every localStorage key "qatrial:x" to "pta-qms:x".
+      It MUST run here, as a plain inline script, before the module bundle. The
+      bundler hoists shared store chunks above main.tsx's own code, so some
+      zustand stores read localStorage before anything in main.tsx can run.
+      An existing "pta-qms:" key always wins. Runs once (flag key below).
+      src/lib/migrateStorageKeys.ts repeats the same step as a safety net and
+      also moves the offline queue in IndexedDB.
+    -->
+    <script>
+      (function () {
+        var OLD = 'qatrial:', NEW = 'pta-qms:', FLAG = 'pta-qms:keys-migrated';
+        try {
+          if (localStorage.getItem(FLAG) === '1') return;
+          var keys = [], i, k;
+          for (i = 0; i < localStorage.length; i++) {
+            k = localStorage.key(i);
+            if (k && k.indexOf(OLD) === 0) keys.push(k);
+          }
+          for (i = 0; i < keys.length; i++) {
+            try {
+              var oldKey = keys[i], newKey = NEW + oldKey.slice(OLD.length);
+              var v = localStorage.getItem(oldKey);
+              if (v !== null && localStorage.getItem(newKey) === null) localStorage.setItem(newKey, v);
+              if (localStorage.getItem(newKey) !== null) localStorage.removeItem(oldKey);
+            } catch (e) { /* quota: keep the old key, nothing lost */ }
+          }
+          localStorage.setItem(FLAG, '1');
+        } catch (e) { /* private mode or blocked storage */ }
+      })();
+    </script>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

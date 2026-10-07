@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "नया प्रोजेक्ट"
+  },
+  "common": {
+    "back": "वापस",
+    "next": "आगे",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "delete": "हटाएं",
+    "search": "खोजें...",
+    "all": "सभी",
+    "noData": "कोई डेटा नहीं",
+    "none": "कोई नहीं",
+    "loading": "लोड हो रहा है...",
+    "confirm": "पुष्टि करें",
+    "close": "बंद करें",
+    "edit": "संपादित करें",
+    "add": "जोड़ें",
+    "remove": "हटाएं",
+    "yes": "हां",
+    "no": "नहीं",
+    "required": "आवश्यक",
+    "optional": "वैकल्पिक",
+    "actions": "कार्रवाई",
+    "settings": "सेटिंग्स"
+  },
+  "statuses": {
+    "Draft": "ड्राफ्ट",
+    "Active": "सक्रिय",
+    "Closed": "बंद",
+    "Not Run": "अनिष्पादित",
+    "Passed": "उत्तीर्ण",
+    "Failed": "विफल",
+    "Approved": "अनुमोदित"
+  },
+  "risk": {
+    "critical": "गंभीर",
+    "high": "उच्च",
+    "medium": "मध्यम",
+    "low": "निम्न",
+    "severity": "गंभीरता",
+    "likelihood": "संभावना",
+    "detectability": "पहचान क्षमता",
+    "riskScore": "जोखिम स्कोर",
+    "riskLevel": "जोखिम स्तर",
+    "mitigation": "शमन",
+    "residualRisk": "अवशिष्ट जोखिम"
+  },
+  "ai": {
+    "generateTests": "टेस्ट केस जनरेट करें",
+    "generating": "जनरेट हो रहा है...",
+    "generatedTests": "{{reqId}} के लिए AI जनरेटेड टेस्ट केस",
+    "accept": "स्वीकार करें",
+    "reject": "अस्वीकार करें",
+    "acceptAll": "सभी स्वीकार करें ({{count}})",
+    "acceptHighConfidence": "उच्च विश्वास स्वीकार करें ({{count}})",
+    "confidence": "विश्वास",
+    "classifyRisk": "जोखिम वर्गीकृत करें",
+    "classifyAll": "सभी अनमूल्यांकित को वर्गीकृत करें ({{count}})",
+    "gapAnalysis": "गैप विश्लेषण चलाएं",
+    "gapStatus": {
+      "covered": "कवर किया गया",
+      "partial": "आंशिक",
+      "missing": "अनुपस्थित"
+    },
+    "generateReqsForGaps": "सभी गैप के लिए Requirements जनरेट करें",
+    "noProvider": "कोई AI प्रदाता कॉन्फ़िगर नहीं है। एक जोड़ने के लिए सेटिंग्स पर जाएं।",
+    "providerSettings": "LLM प्रदाता",
+    "addProvider": "प्रदाता जोड़ें",
+    "testConnection": "टेस्ट",
+    "connected": "कनेक्टेड",
+    "unreachable": "पहुंच योग्य नहीं",
+    "avgLatency": "औसत विलंबता: {{ms}}ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "टोकन उपयोग (इस माह)",
+    "inputTokens": "इनपुट",
+    "outputTokens": "आउटपुट"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "Audit Trail देखें",
+    "exportCSV": "Trail निर्यात करें (CSV)",
+    "exportPDF": "Trail निर्यात करें (PDF)",
+    "viewDiff": "अंतर देखें",
+    "createdBy": "{{name}} द्वारा बनाया गया",
+    "modifiedBy": "{{name}} द्वारा संशोधित",
+    "signedBy": "हस्ताक्षरित: {{meaning}} — {{name}} द्वारा",
+    "reason": "कारण",
+    "actions": {
+      "create": "बनाया गया",
+      "update": "संशोधित",
+      "delete": "हटाया गया",
+      "status_change": "स्थिति बदली",
+      "link": "लिंक किया",
+      "unlink": "अनलिंक किया",
+      "approve": "अनुमोदित",
+      "reject": "अस्वीकृत",
+      "sign": "हस्ताक्षरित",
+      "export": "निर्यात किया",
+      "generate_report": "रिपोर्ट जनरेट की"
+    }
+  },
+  "signature": {
+    "title": "इलेक्ट्रॉनिक हस्ताक्षर",
+    "meaning": "हस्ताक्षर का अर्थ",
+    "authored": "मैंने इसे लिखा है",
+    "reviewed": "मैंने इसकी समीक्षा की है",
+    "approved": "मैं इसे अनुमोदित करता/करती हूं",
+    "verified": "मैंने इसे सत्यापित किया है",
+    "rejected": "मैं इसे अस्वीकार करता/करती हूं",
+    "reasonLabel": "हस्ताक्षर का कारण",
+    "reasonPlaceholder": "कारण दर्ज करें...",
+    "authenticate": "प्रमाणित करें",
+    "password": "पासवर्ड",
+    "signAndApply": "हस्ताक्षर करें और लागू करें",
+    "disclaimer": "हस्ताक्षर करके, आप पुष्टि करते हैं कि यह रिकॉर्ड सटीक और पूर्ण है।"
+  },
+  "changeControl": {
+    "approvalRequired": "अनुमोदन आवश्यक",
+    "pendingApproval": "अनुमोदन लंबित",
+    "revertedToDraft": "ड्राफ्ट में वापस — पुन: अनुमोदन आवश्यक",
+    "approve": "अनुमोदित करें",
+    "reject": "अस्वीकार करें",
+    "rejectReason": "अस्वीकृति का कारण"
+  },
+  "theme": {
+    "light": "लाइट मोड",
+    "dark": "डार्क मोड"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "Nouveau projet"
+  },
+  "common": {
+    "back": "Retour",
+    "next": "Suivant",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "search": "Rechercher...",
+    "all": "Tous",
+    "noData": "Aucune donnée",
+    "none": "Aucun",
+    "loading": "Chargement...",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "remove": "Supprimer",
+    "yes": "Oui",
+    "no": "Non",
+    "required": "Obligatoire",
+    "optional": "Facultatif",
+    "actions": "Actions",
+    "settings": "Paramètres"
+  },
+  "statuses": {
+    "Draft": "Brouillon",
+    "Active": "Actif",
+    "Closed": "Clôturé",
+    "Not Run": "Non exécuté",
+    "Passed": "Réussi",
+    "Failed": "Échoué",
+    "Approved": "Approuvé"
+  },
+  "risk": {
+    "critical": "Critique",
+    "high": "Élevé",
+    "medium": "Moyen",
+    "low": "Faible",
+    "severity": "Sévérité",
+    "likelihood": "Probabilité",
+    "detectability": "Détectabilité",
+    "riskScore": "Score de risque",
+    "riskLevel": "Niveau de risque",
+    "mitigation": "Atténuation",
+    "residualRisk": "Risque résiduel"
+  },
+  "ai": {
+    "generateTests": "Générer des cas de test",
+    "generating": "Génération en cours...",
+    "generatedTests": "Cas de test générés par IA pour {{reqId}}",
+    "accept": "Accepter",
+    "reject": "Rejeter",
+    "acceptAll": "Tout accepter ({{count}})",
+    "acceptHighConfidence": "Accepter haute confiance ({{count}})",
+    "confidence": "Confiance",
+    "classifyRisk": "Classifier le risque",
+    "classifyAll": "Classifier tous les non évalués ({{count}})",
+    "gapAnalysis": "Lancer l'analyse des écarts",
+    "gapStatus": {
+      "covered": "Couvert",
+      "partial": "Partiel",
+      "missing": "Manquant"
+    },
+    "generateReqsForGaps": "Générer des Requirements pour tous les écarts",
+    "noProvider": "Aucun fournisseur IA configuré. Allez dans Paramètres pour en ajouter un.",
+    "providerSettings": "Fournisseurs LLM",
+    "addProvider": "Ajouter un fournisseur",
+    "testConnection": "Tester",
+    "connected": "Connecté",
+    "unreachable": "Injoignable",
+    "avgLatency": "Latence moy. : {{ms}} ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "Utilisation de tokens (ce mois)",
+    "inputTokens": "entrée",
+    "outputTokens": "sortie"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "Voir l'Audit Trail",
+    "exportCSV": "Exporter le trail (CSV)",
+    "exportPDF": "Exporter le trail (PDF)",
+    "viewDiff": "Voir le diff",
+    "createdBy": "Créé par {{name}}",
+    "modifiedBy": "Modifié par {{name}}",
+    "signedBy": "Signé : {{meaning}} par {{name}}",
+    "reason": "Motif",
+    "actions": {
+      "create": "Créé",
+      "update": "Modifié",
+      "delete": "Supprimé",
+      "status_change": "Statut modifié",
+      "link": "Lié",
+      "unlink": "Lien supprimé",
+      "approve": "Approuvé",
+      "reject": "Rejeté",
+      "sign": "Signé",
+      "export": "Exporté",
+      "generate_report": "Rapport généré"
+    }
+  },
+  "signature": {
+    "title": "Signature électronique",
+    "meaning": "Signification de la signature",
+    "authored": "J'ai rédigé ceci",
+    "reviewed": "J'ai vérifié ceci",
+    "approved": "J'approuve ceci",
+    "verified": "J'ai vérifié ceci",
+    "rejected": "Je rejette ceci",
+    "reasonLabel": "Motif de la signature",
+    "reasonPlaceholder": "Saisir le motif...",
+    "authenticate": "S'authentifier",
+    "password": "Mot de passe",
+    "signAndApply": "Signer et appliquer",
+    "disclaimer": "En signant, vous confirmez que cet enregistrement est exact et complet."
+  },
+  "changeControl": {
+    "approvalRequired": "Approbation requise",
+    "pendingApproval": "En attente d'approbation",
+    "revertedToDraft": "Retour au brouillon — nouvelle approbation nécessaire",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "rejectReason": "Motif du rejet"
+  },
+  "theme": {
+    "light": "Mode clair",
+    "dark": "Mode sombre"
+  }
+}

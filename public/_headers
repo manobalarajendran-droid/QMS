@@ -1,0 +1,31 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Build output is content-hashed: a changed file always gets a new name, so a
+# cached copy can never be stale.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The HTML shell names the exact asset hashes of one build. A cached copy
+# outlives its deployment and then asks for files that no longer exist, which is
+# the classic blank-screen-after-deploy. It must always be revalidated.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# A cached service worker pins an old caching strategy in place forever, so a fix
+# shipped here would never reach browsers that already have the old one.
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Service-Worker-Allowed: /
+
+/manifest.json
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.svg
+  Cache-Control: public, max-age=86400

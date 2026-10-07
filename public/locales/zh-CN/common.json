@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "新建项目"
+  },
+  "common": {
+    "back": "返回",
+    "next": "下一步",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "search": "搜索...",
+    "all": "全部",
+    "noData": "无数据",
+    "none": "无",
+    "loading": "加载中...",
+    "confirm": "确认",
+    "close": "关闭",
+    "edit": "编辑",
+    "add": "添加",
+    "remove": "移除",
+    "yes": "是",
+    "no": "否",
+    "required": "必填",
+    "optional": "可选",
+    "actions": "操作",
+    "settings": "设置"
+  },
+  "statuses": {
+    "Draft": "草稿",
+    "Active": "活跃",
+    "Closed": "已关闭",
+    "Not Run": "未执行",
+    "Passed": "通过",
+    "Failed": "失败",
+    "Approved": "已批准"
+  },
+  "risk": {
+    "critical": "关键",
+    "high": "高",
+    "medium": "中",
+    "low": "低",
+    "severity": "严重性",
+    "likelihood": "可能性",
+    "detectability": "可检测性",
+    "riskScore": "风险评分",
+    "riskLevel": "风险等级",
+    "mitigation": "缓解措施",
+    "residualRisk": "残余风险"
+  },
+  "ai": {
+    "generateTests": "生成测试用例",
+    "generating": "生成中...",
+    "generatedTests": "{{reqId}} 的AI生成测试用例",
+    "accept": "接受",
+    "reject": "拒绝",
+    "acceptAll": "全部接受 ({{count}})",
+    "acceptHighConfidence": "接受高置信度 ({{count}})",
+    "confidence": "置信度",
+    "classifyRisk": "分类风险",
+    "classifyAll": "分类所有未评估 ({{count}})",
+    "gapAnalysis": "运行差距分析",
+    "gapStatus": {
+      "covered": "已覆盖",
+      "partial": "部分覆盖",
+      "missing": "缺失"
+    },
+    "generateReqsForGaps": "为所有差距生成Requirements",
+    "noProvider": "未配置AI提供商。请前往设置添加一个。",
+    "providerSettings": "LLM提供商",
+    "addProvider": "添加提供商",
+    "testConnection": "测试",
+    "connected": "已连接",
+    "unreachable": "无法访问",
+    "avgLatency": "平均延迟：{{ms}}ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "Token使用量（本月）",
+    "inputTokens": "输入",
+    "outputTokens": "输出"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "查看Audit Trail",
+    "exportCSV": "导出Trail (CSV)",
+    "exportPDF": "导出Trail (PDF)",
+    "viewDiff": "查看差异",
+    "createdBy": "{{name}} 创建",
+    "modifiedBy": "{{name}} 修改",
+    "signedBy": "签名：{{meaning}} 由 {{name}}",
+    "reason": "原因",
+    "actions": {
+      "create": "已创建",
+      "update": "已修改",
+      "delete": "已删除",
+      "status_change": "状态已更改",
+      "link": "已链接",
+      "unlink": "已取消链接",
+      "approve": "已批准",
+      "reject": "已拒绝",
+      "sign": "已签名",
+      "export": "已导出",
+      "generate_report": "报告已生成"
+    }
+  },
+  "signature": {
+    "title": "电子签名",
+    "meaning": "签名含义",
+    "authored": "我撰写了此内容",
+    "reviewed": "我审查了此内容",
+    "approved": "我批准此内容",
+    "verified": "我验证了此内容",
+    "rejected": "我拒绝此内容",
+    "reasonLabel": "签名原因",
+    "reasonPlaceholder": "输入原因...",
+    "authenticate": "认证",
+    "password": "密码",
+    "signAndApply": "签名并应用",
+    "disclaimer": "签名即表示您确认此记录准确且完整。"
+  },
+  "changeControl": {
+    "approvalRequired": "需要批准",
+    "pendingApproval": "等待批准",
+    "revertedToDraft": "已恢复为草稿 — 需要重新批准",
+    "approve": "批准",
+    "reject": "拒绝",
+    "rejectReason": "拒绝原因"
+  },
+  "theme": {
+    "light": "浅色模式",
+    "dark": "深色模式"
+  }
+}

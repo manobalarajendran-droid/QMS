@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "新規プロジェクト"
+  },
+  "common": {
+    "back": "戻る",
+    "next": "次へ",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "search": "検索...",
+    "all": "すべて",
+    "noData": "データなし",
+    "none": "なし",
+    "loading": "読み込み中...",
+    "confirm": "確認",
+    "close": "閉じる",
+    "edit": "編集",
+    "add": "追加",
+    "remove": "削除",
+    "yes": "はい",
+    "no": "いいえ",
+    "required": "必須",
+    "optional": "任意",
+    "actions": "操作",
+    "settings": "設定"
+  },
+  "statuses": {
+    "Draft": "ドラフト",
+    "Active": "アクティブ",
+    "Closed": "クローズ",
+    "Not Run": "未実行",
+    "Passed": "合格",
+    "Failed": "不合格",
+    "Approved": "承認済み"
+  },
+  "risk": {
+    "critical": "重大",
+    "high": "高",
+    "medium": "中",
+    "low": "低",
+    "severity": "重大度",
+    "likelihood": "可能性",
+    "detectability": "検出可能性",
+    "riskScore": "リスクスコア",
+    "riskLevel": "リスクレベル",
+    "mitigation": "軽減策",
+    "residualRisk": "残留リスク"
+  },
+  "ai": {
+    "generateTests": "テストケースを生成",
+    "generating": "生成中...",
+    "generatedTests": "{{reqId}} のAI生成テストケース",
+    "accept": "承認",
+    "reject": "却下",
+    "acceptAll": "すべて承認 ({{count}})",
+    "acceptHighConfidence": "高信頼度を承認 ({{count}})",
+    "confidence": "信頼度",
+    "classifyRisk": "リスクを分類",
+    "classifyAll": "すべての未評価を分類 ({{count}})",
+    "gapAnalysis": "ギャップ分析を実行",
+    "gapStatus": {
+      "covered": "対応済み",
+      "partial": "一部対応",
+      "missing": "未対応"
+    },
+    "generateReqsForGaps": "すべてのギャップに対してRequirementsを生成",
+    "noProvider": "AIプロバイダーが設定されていません。設定画面で追加してください。",
+    "providerSettings": "LLMプロバイダー",
+    "addProvider": "プロバイダーを追加",
+    "testConnection": "テスト",
+    "connected": "接続済み",
+    "unreachable": "接続不可",
+    "avgLatency": "平均レイテンシ：{{ms}}ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "トークン使用量（今月）",
+    "inputTokens": "入力",
+    "outputTokens": "出力"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "Audit Trailを表示",
+    "exportCSV": "Trail をエクスポート (CSV)",
+    "exportPDF": "Trail をエクスポート (PDF)",
+    "viewDiff": "差分を表示",
+    "createdBy": "{{name}} が作成",
+    "modifiedBy": "{{name}} が変更",
+    "signedBy": "署名：{{meaning}} （{{name}}）",
+    "reason": "理由",
+    "actions": {
+      "create": "作成",
+      "update": "変更",
+      "delete": "削除",
+      "status_change": "ステータス変更",
+      "link": "リンク",
+      "unlink": "リンク解除",
+      "approve": "承認",
+      "reject": "却下",
+      "sign": "署名",
+      "export": "エクスポート",
+      "generate_report": "レポート生成"
+    }
+  },
+  "signature": {
+    "title": "電子署名",
+    "meaning": "署名の意味",
+    "authored": "私がこれを作成しました",
+    "reviewed": "私がこれをレビューしました",
+    "approved": "私がこれを承認します",
+    "verified": "私がこれを検証しました",
+    "rejected": "私がこれを却下します",
+    "reasonLabel": "署名の理由",
+    "reasonPlaceholder": "理由を入力...",
+    "authenticate": "認証",
+    "password": "パスワード",
+    "signAndApply": "署名して適用",
+    "disclaimer": "署名することにより、このレコードが正確かつ完全であることを確認します。"
+  },
+  "changeControl": {
+    "approvalRequired": "承認が必要",
+    "pendingApproval": "承認待ち",
+    "revertedToDraft": "ドラフトに戻されました — 再承認が必要です",
+    "approve": "承認",
+    "reject": "却下",
+    "rejectReason": "却下の理由"
+  },
+  "theme": {
+    "light": "ライトモード",
+    "dark": "ダークモード"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "Nuovo progetto"
+  },
+  "common": {
+    "back": "Indietro",
+    "next": "Avanti",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "delete": "Elimina",
+    "search": "Cerca...",
+    "all": "Tutti",
+    "noData": "Nessun dato",
+    "none": "Nessuno",
+    "loading": "Caricamento...",
+    "confirm": "Conferma",
+    "close": "Chiudi",
+    "edit": "Modifica",
+    "add": "Aggiungi",
+    "remove": "Rimuovi",
+    "yes": "Sì",
+    "no": "No",
+    "required": "Obbligatorio",
+    "optional": "Facoltativo",
+    "actions": "Azioni",
+    "settings": "Impostazioni"
+  },
+  "statuses": {
+    "Draft": "Bozza",
+    "Active": "Attivo",
+    "Closed": "Chiuso",
+    "Not Run": "Non eseguito",
+    "Passed": "Superato",
+    "Failed": "Fallito",
+    "Approved": "Approvato"
+  },
+  "risk": {
+    "critical": "Critico",
+    "high": "Alto",
+    "medium": "Medio",
+    "low": "Basso",
+    "severity": "Gravità",
+    "likelihood": "Probabilità",
+    "detectability": "Rilevabilità",
+    "riskScore": "Punteggio di rischio",
+    "riskLevel": "Livello di rischio",
+    "mitigation": "Mitigazione",
+    "residualRisk": "Rischio residuo"
+  },
+  "ai": {
+    "generateTests": "Genera casi di test",
+    "generating": "Generazione in corso...",
+    "generatedTests": "Casi di test generati dall'IA per {{reqId}}",
+    "accept": "Accetta",
+    "reject": "Rifiuta",
+    "acceptAll": "Accetta tutti ({{count}})",
+    "acceptHighConfidence": "Accetta alta affidabilità ({{count}})",
+    "confidence": "Affidabilità",
+    "classifyRisk": "Classifica rischio",
+    "classifyAll": "Classifica tutti i non valutati ({{count}})",
+    "gapAnalysis": "Esegui analisi delle lacune",
+    "gapStatus": {
+      "covered": "Coperto",
+      "partial": "Parziale",
+      "missing": "Mancante"
+    },
+    "generateReqsForGaps": "Genera Requirements per tutte le lacune",
+    "noProvider": "Nessun fornitore IA configurato. Vai nelle Impostazioni per aggiungerne uno.",
+    "providerSettings": "Fornitori LLM",
+    "addProvider": "Aggiungi fornitore",
+    "testConnection": "Testa",
+    "connected": "Connesso",
+    "unreachable": "Non raggiungibile",
+    "avgLatency": "Latenza media: {{ms}} ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "Utilizzo token (questo mese)",
+    "inputTokens": "input",
+    "outputTokens": "output"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "Visualizza Audit Trail",
+    "exportCSV": "Esporta trail (CSV)",
+    "exportPDF": "Esporta trail (PDF)",
+    "viewDiff": "Visualizza diff",
+    "createdBy": "Creato da {{name}}",
+    "modifiedBy": "Modificato da {{name}}",
+    "signedBy": "Firmato: {{meaning}} da {{name}}",
+    "reason": "Motivo",
+    "actions": {
+      "create": "Creato",
+      "update": "Modificato",
+      "delete": "Eliminato",
+      "status_change": "Stato modificato",
+      "link": "Collegato",
+      "unlink": "Scollegato",
+      "approve": "Approvato",
+      "reject": "Rifiutato",
+      "sign": "Firmato",
+      "export": "Esportato",
+      "generate_report": "Report generato"
+    }
+  },
+  "signature": {
+    "title": "Firma elettronica",
+    "meaning": "Significato della firma",
+    "authored": "Ho redatto questo",
+    "reviewed": "Ho revisionato questo",
+    "approved": "Approvo questo",
+    "verified": "Ho verificato questo",
+    "rejected": "Rifiuto questo",
+    "reasonLabel": "Motivo della firma",
+    "reasonPlaceholder": "Inserisci il motivo...",
+    "authenticate": "Autenticarsi",
+    "password": "Password",
+    "signAndApply": "Firma e applica",
+    "disclaimer": "Firmando, confermi che questo record è accurato e completo."
+  },
+  "changeControl": {
+    "approvalRequired": "Approvazione richiesta",
+    "pendingApproval": "In attesa di approvazione",
+    "revertedToDraft": "Ripristinato a bozza — necessaria nuova approvazione",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "rejectReason": "Motivo del rifiuto"
+  },
+  "theme": {
+    "light": "Modalità chiara",
+    "dark": "Modalità scura"
+  }
+}

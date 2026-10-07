@@ -1,0 +1,21 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.log
+
+.env
+.env.local
+
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+.wrangler
+
+# secrets and local env files
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*

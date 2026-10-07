@@ -1,0 +1,656 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Surfaces are translucent, not white.
+     This is the whole glass effect, done once. `bg-surface` is on roughly every
+     card in the app, so tinting it here turns all 46 tabs to frosted glass
+     without touching a single component. The page behind it is a smooth fixed
+     gradient (see `body` below), which is what a card actually shows through
+     itself - a gradient read through 72% white is exactly what iOS and macOS
+     material looks like.
+
+     Only these two are translucent. -secondary/-tertiary/-hover stay solid on
+     purpose: they are the *inner* fills (input wells, table stripes, row
+     hovers) and stacking translucency on translucency goes muddy fast. */
+  --color-surface: rgba(255, 255, 255, 0.62);
+  /* The inner fills of a glass card - input wells, table stripes, row hovers.
+     An opaque grey here is what made the first attempt look like paper: a solid
+     #f3f7f8 well punched a dead flat hole in a panel that was meant to be one
+     continuous material. They are tints of the card's own shadow instead, so a
+     well reads as a slight depression in the glass and stays correct over
+     whatever colour the wallpaper happens to be underneath it. */
+  --color-surface-secondary: rgba(15, 42, 56, 0.045);
+  --color-surface-tertiary: rgba(15, 42, 56, 0.075);
+  --color-surface-hover: rgba(15, 42, 56, 0.06);
+  --color-surface-elevated: rgba(255, 255, 255, 0.74);
+  /* Hairline borders. A glass panel is separated from its ground by a barely
+     visible edge of light, not by a drawn grey line - a solid #dce7e8 rule
+     reads as a printed box the moment the fill goes translucent. */
+  --color-border: rgba(15, 42, 56, 0.10);
+  --color-border-subtle: rgba(15, 42, 56, 0.06);
+  --color-text-primary: #16232e;
+  --color-text-secondary: #4b5d68;
+  /* Thinner glass over a genuinely coloured wallpaper means the ground under
+     small labels is now around #e2f0f1 rather than white. #5f7278 measured
+     4.27:1 there, under the 4.5:1 body floor; this is the same grey-teal two
+     steps deeper and clears 5.5:1. */
+  --color-text-tertiary: #4f6167;
+  --color-text-inverse: #ffffff;
+  /* The accent is a button fill first and a chart fill second, so it has to
+     clear 4.5:1 against its own label. #0f9e8c only managed 3.34:1 with white,
+     which put every primary action in the app below the body-text floor.
+     #0b7a6d is the same teal a shade deeper and reaches 5.23:1. */
+  --color-accent: #0b7a6d;
+  --color-accent-hover: #0a6f63;
+  --color-accent-subtle: #e6f5f3;
+  --color-accent-text: #0b7a6d;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-subtle: #fef2f2;
+  --color-success: #10b981;
+  --color-success-subtle: #ecfdf5;
+  --color-warning: #f59e0b;
+  --color-warning-subtle: #fffbeb;
+
+  /* Paired foregrounds. A status colour and the ink that sits on it have to
+     move together, and they do not move the same way between themes: the teal
+     darkens for light mode and brightens for dark, so white is right on one
+     and unreadable (1.86:1) on the other. Filled buttons use these instead of
+     a hardcoded text-white. */
+  --color-accent-fg: #ffffff;   /* on --color-accent  5.23:1 */
+  --color-danger-fg: #ffffff;   /* on --color-danger  4.83:1 */
+  --color-success-fg: #052e1c;  /* on --color-success 5.85:1 */
+  --color-warning-fg: #3d2504;  /* on --color-warning 6.68:1 */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-input-bg: #ffffff;
+  --color-input-border: #cbd5e1;
+  --color-badge-draft-bg: #eef4f5;
+  --color-badge-draft-text: #4b5d68;
+  --color-badge-active-bg: #e6f5f3;
+  --color-badge-active-text: #0b7a6d;
+  --color-badge-closed-bg: #ecfdf5;
+  --color-badge-closed-text: #059669;
+  --color-badge-notrun-bg: #eef4f5;
+  --color-badge-notrun-text: #4b5d68;
+  --color-badge-passed-bg: #ecfdf5;
+  --color-badge-passed-text: #059669;
+  --color-badge-failed-bg: #fef2f2;
+  --color-badge-failed-text: #dc2626;
+  --color-gradient-start: #0e2a47;
+  --color-gradient-end: #0f9e8c;
+
+  /* Type scale.
+     Tailwind's stock ramp is sized for marketing pages: text-sm is 14px and
+     text-2xl is 24px. This is a register-driven compliance console whose users
+     read tables all day, so the whole ramp is pulled down one notch and the
+     top is capped at 26px. Overriding the scale here rather than rewriting
+     ~2,200 utility classes keeps every view on one scale and stops sizes
+     drifting per component again.
+
+     11px is the floor: nothing functional is allowed below it. */
+  --text-xs: 0.6875rem;      /* 11px   was 12 */
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.78125rem;     /* 12.5px was 14 - the default reading size */
+  --text-sm--line-height: 1.125rem;
+  --text-base: 0.8125rem;    /* 13px   was 16 */
+  --text-base--line-height: 1.25rem;
+  --text-lg: 0.875rem;       /* 14px   was 18 - card and section headings */
+  --text-lg--line-height: 1.25rem;
+  --text-xl: 0.9375rem;      /* 15px   was 20 - page titles */
+  --text-xl--line-height: 1.375rem;
+  --text-2xl: 1.125rem;      /* 18px   was 24 - standard KPI value */
+  --text-2xl--line-height: 1.5rem;
+  --text-3xl: 1.375rem;      /* 22px   was 30 */
+  --text-3xl--line-height: 1.75rem;
+  --text-4xl: 1.625rem;      /* 26px   was 36 - the cap */
+  --text-4xl--line-height: 2rem;
+
+  /* Closure ramp: one hue family, pale = nothing done, deep = fully closed.
+     Used for the TÜV finding pipeline so the ring reads as filling with brand
+     colour rather than as an unordered categorical palette. */
+  --color-stage-open: #cbd8dc;
+  --color-stage-action: #7cc4bb;
+  --color-stage-verified: #2aa899;
+  --color-stage-closed: #0b7a6d;
+  --color-chart-track: rgba(15, 42, 56, 0.10);
+
+  /* --color-danger is tuned for fills and rules; at 3.8:1 on white it is below
+     the 4.5:1 body-text floor. Numbers and labels that carry an alert use this
+     darker red instead, which clears 6:1.
+
+     The other three follow the same rule and exist for the same reason: the app
+     had ~237 raw palette classes (text-green-600, text-amber-600, text-red-500,
+     text-cyan-600 ...) doing the job of status text, and every one of them sat
+     between 2.1:1 and 3.6:1 on a light surface. A step-500 or -600 swatch is a
+     fill colour; it is not ink. These are the ink, and unlike a palette class
+     they also carry a dark-theme value, so a status label cannot pass in one
+     theme and fail in the other.
+
+     Values are picked with headroom, not to the threshold - the worst light
+     ground in the app is one of the -50 tints, and each of these clears 5:1
+     there. Anything landing on 4.5 exactly fails again the next time someone
+     nudges the swatch. */
+  --color-danger-text: #b91c1c;   /* 6.47 on white, 5.91 on danger-subtle */
+  --color-success-text: #047857;  /* 5.48 on white, 5.01 worst tint */
+  --color-warning-text: #92400e;  /* 7.09 on white, 6.48 worst tint */
+  --color-info-text: #1d4ed8;     /* 6.70 on white, 6.13 worst tint */
+
+  /* Sidebar is a fixed navy → teal rail, independent of light/dark theme */
+  --color-sidebar-grad-from: #0b2138;
+  --color-sidebar-grad-via: #0e3450;
+  --color-sidebar-grad-to: #11485c;
+  --color-sidebar-active-rail: #2dd4bf;
+  --color-sidebar-text: rgba(255, 255, 255, 0.72);
+  --color-sidebar-text-active: #ffffff;
+
+  /* Corner radius.
+     The MR dashboard is the one screen that was designed rather than assembled,
+     and its cards are rounded-2xl while the rest of the app is on rounded-lg
+     and rounded-xl. Rather than rewrite every class string, the ramp itself is
+     pushed up a notch, so a `rounded-lg` written a year ago now draws the MR
+     radius. Apple's material is the same idea - continuous, generous corners
+     with nothing sharper than a 6px chip. */
+  --radius-sm: 0.375rem;   /*  6px  was 2  */
+  --radius-md: 0.5rem;     /*  8px  was 6  */
+  --radius-lg: 0.75rem;    /* 12px  was 8  */
+  --radius-xl: 1rem;       /* 16px  was 12 */
+  --radius-2xl: 1.25rem;   /* 20px  was 16 */
+  --radius-3xl: 1.5rem;    /* 24px  was 24 */
+
+  /* Elevation.
+     Tailwind's stock shadows are a single hard drop with a black tint, which
+     against glass looks like a sticker on a window. These are two-layer - a
+     tight contact shadow plus a wide soft one - and tinted with the app's own
+     navy so the light in the UI has one colour. Same override trick as the type
+     scale: every existing `shadow-sm` in the app becomes this. */
+  --shadow-xs: 0 1px 2px 0 rgba(11, 33, 56, 0.04);
+  --shadow-sm: 0 1px 2px 0 rgba(11, 33, 56, 0.04), 0 1px 3px 0 rgba(11, 33, 56, 0.05);
+  --shadow-md: 0 2px 4px -1px rgba(11, 33, 56, 0.05), 0 6px 16px -4px rgba(11, 33, 56, 0.08);
+  --shadow-lg: 0 4px 8px -2px rgba(11, 33, 56, 0.06), 0 12px 28px -6px rgba(11, 33, 56, 0.10);
+  --shadow-xl: 0 8px 16px -4px rgba(11, 33, 56, 0.07), 0 24px 48px -12px rgba(11, 33, 56, 0.14);
+  --shadow-2xl: 0 12px 24px -6px rgba(11, 33, 56, 0.10), 0 40px 80px -20px rgba(11, 33, 56, 0.24);
+}
+
+/* --- Dark theme overrides ---
+   `:root` and a bare `.dark` both score (0,1,0), so these overrides would
+   win only on source order - which a stylesheet reorder (an HMR swap, a
+   plugin, a change of import order) can silently invert, leaving dark text
+   on light surfaces. `:root.dark` scores (0,1,1) and wins outright.
+   The class is only ever set on documentElement, so this cannot narrow. */
+:root.dark {
+  /* Dark glass is thicker than light glass. Light text over a blurred dark
+     ground loses contrast much faster than dark text over a light one, so the
+     fill is held nearer opaque and the highlight edge is white, not black. */
+  --color-surface: rgba(17, 26, 43, 0.62);
+  --color-surface-secondary: rgba(255, 255, 255, 0.045);
+  --color-surface-tertiary: rgba(255, 255, 255, 0.075);
+  --color-surface-hover: rgba(255, 255, 255, 0.07);
+  --color-surface-elevated: rgba(30, 41, 59, 0.74);
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #8797a9;
+  --color-text-inverse: #0f172a;
+  --color-accent: #2dd4bf;
+  --color-accent-hover: #14b8a6;
+  --color-accent-subtle: rgba(45, 212, 191, 0.15);
+  --color-accent-text: #5eead4;
+  --color-danger: #f87171;
+  --color-danger-hover: #ef4444;
+  --color-danger-subtle: rgba(239, 68, 68, 0.15);
+  --color-success: #34d399;
+  --color-success-subtle: rgba(16, 185, 129, 0.15);
+  --color-warning: #fbbf24;
+  --color-warning-subtle: rgba(245, 158, 11, 0.15);
+
+  /* Dark keeps the bright fills - they are correct against a dark ground - and
+     flips the ink instead. White on #2dd4bf measured 1.86:1. */
+  --color-accent-fg: #04241f;   /* on --color-accent  8.83:1 */
+  --color-danger-fg: #2b0a0a;   /* on --color-danger  6.60:1 */
+  --color-success-fg: #052e1c;  /* on --color-success 7.73:1 */
+  --color-warning-fg: #3d2504;  /* on --color-warning 8.59:1 */
+  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-input-bg: #1a1c2e;
+  --color-input-border: #2a2d3e;
+  --color-badge-draft-bg: #1e2030;
+  --color-badge-draft-text: #94a3b8;
+  --color-badge-active-bg: rgba(45, 212, 191, 0.15);
+  --color-badge-active-text: #5eead4;
+  --color-badge-closed-bg: rgba(16, 185, 129, 0.15);
+  --color-badge-closed-text: #34d399;
+  --color-badge-notrun-bg: #1e2030;
+  --color-badge-notrun-text: #94a3b8;
+  --color-badge-passed-bg: rgba(16, 185, 129, 0.15);
+  --color-badge-passed-text: #34d399;
+  --color-badge-failed-bg: rgba(239, 68, 68, 0.15);
+  --color-badge-failed-text: #f87171;
+  --color-gradient-start: #0e2a47;
+  --color-gradient-end: #2dd4bf;
+  --color-stage-open: #33485a;
+  --color-stage-action: #14827a;
+  --color-stage-verified: #21b3a2;
+  --color-stage-closed: #5eead4;
+  --color-chart-track: rgba(255, 255, 255, 0.10);
+  /* Status ink inverts: dark surfaces need the bright end of each ramp. Worst
+     dark ground in the app is --color-surface-elevated #1e293b. */
+  --color-danger-text: #fca5a5;   /* 7.71 on the worst dark ground */
+  --color-success-text: #34d399;  /* 7.61 */
+  --color-warning-text: #fbbf24;  /* 8.76 */
+  --color-info-text: #93c5fd;     /* 8.11 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-modal-enter {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* The ground the glass sits on - and the reason the first attempt failed.
+   A translucent panel is only visibly translucent if what is behind it differs
+   from the panel. The first version washed the page at 10-16% alpha over
+   #eef3f5, which put the page within two or three RGB steps of the cards, so
+   62% white over it was indistinguishable from plain white. The wash has to be
+   strong enough to see, and it has to reach the middle of the viewport where
+   the large panels actually sit - corners-only leaves every big card white.
+   It is `fixed`, so it stays put while content scrolls over it (the same trick
+   as an iOS wallpaper under a sheet), and it is a plain CSS gradient, so it
+   costs nothing to paint. */
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #d9e6ee;
+  background-image:
+    radial-gradient(1200px 800px at 2% -10%, rgba(45, 212, 191, 0.50), transparent 55%),
+    radial-gradient(1000px 760px at 86% -6%, rgba(96, 165, 250, 0.45), transparent 58%),
+    radial-gradient(900px 820px at 106% 54%, rgba(167, 139, 250, 0.32), transparent 60%),
+    radial-gradient(1100px 900px at 26% 120%, rgba(13, 148, 136, 0.38), transparent 58%),
+    radial-gradient(820px 700px at 68% 86%, rgba(59, 130, 246, 0.22), transparent 60%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+:root.dark body {
+  background-color: #050a14;
+  background-image:
+    radial-gradient(1200px 800px at 2% -10%, rgba(20, 184, 166, 0.40), transparent 55%),
+    radial-gradient(1000px 760px at 86% -6%, rgba(59, 130, 246, 0.34), transparent 58%),
+    radial-gradient(900px 820px at 106% 54%, rgba(139, 92, 246, 0.26), transparent 60%),
+    radial-gradient(1100px 900px at 26% 120%, rgba(45, 212, 191, 0.20), transparent 58%),
+    radial-gradient(820px 700px at 68% 86%, rgba(59, 130, 246, 0.14), transparent 60%);
+}
+
+/* Recharts text color fix for dark mode */
+.dark .recharts-text {
+  fill: var(--color-text-secondary) !important;
+}
+.dark .recharts-cartesian-axis-tick-value {
+  fill: var(--color-text-tertiary) !important;
+}
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: var(--color-surface-elevated) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* One-off panel used by the app shell's empty state. It predates the shared
+   material and had its own hardcoded fill, blur and shadow, which now drift
+   from every other card in the app. Rebased onto the same tokens so there is
+   one glass recipe, not two. */
+.glass-card {
+  background-color: var(--color-surface);
+  background-image: var(--glass-sheen);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  outline: 1px solid var(--color-hairline);
+  outline-offset: -1px;
+  box-shadow: var(--shadow-lg);
+}
+
+.glass-card-accent {
+  background-color: var(--color-surface);
+  background-image:
+    linear-gradient(135deg, rgba(15, 158, 140, 0.10) 0%, rgba(14, 42, 71, 0.05) 100%),
+    var(--glass-sheen);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* --- Keyframe Animations --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* `forwards`, and never `both` or `backwards`, on any entrance that starts from
+   opacity 0. This is the whole reason the blank-panel bug exists.
+
+   A backwards fill pins the element at the from-state - invisible - from the
+   moment it is styled until the animation actually runs. In a tab that is not
+   painting (backgrounded, or restored into the background), animations are
+   created in state "running" but their currentTime stays at 0, so the fill is
+   all you ever get and the panel is blank. Measured live: hidden tab, three
+   `both` elements, playState "running", currentTime 0, computed opacity 0.
+   That is the same failure as the framer-motion entrances this class replaced,
+   just moved into CSS.
+
+   `forwards` fills only the to-state. If the animation never runs the element
+   simply stays at its natural opacity, which is visible. That is the property
+   that makes this safe, and it only holds while nothing adds an animation-delay
+   - a delay plus `forwards` shows the element, then blanks it when the delay
+   expires. So: no stagger delays on this class. Visible-but-unanimated is an
+   acceptable failure; invisible is not. */
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-enter {
+  animation: modalEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
+/* ============================================================================
+   Apple-style material
+   ============================================================================
+   Three things have to be true at once, or a translucent panel just reads as a
+   white box - which is exactly what the first pass produced.
+
+     1. There has to be something behind it worth seeing. A 72% white card over
+        a page that was itself 96% white is, to the eye, a white card. The
+        wallpaper above now carries real colour, so translucency has something
+        to be translucent *to*. This was the actual bug.
+     2. The panel has to bend and saturate what is behind it. Blur alone on a
+        smooth gradient is close to a no-op, but the saturation boost is not:
+        it pulls the wallpaper's teal and blue up through the panel. That is
+        the "vibrancy" half of the material, and it was missing entirely.
+     3. Its rim has to catch light. A pane of glass is separated from its
+        ground by an edge of light, not by a drawn grey line. This is the
+        single strongest cue that a panel is a material and not a rectangle.
+
+   The material also gets thicker the more important the layer is - thin for
+   chrome, thick for a sheet that must be read against a busy page. That ramp
+   is below.
+   -------------------------------------------------------------------------- */
+@theme {
+  /* A modal sheet is read against a dimmed, blurred page, so it needs a much
+     thicker material than a card that only ever sits on the wallpaper. */
+  --color-sheet: rgba(255, 255, 255, 0.92);
+  --color-chrome: rgba(255, 255, 255, 0.55);
+  --color-hairline: rgba(255, 255, 255, 0.6);
+}
+
+:root.dark {
+  --color-sheet: rgba(23, 32, 50, 0.92);
+  --color-chrome: rgba(11, 18, 32, 0.5);
+  --color-hairline: rgba(255, 255, 255, 0.14);
+}
+
+/* The band of light across the top of a pane. The stops are in pixels, not
+   percentages, so the highlight stays a consistent 120px falloff whether it is
+   on a KPI tile or a full-height table - a percentage-based sheen washes out
+   half a large card. */
+:root {
+  --glass-sheen: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.5) 0,
+    rgba(255, 255, 255, 0.14) 56px,
+    rgba(255, 255, 255, 0) 120px
+  );
+}
+:root.dark {
+  --glass-sheen: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.09) 0,
+    rgba(255, 255, 255, 0.03) 56px,
+    rgba(255, 255, 255, 0) 120px
+  );
+}
+
+/* (2) Bend and saturate what is behind the panel.
+
+   backdrop-filter makes an element a containing block for any fixed-position
+   descendant, and this app renders all 42 of its modals inline rather than
+   through a portal - so a filter here would trap an overlay opened from inside
+   a card inside that card. `:has()` drops the filter the instant a card
+   actually contains one, and re-evaluates live as the modal mounts and
+   unmounts, so the overlay still covers the whole window.
+
+   Scoped to `.border` so this lands on real panels and not on every small
+   `bg-surface` chip and table row in the app - a few dozen filtered layers is
+   fine, a few hundred is not. */
+.bg-surface.border:not(:has(.fixed)),
+.bg-surface-elevated.border:not(:has(.fixed)) {
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+}
+
+/* (3) The rim and the sheen.
+
+   The rim rides on `outline` rather than `box-shadow` on purpose: every card in
+   the app already sets its own `shadow-sm`/`shadow-lg`, and a box-shadow here
+   would either be overwritten by those utilities or overwrite them. `outline`
+   is a property nothing else in the app uses for cards, follows border-radius,
+   and is replaced cleanly by the focus ring when a card is focused. */
+.bg-surface.border,
+.bg-surface-elevated.border {
+  outline: 1px solid var(--color-hairline);
+  outline-offset: -1px;
+  background-image: var(--glass-sheen);
+}
+
+/* A card that paints its own gradient has already decided what its fill is. */
+.bg-surface.border[class*="bg-gradient"],
+.bg-surface.border[class*="bg-linear"],
+.bg-surface-elevated.border[class*="bg-gradient"],
+.bg-surface-elevated.border[class*="bg-linear"] {
+  background-image: none;
+}
+
+/* Anything drawn with a surface fill inside a full-screen overlay is a modal
+   sheet. Overlays already blur the page behind themselves, so the sheet only
+   needs the thicker fill - no second backdrop-filter, which would also turn the
+   sheet into a containing block and trap any nested fixed-position child. */
+.fixed.inset-0 .bg-surface,
+.fixed.inset-0 .bg-surface-elevated {
+  background-color: var(--color-sheet);
+}
+
+/* A sticky header is the one place a card fill really does have live content
+   passing behind it, so this is where blur earns its cost. */
+.sticky.bg-surface,
+.sticky.bg-surface-elevated {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Recharts paints its tooltip over the plot, not over the wallpaper, so it is a
+   sheet and not a card - a translucent tooltip sitting on its own chart lines
+   is unreadable. */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: var(--color-sheet) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 0.75rem;
+  border-color: var(--color-border) !important;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Accessibility: macOS "Reduce transparency" and the Windows equivalent. The
+   layout must not shift when this is on, so only the fills go solid. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --color-surface: #ffffff;
+    --color-surface-secondary: #f3f7f8;
+    --color-surface-tertiary: #eef4f5;
+    --color-surface-hover: #eef4f5;
+    --color-surface-elevated: #ffffff;
+    --color-sheet: #ffffff;
+    --color-chrome: #ffffff;
+    --color-border: #dce7e8;
+    --color-border-subtle: #eef4f5;
+    --color-chart-track: #eef4f5;
+  }
+  :root.dark {
+    --color-surface: #111a2b;
+    --color-surface-secondary: #0f172a;
+    --color-surface-tertiary: #1e293b;
+    --color-surface-hover: #1e293b;
+    --color-surface-elevated: #1e293b;
+    --color-sheet: #172032;
+    --color-chrome: #0b1220;
+    --color-border: #2a2d3e;
+    --color-border-subtle: #1e2030;
+    --color-chart-track: #1e293b;
+  }
+  body {
+    background-image: none;
+  }
+  /* The rim, the sheen and every blur in the app, off in one place. */
+  .bg-surface.border,
+  .bg-surface-elevated.border {
+    outline: none;
+    background-image: none;
+  }
+  [class*="backdrop-blur"],
+  .bg-surface.border,
+  .bg-surface-elevated.border,
+  .sticky.bg-surface,
+  .sticky.bg-surface-elevated,
+  .recharts-tooltip-wrapper .recharts-default-tooltip {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ============================================================================
+   Scrollbars
+   ============================================================================
+   Windows draws a 17px grey trough with a stepper arrow at each end. Next to a
+   glass sidebar it is the single loudest thing on screen, and it was showing in
+   the nav rail because Sidebar.tsx asks for a `scrollbar-none` class that was
+   never actually defined anywhere.
+
+   Both are fixed here: a real `scrollbar-none` utility, and a macOS-style
+   overlay scrollbar - no track, no arrows, just a translucent capsule - for
+   everywhere else.
+   -------------------------------------------------------------------------- */
+
+/* Firefox and any browser on the standards property. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(15, 42, 56, 0.22) transparent;
+}
+:root.dark * {
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* The stepper arrows. This single rule is what removes the ugly buttons. */
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(15, 42, 56, 0.22);
+  border-radius: 9999px;
+  /* Transparent border + background-clip is the standard way to inset a
+     WebKit thumb; there is no padding property on a scrollbar part. */
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(15, 42, 56, 0.38);
+  background-clip: padding-box;
+}
+
+:root.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.20);
+}
+:root.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.34);
+}
+
+/* On the navy sidebar rail a dark thumb is invisible, so it gets a light one. */
+.scrollbar-rail {
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+.scrollbar-rail::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.20);
+}
+.scrollbar-rail::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.36);
+}
+
+/* Referenced by Sidebar.tsx since it was written; this is the first time it
+   has actually existed. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ============================================================================
+   The MR dashboard card, applied everywhere
+   ============================================================================
+   The MR dashboard's card is `border border-border/60 shadow-sm rounded-2xl
+   bg-surface`. Three of those four are now handled centrally - the radius ramp
+   and the shadow ramp were rebased above, and the border is a hairline - which
+   leaves elevation. Roughly half the app's cards were written as
+   `bg-surface rounded-xl border border-border p-4` with no shadow at all, and
+   next to a shadowed MR card they read as holes rather than panels.
+
+   So: anything with a surface fill and a border gets the MR card's elevation by
+   default. This lives in @layer base, which means any component that states its
+   own `shadow-*` utility still wins - modals keep their shadow-2xl, and a
+   deliberate `shadow-none` still flattens. It is a default, not an override.
+   -------------------------------------------------------------------------- */
+@layer base {
+  .bg-surface.border,
+  .bg-surface-elevated.border {
+    box-shadow: var(--shadow-sm);
+  }
+}

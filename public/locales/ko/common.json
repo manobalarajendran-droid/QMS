@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "PTA QMS Dashboard",
+    "newProject": "새 프로젝트"
+  },
+  "common": {
+    "back": "뒤로",
+    "next": "다음",
+    "cancel": "취소",
+    "save": "저장",
+    "delete": "삭제",
+    "search": "검색...",
+    "all": "전체",
+    "noData": "데이터 없음",
+    "none": "없음",
+    "loading": "로딩 중...",
+    "confirm": "확인",
+    "close": "닫기",
+    "edit": "편집",
+    "add": "추가",
+    "remove": "제거",
+    "yes": "예",
+    "no": "아니요",
+    "required": "필수",
+    "optional": "선택 사항",
+    "actions": "작업",
+    "settings": "설정"
+  },
+  "statuses": {
+    "Draft": "초안",
+    "Active": "활성",
+    "Closed": "종료",
+    "Not Run": "미실행",
+    "Passed": "합격",
+    "Failed": "불합격",
+    "Approved": "승인됨"
+  },
+  "risk": {
+    "critical": "치명적",
+    "high": "높음",
+    "medium": "중간",
+    "low": "낮음",
+    "severity": "심각도",
+    "likelihood": "가능성",
+    "detectability": "검출 가능성",
+    "riskScore": "위험 점수",
+    "riskLevel": "위험 수준",
+    "mitigation": "완화 조치",
+    "residualRisk": "잔여 위험"
+  },
+  "ai": {
+    "generateTests": "테스트 케이스 생성",
+    "generating": "생성 중...",
+    "generatedTests": "{{reqId}}에 대한 AI 생성 테스트 케이스",
+    "accept": "수락",
+    "reject": "거부",
+    "acceptAll": "모두 수락 ({{count}})",
+    "acceptHighConfidence": "높은 신뢰도 수락 ({{count}})",
+    "confidence": "신뢰도",
+    "classifyRisk": "위험 분류",
+    "classifyAll": "모든 미평가 항목 분류 ({{count}})",
+    "gapAnalysis": "갭 분석 실행",
+    "gapStatus": {
+      "covered": "충족",
+      "partial": "부분 충족",
+      "missing": "미충족"
+    },
+    "generateReqsForGaps": "모든 갭에 대해 Requirements 생성",
+    "noProvider": "AI 공급자가 설정되지 않았습니다. 설정에서 추가하세요.",
+    "providerSettings": "LLM 공급자",
+    "addProvider": "공급자 추가",
+    "testConnection": "테스트",
+    "connected": "연결됨",
+    "unreachable": "연결 불가",
+    "avgLatency": "평균 지연시간: {{ms}}ms",
+    "purposeRouting": "Purpose Routing",
+    "tokenUsage": "토큰 사용량 (이번 달)",
+    "inputTokens": "입력",
+    "outputTokens": "출력"
+  },
+  "audit": {
+    "title": "Audit Trail",
+    "viewTrail": "Audit Trail 보기",
+    "exportCSV": "Trail 내보내기 (CSV)",
+    "exportPDF": "Trail 내보내기 (PDF)",
+    "viewDiff": "차이점 보기",
+    "createdBy": "{{name}}에 의해 생성됨",
+    "modifiedBy": "{{name}}에 의해 수정됨",
+    "signedBy": "서명: {{meaning}} — {{name}}",
+    "reason": "사유",
+    "actions": {
+      "create": "생성됨",
+      "update": "수정됨",
+      "delete": "삭제됨",
+      "status_change": "상태 변경됨",
+      "link": "연결됨",
+      "unlink": "연결 해제됨",
+      "approve": "승인됨",
+      "reject": "거부됨",
+      "sign": "서명됨",
+      "export": "내보내짐",
+      "generate_report": "보고서 생성됨"
+    }
+  },
+  "signature": {
+    "title": "전자 서명",
+    "meaning": "서명 의미",
+    "authored": "본인이 이것을 작성했습니다",
+    "reviewed": "본인이 이것을 검토했습니다",
+    "approved": "본인이 이것을 승인합니다",
+    "verified": "본인이 이것을 확인했습니다",
+    "rejected": "본인이 이것을 거부합니다",
+    "reasonLabel": "서명 사유",
+    "reasonPlaceholder": "사유 입력...",
+    "authenticate": "인증",
+    "password": "비밀번호",
+    "signAndApply": "서명 및 적용",
+    "disclaimer": "서명함으로써 이 기록이 정확하고 완전함을 확인합니다."
+  },
+  "changeControl": {
+    "approvalRequired": "승인 필요",
+    "pendingApproval": "승인 대기 중",
+    "revertedToDraft": "초안으로 되돌림 — 재승인 필요",
+    "approve": "승인",
+    "reject": "거부",
+    "rejectReason": "거부 사유"
+  },
+  "theme": {
+    "light": "라이트 모드",
+    "dark": "다크 모드"
+  }
+}
