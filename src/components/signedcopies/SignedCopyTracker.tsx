@@ -34,7 +34,7 @@ export function SignedCopyTracker<R extends { id: string }>({ tab, records, rowL
         )}
       </div>
       {open && (
-        <ul className="mt-2 space-y-1.5 bg-surface rounded-xl border border-border p-3">
+        <ul className="mt-2 max-h-60 overflow-y-auto space-y-1.5 bg-surface rounded-xl border border-border p-3">
           {loose.map((n) => (
             <li key={n.file.id} className="flex flex-wrap items-center gap-2">
               <WFileButton file={n.file} opener={opener} />
