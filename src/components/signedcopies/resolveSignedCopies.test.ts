@@ -13,6 +13,14 @@ describe('matches', () => {
     expect(matches([['a1b2'], ['2025', '2026']], 'A1-B2 report 2026.pdf')).toBe(true);
     expect(matches([['a1b2'], ['2025']], 'A1-B2 report 2026.pdf')).toBe(false);
   });
+  it('a key can not run into more of the same kind (digits into digits, letters into letters)', () => {
+    expect(matches([['ncr001']], 'NCR-0010.pdf')).toBe(false);
+    expect(matches([['001']], 'DCR 2001.pdf')).toBe(false);
+    expect(matches([['dcr'], ['001']], 'DCR001.pdf')).toBe(true);
+    expect(matches([['ncr001']], 'NCR-001A.pdf')).toBe(true);
+    expect(matches([['ncr001']], 'NCR-001Rev1.pdf')).toBe(true);
+    expect(matches([['mrm'], ['2025']], 'MRM2025.pdf')).toBe(true);
+  });
   it('never matches empty groups or empty keys', () => {
     expect(matches([], 'anything.pdf')).toBe(false);
     expect(matches([['']], 'anything.pdf')).toBe(false);
@@ -31,6 +39,8 @@ describe('resolveSignedCopies: TUV and longest key', () => {
   it('tuv only considers files with "tuv" in the name', () => {
     const r = resolveSignedCopies('tuv', [tuvRow], [file('f1', 'Internal Audit 2025.pdf', A), file('f2', 'TUV_audit 2025.pdf', A)], []);
     expect(r.byRow.tu.map((x) => x.fileName)).toEqual(['TUV_audit 2025.pdf']);
+    const glued = resolveSignedCopies('audit', [audRow], [file('f3', 'TUV2025 Production.pdf', A)], []);
+    expect(glued.byRow.au).toEqual([]);
     expect(r.notLinked).toEqual([]);
   });
   it('keeps only the longest key when one row key is part of another', () => {

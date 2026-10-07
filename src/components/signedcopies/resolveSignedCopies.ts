@@ -17,11 +17,13 @@ const inFolders = (tab: SignedTab, f: WFile) =>
   RULES[tab].folders.some((p) => f.folder === p || f.folder.startsWith(p + '/'));
 
 const keyPatterns = new Map<string, RegExp>();
-/** A key matches only on a token edge: no letter or digit just before or after it. Separators inside the name are ignored. */
+/** Same-kind edge: a key ending in a digit can't run into more digits, one ending in a letter can't run into more letters.
+ *  So NCR-001 skips NCR-0010, but DCR001 and NCR-001A still match. Separators inside the name are ignored. */
+const edge = (c: string) => (/[0-9]/.test(c) ? '0-9' : 'a-z');
 const keyPattern = (k: string): RegExp => {
   let re = keyPatterns.get(k);
   if (!re) {
-    re = new RegExp(`(?<![a-z0-9])${[...k].join('[^a-z0-9]*')}(?![a-z0-9])`);
+    re = new RegExp(`(?<![${edge(k[0])}])${[...k].join('[^a-z0-9]*')}(?![${edge(k[k.length - 1])}])`);
     keyPatterns.set(k, re);
   }
   return re;
@@ -33,7 +35,7 @@ export const matches = (groups: KeyGroup[], name: string): boolean => {
   return groups.length > 0 && groups.every((g) => g.some((k) => k !== '' && keyPattern(k).test(n)));
 };
 
-const TUV_NAME = /(?<![a-z0-9])tuv(?![a-z0-9])/i;
+const TUV_NAME = /(?<![a-z])tuv(?![a-z])/i;
 
 /** Audit and TUV share one W: folder: "tuv" files belong to TUV only. */
 const forTab = (tab: SignedTab, f: WFile) => {
