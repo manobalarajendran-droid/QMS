@@ -1,4 +1,6 @@
 import { useState, useMemo, type ReactNode } from 'react';
+import { DCRDraftFiles } from '../wfiles/DCRDraftFiles';
+import { takeDCRPrefill, type DCRPrefill } from '../wfiles/dcrPrefill';
 import { useRouteRecord } from '../../lib/router';
 import { useDCRStore } from '../../store/useDCRStore';
 import type { DCRRecord, DCRStatus } from '../../store/useDCRStore';
@@ -68,7 +70,8 @@ export function DCRWorkflow() {
   const records = useDCRStore((s) => s.records);
 
   const [selectedId, setSelectedId] = useRouteRecord('dcr_workflow');
-  const [showForm, setShowForm] = useState(false);
+  const [prefill] = useState<DCRPrefill | null>(() => takeDCRPrefill());
+  const [showForm, setShowForm] = useState(prefill !== null);
   const [showArchived, setShowArchived] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'All' | DCRStatus>('All');
   const [deptFilter, setDeptFilter] = useState('All');
@@ -231,6 +234,7 @@ export function DCRWorkflow() {
 
       {showForm && (
         <DCRFormModal
+          prefill={prefill ?? undefined}
           onClose={() => setShowForm(false)}
           onSubmit={(data) => {
             useDCRStore.getState().addRecord({ ...data, status: 'Draft' } as Omit<DCRRecord, 'id' | 'dcrNo' | 'createdAt' | 'updatedAt'>);
@@ -491,6 +495,9 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
         </section>
       )}
 
+      <DCRDraftFiles dcrId={record.id} wFileId={record.wFileId}
+        canUpload={record.status === 'Draft'} approved={record.status === 'Approved'} isMR={isMR} />
+
       {showComments && (
         <section className="bg-surface rounded-xl border border-border p-4 print:hidden">
           <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Comments</h3>
@@ -534,16 +541,18 @@ function DCRFormModal({
   onClose,
   onSubmit,
   initial,
+  prefill,
 }: {
   onClose: () => void;
   onSubmit: (data: Partial<DCRRecord>) => void;
   initial?: DCRRecord;
+  prefill?: DCRPrefill;
 }) {
   const authUsers = useAuthStore((s) => s.users);
 
   const [formData, setFormData] = useState<DCRFormData>({
-    docNo: initial?.docNo ?? '',
-    title: initial?.title ?? '',
+    docNo: initial?.docNo ?? prefill?.docNo ?? '',
+    title: initial?.title ?? prefill?.title ?? '',
     requestor: initial?.requestor ?? '',
     department: initial?.department ?? '',
     changeDescription: initial?.changeDescription ?? '',
@@ -559,7 +568,7 @@ function DCRFormModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-surface w-full max-w-3xl rounded-xl p-4 shadow-2xl border border-border my-8">
         <h3 className="text-xl font-bold mb-4">{initial ? 'Edit Change Request' : 'New Change Request'}</h3>
-        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ ...formData, docId: initial?.docId ?? '' }); }} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ ...formData, docId: initial?.docId ?? '', ...(prefill && !initial ? { wFileId: prefill.wFileId } : {}) }); }} className="space-y-4">
           <fieldset className="grid grid-cols-2 gap-4">
             <Labeled label="Document Number">
               <input className={inputCls} value={formData.docNo} onChange={(e) => setFormData({ ...formData, docNo: e.target.value })} placeholder="e.g. PTA-HSE-P-02" required />

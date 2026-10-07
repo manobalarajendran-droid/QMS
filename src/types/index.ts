@@ -898,6 +898,8 @@ export interface DCRRecord extends BaseEntity, ApprovalMetadata {
   assignedTo?: string;
   dueDate?: string;
   stateHistory?: DCRStateHistoryEntry[];
+  /** W: file this DCR proposes to replace (laptop file helper id). */
+  wFileId?: string;
 }
 
 export interface DCRStateHistoryEntry {

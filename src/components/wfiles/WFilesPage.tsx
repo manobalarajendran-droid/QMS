@@ -2,7 +2,9 @@
 // served by the laptop helper after the user types their PIN. To change a
 // document, people raise a DCR (Document changes screen) - files here never change.
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FolderOpen, Folder, ChevronDown, ChevronRight, Search, FileText, RefreshCw, Loader2 } from 'lucide-react';
+import { FolderOpen, Folder, ChevronDown, ChevronRight, Search, FileText, RefreshCw, Loader2, FilePen } from 'lucide-react';
+import { navigate } from '../../lib/router';
+import { saveDCRPrefill } from './dcrPrefill';
 import { EvidenceViewer } from '../evidence/EvidenceViewer';
 import { evidenceViewKind } from '../evidence/evidenceFileRules';
 import { WFilePinBox } from './WFilePinBox';
@@ -109,7 +111,7 @@ export function WFilesPage() {
       <div>
         <h1 className="text-[16px] font-semibold tracking-tight text-text-primary">QMS files (W:)</h1>
         <p className="mt-0.5 text-[11px] text-text-tertiary">
-          Master QMS Repository, view only. To change a document, raise a DCR under Document changes.
+          Master QMS Repository, view only. To change a document, press Propose change on it: this raises a DCR where you attach the new version.
         </p>
       </div>
       <button onClick={load} className="inline-flex items-center gap-1.5 rounded-xl border border-border/60 bg-surface px-3 py-1.5 text-[12.5px] font-semibold text-text-secondary hover:bg-surface-hover">
@@ -154,9 +156,9 @@ export function WFilesPage() {
               {isOpen && (
                 <ul className="border-t border-border/40">
                   {list.map((f) => (
-                    <li key={f.id}>
+                    <li key={f.id} className="flex items-center hover:bg-surface-hover">
                       <button onClick={() => void openFile(f)} disabled={busyId !== null}
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left hover:bg-surface-hover disabled:opacity-60">
+                        className="flex min-w-0 flex-1 items-center gap-2 px-3 py-1.5 text-left disabled:opacity-60">
                         {busyId === f.id ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /> : <FileText className="h-3.5 w-3.5 shrink-0 text-text-tertiary" />}
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[12.5px] text-text-primary">{f.name}</span>
@@ -164,6 +166,11 @@ export function WFilesPage() {
                         </span>
                         {f.docNo && <span className="shrink-0 rounded-md bg-accent-subtle px-1.5 py-0.5 text-[10.5px] font-semibold text-accent-text">{f.docNo}</span>}
                         <span className="hidden shrink-0 text-[10.5px] text-text-tertiary sm:block">{sizeText(f.size)} · {f.at.slice(0, 10)}</span>
+                      </button>
+                      <button onClick={() => { saveDCRPrefill(f); navigate('dcr_workflow'); }}
+                        title="Propose a new version of this document (raises a DCR)" aria-label={`Propose change to ${f.name}`}
+                        className="mr-2 inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[10.5px] font-semibold text-accent-text hover:bg-accent-subtle">
+                        <FilePen className="h-3.5 w-3.5" aria-hidden="true" /> <span className="hidden md:inline">Propose change</span>
                       </button>
                     </li>
                   ))}

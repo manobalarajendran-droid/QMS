@@ -75,6 +75,41 @@ export async function listFiles(): Promise<WFile[]> {
   return body.files;
 }
 
+/** A proposed new file attached to a DCR (kept on the laptop, never on W:). */
+export interface DraftFile {
+  id: string;
+  name: string;
+  size: number;
+  at: string;
+  by: string;
+}
+
+export async function listDrafts(dcrId: string): Promise<DraftFile[]> {
+  const body = await call<{ drafts: DraftFile[] }>(`/draft/list?dcr=${encodeURIComponent(dcrId)}`);
+  return body.drafts;
+}
+
+/** Sends the raw file to the helper. Needs its own fetch: call() always sends JSON. */
+export async function uploadDraft(dcrId: string, file: File): Promise<void> {
+  const host = await getHost();
+  if (!host) throw new Error('The QMS file helper is not running. Ask the QMS admin to start it.');
+  const q = `dcr=${encodeURIComponent(dcrId)}&name=${encodeURIComponent(file.name)}`;
+  let res: Response;
+  try {
+    res = await fetch(`${host}/draft/upload?${q}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${getAccessToken() ?? ''}`, 'Content-Type': 'application/octet-stream' },
+      body: file,
+    });
+  } catch {
+    cachedHost = null;
+    throw new Error('Cannot reach the QMS file helper. The laptop may be off or offline.');
+  }
+  const body = (await res.json().catch(() => ({}))) as { error?: string; needPin?: boolean };
+  if (res.status === 423 && body.needPin) throw new PinNeededError();
+  if (!res.ok) throw new Error(body.error || `File helper error ${res.status}`);
+}
+
 /** Downloads one file through a short-lived signed link. */
 export async function fetchFile(id: string): Promise<Blob> {
   const { path } = await call<{ path: string }>(`/sign?id=${encodeURIComponent(id)}`, { method: 'POST' });
