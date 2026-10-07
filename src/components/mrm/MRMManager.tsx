@@ -17,6 +17,8 @@ import {
 import { StatusBadge } from '../shared/StatusBadge';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
+import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 import { CommentThread } from '../shared/CommentThread';
 
 const INPUT_LABELS: Record<string, string> = {
@@ -234,6 +236,9 @@ export function MRMManager() {
           </button>
         </div>
       </div>
+
+      <SignedCopyTracker tab="mrm" records={records}
+        rowLabel={(r) => `${r.meetingNo} ${r.meetingDate}`.trim() || r.id} />
 
       {view === 'actions' ? (
         <ActionTrackerView records={records} />
@@ -469,6 +474,7 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
 
   const ncrRecords = useNCRStore((s) => s.records);
   const auditRecords = useAuditProgrammeStore((s) => s.records);
+  const allMrmRecords = useMRMStore((s) => s.records);
   const objectives = useObjectivesStore((s) => s.records);
   const csiRecords = useCSIStore((s) => s.records);
 
@@ -794,6 +800,8 @@ function MRMDetailPanel({ record, onClose }: { record: MRMRecord; onClose: () =>
           <CommentThread entityType="mrm" entityId={record.id} projectId={projectId} />
         </section>
       )}
+
+      <SignedCopyCard tab="mrm" records={allMrmRecords} rowId={record.id} />
 
       {showEvidence && (
         <EvidencePanel entityType="mrm" entityId={record.id} projectId={projectId} open={showEvidence} onClose={() => setShowEvidence(false)} />
