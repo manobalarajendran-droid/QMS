@@ -166,6 +166,8 @@
     "uploading": "Wird hochgeladen...",
     "noEvidence": "Keine Nachweise angehängt",
     "download": "Herunterladen",
+    "view": "Ansehen",
+    "noPreview": "Dieser Dateityp kann hier nicht angezeigt werden. Bitte herunterladen.",
     "delete": "Nachweis löschen",
     "serverRequired": "Nachweis-Uploads erfordern den Server-Modus",
     "completeness": "Nachweis-Vollständigkeit",

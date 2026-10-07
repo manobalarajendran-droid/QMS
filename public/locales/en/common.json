@@ -202,6 +202,8 @@
     "uploading": "Uploading...",
     "noEvidence": "No evidence attached",
     "download": "Download",
+    "view": "View",
+    "noPreview": "This file type cannot be shown here. Please download it.",
     "delete": "Delete Evidence",
     "serverRequired": "Evidence uploads require server mode",
     "completeness": "Evidence Completeness",

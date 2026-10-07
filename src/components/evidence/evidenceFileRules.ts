@@ -22,3 +22,22 @@ export function checkEvidenceFile(fileName: string, size: number): string | null
   if (size > MAX_EVIDENCE_BYTES) return 'The file is bigger than 20 MB.';
   return null;
 }
+
+// ── In-app preview ──
+const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+const DOC_EXTENSIONS = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+
+export type EvidenceViewKind = 'image' | 'document' | 'none';
+
+function viewExtensionOf(fileName: string): string {
+  const dot = fileName.lastIndexOf('.');
+  return dot === -1 ? '' : fileName.slice(dot + 1).toLowerCase();
+}
+
+/** Which way a file can be previewed. 'none' means: offer download instead. */
+export function evidenceViewKind(fileName: string): EvidenceViewKind {
+  const ext = viewExtensionOf(fileName);
+  if (IMAGE_EXTENSIONS.includes(ext)) return 'image';
+  if (DOC_EXTENSIONS.includes(ext)) return 'document';
+  return 'none';
+}

@@ -1,12 +1,13 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Upload, Download, Trash2, Paperclip, FileText, AlertTriangle } from 'lucide-react';
+import { X, Upload, Download, Trash2, Paperclip, FileText, AlertTriangle, Eye } from 'lucide-react';
 import { useAppMode } from '../../hooks/useAppMode';
 import { useEvidenceStore, type EvidenceAttachment } from '../../store/useEvidenceStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { apiFetch, apiRaw, ApiError } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
-import { EVIDENCE_ACCEPT, checkEvidenceFile } from './evidenceFileRules';
+import { EVIDENCE_ACCEPT, checkEvidenceFile, evidenceViewKind } from './evidenceFileRules';
+import { EvidenceViewer } from './EvidenceViewer';
 
 type EvidenceEntityType =
   'requirement' | 'test' | 'capa' | 'ncr' | 'dcr' | 'audit' | 'mrm' | 'csi'
@@ -87,6 +88,7 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [viewing, setViewing] = useState<{ attachment: EvidenceAttachment; blob: Blob } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Offline: anyone on this PC. Signed in: the same roles the server allows.
@@ -213,6 +215,27 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
     }
   };
 
+  /** Gets the file as a Blob: from the saved copy offline, or from the server with the login token. */
+  const loadBlob = async (attachment: EvidenceAttachment): Promise<Blob | null> => {
+    if (attachment.dataUrl) return (await fetch(attachment.dataUrl)).blob();
+    if (!isServerMode) return null;
+    const response = await apiRaw(`/evidence/${encodeURIComponent(attachment.id)}/download`);
+    return response.blob();
+  };
+
+  const handleView = async (attachment: EvidenceAttachment) => {
+    if (evidenceViewKind(attachment.fileName) === 'none') {
+      await handleDownload(attachment);
+      return;
+    }
+    try {
+      const blob = await loadBlob(attachment);
+      if (blob) setViewing({ attachment, blob });
+    } catch (error) {
+      setErrors([messageOf(error, 'Could not open the file.')]);
+    }
+  };
+
   const handleDelete = async (attachment: EvidenceAttachment) => {
     if (!isServerMode) {
       removeAttachment(attachment.id);
@@ -260,6 +283,15 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
   if (!open) return null;
 
   return (
+    <>
+    {viewing && (
+      <EvidenceViewer
+        blob={viewing.blob}
+        fileName={viewing.attachment.fileName}
+        onClose={() => setViewing(null)}
+        onDownload={() => saveBlob(viewing.blob, viewing.attachment.fileName)}
+      />
+    )}
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay" onClick={onClose}>
       <div
         className="bg-surface-elevated rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col border border-border"
@@ -392,6 +424,14 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button
+                      onClick={() => void handleView(att)}
+                      className="p-1.5 text-text-tertiary hover:text-accent rounded-lg hover:bg-accent-subtle transition-colors"
+                      title={t('evidence.view', 'View')}
+                      aria-label={t('evidence.view', 'View')}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                    <button
                       onClick={() => void handleDownload(att)}
                       className="p-1.5 text-text-tertiary hover:text-accent rounded-lg hover:bg-accent-subtle transition-colors"
                       title={t('evidence.download')}
@@ -415,5 +455,6 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }

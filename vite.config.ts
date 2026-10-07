@@ -34,6 +34,9 @@ export default defineConfig({
           groups: [
             { name: 'vendor-react', test: /node_modules[\/](react|react-dom|scheduler)[\/]/, priority: 40 },
             { name: 'vendor-i18n', test: /node_modules[\/](i18next[^\/]*|react-i18next)[\/]/, priority: 30 },
+            // Evidence viewer (PDF/Word/Excel). Only reachable through a dynamic import,
+            // so it downloads when someone presses View, never on normal page loads.
+            { name: 'vendor-file-viewer', test: /node_modules[\/]@file-viewer[\/]/, priority: 25 },
             { name: 'vendor-table', test: /node_modules[\/]@tanstack[\/]/, priority: 20 },
             { name: 'vendor-charts', test: /node_modules[\/](recharts|d3-[^\/]+|victory-vendor)[\/]/, priority: 10 },
           ],
