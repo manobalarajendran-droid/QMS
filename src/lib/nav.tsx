@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import {
   Sun, Inbox, AlertTriangle, ClipboardCheck, CheckSquare, MessageSquareHeart,
   FileText, GitBranch, Landmark, Target, ShieldCheck, Users, ListTodo,
-  Workflow, Map, ScrollText, Upload,
+  Workflow, Map, ScrollText, Upload, FolderOpen,
 } from 'lucide-react';
 import type { ViewTab } from '../types';
 
@@ -60,6 +60,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: 'dml_manager', label: 'Document Master List', icon: <FileText className={ic} aria-hidden="true" />, screens: ['dml_manager'], keywords: 'dml procedure form register' },
       { id: 'dcr_workflow', label: 'Document changes', icon: <GitBranch className={ic} aria-hidden="true" />, screens: ['dcr_workflow', 'change_control'], keywords: 'dcr change request revision' },
+      { id: 'w_files', label: 'QMS files (W:)', icon: <FolderOpen className={ic} aria-hidden="true" />, screens: ['w_files'], keywords: 'repository folder procedure form manual pdf w drive files' },
     ],
   },
   {
@@ -103,6 +104,7 @@ export const SCREEN_TITLES: Record<ViewTab, string> = {
   pms: 'Customer feedback',
   dml_manager: 'Document Master List',
   dcr_workflow: 'Document changes',
+  w_files: 'QMS files (W:)',
   change_control: 'Document changes',
   mrm_manager: 'Management review',
   objectives: 'Objectives & KPIs',

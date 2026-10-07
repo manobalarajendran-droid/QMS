@@ -32,6 +32,7 @@ const TUVTracker = lazyWithRetry(() => import('../tuv/TUVTracker').then((m) => (
 const AuditProgramme = lazyWithRetry(() => import('../audit/AuditProgramme').then((m) => ({ default: m.AuditProgramme })));
 const DMLManager = lazyWithRetry(() => import('../documents/DMLManager').then((m) => ({ default: m.DMLManager })));
 const DCRWorkflow = lazyWithRetry(() => import('../documents/DCRWorkflow').then((m) => ({ default: m.DCRWorkflow })));
+const WFilesPage = lazyWithRetry(() => import('../wfiles/WFilesPage').then((m) => ({ default: m.WFilesPage })));
 const ComplianceMap = lazyWithRetry(() => import('../compliance/ComplianceMap').then((m) => ({ default: m.ComplianceMap })));
 const MRMManager = lazyWithRetry(() => import('../mrm/MRMManager').then((m) => ({ default: m.MRMManager })));
 const ObjectivesDashboard = lazyWithRetry(() => import('../objectives/ObjectivesDashboard').then((m) => ({ default: m.ObjectivesDashboard })));
@@ -49,6 +50,7 @@ function renderScreen(screen: ViewTab): ReactNode {
     case 'tuv_tracker': return <TUVTracker />;
     case 'dml_manager': return <DMLManager />;
     case 'dcr_workflow': return <DCRWorkflow />;
+    case 'w_files': return <WFilesPage />;
     case 'change_control': return <ChangeControlTracker />;
     case 'compliance_map': return <ComplianceMap />;
     case 'mrm_manager': return <MRMManager />;

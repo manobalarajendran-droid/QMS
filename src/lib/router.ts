@@ -19,6 +19,7 @@ export const SCREEN_SLUGS: Record<ViewTab, string> = {
   pms: 'csi',
   dml_manager: 'documents',
   dcr_workflow: 'dcr',
+  w_files: 'qms-files',
   change_control: 'change-requests',
   mrm_manager: 'management-review',
   objectives: 'objectives',
