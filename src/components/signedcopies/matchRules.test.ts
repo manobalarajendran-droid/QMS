@@ -9,10 +9,11 @@ describe('matchRules', () => {
   it('norm keeps letters and digits only, lower case', () => {
     expect(norm('NCR-03 / AR-RAZI')).toBe('ncr03arrazi');
   });
-  it('NCR: number + client + year', () => {
-    const row = { ref: 'NCR-03', project: 'AR-RAZI-P-II', dt: '2025-04-02' };
-    expect(hit('ncr', row, 'FM-NC-13_AR-RAZI-P-II-NCR-03_2025.pdf')).toBe(true);
-    expect(hit('ncr', row, 'FM-NC-13_AR-RAZI-P-II-NCR-04_2025.pdf')).toBe(false);
+  it('NCR: matches on ref only', () => {
+    const row = { ref: 'JULY-2024-01', project: 'PLAN-TECH Workshop - Steam Jacket', dt: '27-Jul-2024' };
+    expect(hit('ncr', row, 'FM-NC-13_NCR JULY 2024 01.pdf')).toBe(true);
+    expect(hit('ncr', row, 'FM-NC-13_JULY-2024-01_signed.pdf')).toBe(true);
+    expect(hit('ncr', row, 'FM-NC-13_JULY-2024-02.pdf')).toBe(false);
   });
   it('DCR: the words + the number', () => {
     const row = { dcrNo: 'DCR-002' };
@@ -21,6 +22,17 @@ describe('matchRules', () => {
   });
   it('DCR: a number without leading zeros is padded to 3 digits', () => {
     expect(rowKeys('dcr', { dcrNo: '2' })[1]).toEqual(['002']);
+  });
+  it('DCR: the last digit group of a real number like DCR-2026-001 is used', () => {
+    const row = { dcrNo: 'DCR-2026-001' };
+    expect(hit('dcr', row, 'DOCUMENT CHANGE REQUEST- 001.pdf')).toBe(true);
+    expect(hit('dcr', row, 'DOCUMENT CHANGE REQUEST- 002.pdf')).toBe(false);
+  });
+  it('Audit: uses ref when present, else area + year', () => {
+    const row = { ref: 'IA-2025-01', dep: 'All Departments', dt: '2025-11-15' };
+    expect(hit('audit', row, 'Internal Audit IA-2025-01 report.pdf')).toBe(true);
+    expect(hit('audit', row, 'Internal Audit IA-2025-02 report.pdf')).toBe(false);
+    expect(hit('audit', { dep: 'Production', dt: '2025-03-10' }, 'Audit_Production_2025.pdf')).toBe(true);
   });
   it('CSI: customer + year', () => {
     const row = { clientName: 'CHEMANOL', yr: 2025 };
@@ -44,7 +56,7 @@ describe('matchRules', () => {
   });
   it('a row with an empty key field never auto-matches', () => {
     expect(rowKeys('csi', { clientName: '', yr: 2025 })).toEqual([]);
-    expect(rowKeys('ncr', { ref: 'NCR-03', project: 'AR-RAZI' })).toEqual([]);
+    expect(rowKeys('ncr', { project: 'AR-RAZI' })).toEqual([]);
   });
   it('a text key shorter than 4 characters never auto-matches', () => {
     expect(rowKeys('objectives', { dept: 'OPS', yr: 2026 })).toEqual([]);

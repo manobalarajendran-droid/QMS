@@ -34,7 +34,8 @@ const text = (v: unknown) => {
 };
 /** Digits only, padded to 3 ("2" becomes "002") so it cannot hit unrelated numbers. */
 const digits = (v: unknown) => {
-  const d = String(v ?? '').replace(/\D/g, '');
+  // Last digit group only: "DCR-2026-001" gives "001", not "2026001".
+  const d = String(v ?? '').match(/(\d+)\s*$/)?.[1] ?? '';
   return d === '' ? '' : d.padStart(3, '0');
 };
 const year = (...vs: unknown[]) => {
@@ -53,11 +54,15 @@ export function rowKeys(tab: SignedTab, row: Row): KeyGroup[] {
 
 function build(tab: SignedTab, r: Row): KeyGroup[] {
   switch (tab) {
-    case 'ncr': return [[text(r.ref)], [text(r.project)], [year(r.dt)]];
+    case 'ncr': return [[text(r.ref)]];
     case 'dcr': return [['dcr', 'documentchangerequest'], [digits(r.dcrNo)]];
     case 'csi': return [[text(r.clientName ?? r.cl)], [year(r.yr, r.surveyDate, r.dt)]];
+    // Objectives and TUV: files that hit many rows correctly go to Not linked for hand linking; no extra logic on purpose.
     case 'objectives': return [[text(r.dept)], [year(r.yr)]];
-    case 'audit': return [[text(r.dep ?? r.auditee)], [year(r.dt, r.completedDate)]];
+    case 'audit': {
+      const ref = text(r.ref);
+      return ref !== '' ? [[ref]] : [[text(r.dep ?? r.auditee)], [year(r.dt, r.completedDate)]];
+    }
     // TUVRecord has no year field of its own: take the year from due, then closed, verified, created.
     case 'tuv': return [['tuv'], [year(r.due, r.closed, r.verifiedDate, r.createdAt)]];
     case 'mrm': return [['mrm', 'managementreview'], [year(r.meetingDate)]];
