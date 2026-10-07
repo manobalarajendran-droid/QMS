@@ -14,7 +14,7 @@ interface SidebarProps {
   onCloseMobile: () => void;
 }
 
-const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5eead4] focus-visible:ring-offset-0';
+const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff8a3d] focus-visible:ring-offset-0';
 
 function useBadges(): Partial<Record<ViewTab, number>> {
   const items = useInbox();
@@ -53,7 +53,7 @@ export function Sidebar({ activeScreen, onOpenSearch, mobileOpen, onCloseMobile 
 
   const shell = mobileOpen
     ? 'fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shadow-2xl'
-    : `hidden md:flex ${narrow ? 'w-14' : 'w-56'}`;
+    : `hidden md:my-3 md:ml-3 md:flex md:h-[calc(100%-1.5rem)] md:rounded-2xl md:border md:overflow-hidden md:shadow-[0_18px_40px_rgba(0,0,0,0.35)] ${narrow ? 'w-14' : 'w-56'}`;
 
   return (
     <>
@@ -62,7 +62,7 @@ export function Sidebar({ activeScreen, onOpenSearch, mobileOpen, onCloseMobile 
       )}
       <nav
         aria-label="Main menu"
-        className={`${shell} h-full shrink-0 flex-col border-r border-white/10 bg-gradient-to-b from-[#0b2138]/95 via-[#0e3450]/92 to-[#11485c]/90 backdrop-blur-2xl backdrop-saturate-200 transition-[width] duration-200 md:from-[#0b2138]/82 md:via-[#0e3450]/80 md:to-[#11485c]/78`}
+        className={`${shell} h-full shrink-0 flex-col border-r border-white/10 animate-sidebar-in bg-[rgba(46,46,50,0.88)] shadow-[inset_-1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-[22px] backdrop-saturate-[1.2] transition-[width] duration-200 dark:md:bg-[rgba(58,58,63,0.42)]`}
       >
         <div className="flex h-12 shrink-0 items-center gap-1.5 border-b border-white/10 px-2.5">
           {!narrow && (
@@ -128,10 +128,10 @@ export function Sidebar({ activeScreen, onOpenSearch, mobileOpen, onCloseMobile 
                             aria-label={narrow ? item.label : undefined}
                             aria-current={active ? 'page' : undefined}
                             className={`relative flex w-full items-center gap-2.5 rounded-md px-2.5 py-[7px] text-[12.5px] font-medium transition-colors ${FOCUS} ${
-                              active ? 'bg-white/15 font-semibold text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                              active ? 'bg-gradient-to-r from-[#ff5a3c]/25 to-white/5 font-semibold text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'
                             } ${narrow ? 'justify-center' : ''}`}
                           >
-                            {active && <span aria-hidden="true" className="absolute bottom-1 left-0 top-1 w-[2px] rounded-full bg-[#2dd4bf]" />}
+                            {active && <span aria-hidden="true" className="absolute bottom-1 left-0 top-1 rounded-full bg-gradient-to-b from-[#ff5a3c] to-[#ff8a3d] shadow-[0_0_10px_rgba(255,106,61,0.7)] w-[3px]" />}
                             {item.icon}
                             {!narrow && <span className="flex-1 truncate text-left">{item.label}</span>}
                             {!narrow && count > 0 && (
@@ -154,7 +154,7 @@ export function Sidebar({ activeScreen, onOpenSearch, mobileOpen, onCloseMobile 
         <div data-testid="sidebar-user-profile" className="mt-auto shrink-0 border-t border-white/10 p-2.5">
           <div className={`flex items-center gap-2.5 ${narrow ? 'justify-center' : 'px-1'}`}>
             <div
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-[#0b2138] to-[#2dd4bf] text-[11px] font-bold text-white ring-1 ring-white/20"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-[#ff5a3c] to-[#ff8a3d] text-[11px] font-bold text-white ring-1 ring-white/20"
               title={me.name || 'Signed in'}
               aria-hidden="true"
             >
@@ -163,7 +163,10 @@ export function Sidebar({ activeScreen, onOpenSearch, mobileOpen, onCloseMobile 
             {!narrow && (
               <div className="min-w-0 flex-1">
                 <div className="truncate text-[12.5px] font-semibold text-white">{me.name || 'Signed in'}</div>
-                <div className="truncate text-[11px] capitalize text-white/60">{me.role.replace(/_/g, ' ')}</div>
+                <div className="flex items-center gap-1.5 truncate text-[11px] capitalize text-white/60">
+                  <span className="live-dot shrink-0" aria-hidden="true" />
+                  {me.role.replace(/_/g, ' ')}
+                </div>
               </div>
             )}
           </div>

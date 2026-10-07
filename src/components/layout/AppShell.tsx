@@ -14,6 +14,7 @@ import { PhoneBar } from './PhoneBar';
 import { SubTabs } from './SubTabs';
 import { CommandPalette } from './CommandPalette';
 import { SyncConflictBanner } from './SyncConflictBanner';
+import { ShardBackground } from '../auth/ShardBackground';
 import type { ViewTab } from '../../types';
 
 // ── Screens (lazy-loaded) ────────────────────────────────────────────────────
@@ -122,10 +123,12 @@ export function AppShell() {
       <a href="#main" className="sr-only z-[60] rounded bg-surface px-3 py-2 text-text-primary focus:not-sr-only focus:fixed focus:left-2 focus:top-2">
         Skip to content
       </a>
+      {/* Dark mode only: the same black slabs as the login page. */}
+      <div className="hidden dark:block" aria-hidden="true"><ShardBackground /></div>
       <div className="relative z-10 flex h-full w-full">
         <Sidebar activeScreen={screen} onOpenSearch={openSearch} mobileOpen={menuOpen} onCloseMobile={closeMenu} />
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <TopBar title={SCREEN_TITLES[screen]} />
+          <TopBar title={SCREEN_TITLES[screen]} onOpenSearch={openSearch} />
           <SyncStatusBar />
           <main id="main" tabIndex={-1} className="flex-1 overflow-y-auto p-4 pb-24 focus:outline-none md:p-6 md:pb-6">
             <SubTabs screen={screen} />

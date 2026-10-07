@@ -5,6 +5,8 @@ import { navigate } from '../../lib/router';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { EmptyState } from '../shared/EmptyState';
 import { InboxList } from './InboxList';
+import { TodayGlassStats } from './TodayGlassStats';
+import { TodayCharts } from './TodayCharts';
 import { ScopeSwitch, type Scope } from './ScopeSwitch';
 
 type Filter = 'all' | 'overdue' | 'week' | 'approvals';
@@ -82,6 +84,9 @@ export function TodayView() {
           </button>
         </div>
       </header>
+
+      <TodayGlassStats overdue={counts.overdue} />
+      <TodayCharts />
 
       <div className="flex flex-wrap gap-3" role="group" aria-label="Filter my work">
         <Chip label="Overdue" count={counts.overdue} tone="danger" pressed={filter === 'overdue'} onClick={() => toggle('overdue')} />

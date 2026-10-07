@@ -31,7 +31,7 @@ const NEXT: Record<Theme, Theme> = { system: 'light', light: 'dark', dark: 'syst
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'system',
+      theme: 'dark',
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
