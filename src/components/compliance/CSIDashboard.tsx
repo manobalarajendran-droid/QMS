@@ -16,6 +16,7 @@ import { EvidencePanel } from '../evidence/EvidencePanel';
 import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
 import { CommentThread } from '../shared/CommentThread';
 import { normalizeScore } from '../../lib/csiScore';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 
 const RATING_BUCKETS = ['All', 'Excellent', 'Good', 'Satisfactory', 'Fair', 'Needs Improvement'] as const;
 
@@ -118,6 +119,8 @@ export function CSIDashboard() {
           </div>
           <button onClick={() => { setEditingRecord(null); setShowForm(true); }} className="inline-flex items-center gap-1.5 bg-accent text-accent-fg px-3 py-1.5 rounded-xl text-[12.5px] font-semibold hover:bg-accent-hover transition-colors shadow-sm">+ New Survey</button>
         </div>
+
+        <SignedCopyTracker tab="csi" records={records} rowLabel={(r) => [r.clientName || r.cl, r.surveyDate].filter(Boolean).join(' - ') || r.id} />
 
         {/* KPI strip */}
         <div className="grid grid-cols-2 gap-3">

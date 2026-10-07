@@ -13,6 +13,7 @@ import { StatusBadge } from '../shared/StatusBadge';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
 import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 import { CommentThread } from '../shared/CommentThread';
 import {
   CheckCircle,
@@ -142,6 +143,8 @@ export function DCRWorkflow() {
             + New DCR
           </button>
         </div>
+
+        <SignedCopyTracker tab="dcr" records={records} rowLabel={(r) => [r.dcrNo, r.title].filter(Boolean).join(' - ') || r.id} />
 
         <div className="relative">
           <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary" />

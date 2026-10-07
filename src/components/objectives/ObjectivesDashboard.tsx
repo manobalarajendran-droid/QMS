@@ -10,6 +10,7 @@ import { StatusBadge } from "../shared/StatusBadge";
 import { EvidencePanel } from "../evidence/EvidencePanel";
 import { SignedCopyCard } from "../signedcopies/SignedCopyCard";
 import { CommentThread } from "../shared/CommentThread";
+import { SignedCopyTracker } from "../signedcopies/SignedCopyTracker";
 
 const DEPTS = ["IED / QAQC", "Projects", "OSD", "IT", "Facility", "Procurement", "Store", "P&E", "HR"];
 
@@ -196,6 +197,8 @@ export function ObjectivesDashboard() {
           <Plus className="w-3.5 h-3.5" /> New Objective
         </button>
       </div>
+
+      <SignedCopyTracker tab="objectives" records={records} rowLabel={(r) => [r.ref || r.objId, r.dept].filter(Boolean).join(' - ') || r.id} />
 
       {/* ── KPI tiles ────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">

@@ -9,6 +9,7 @@ import { NCRForm } from './NCRForm';
 import { NCRRecordPage } from './NCRRecordPage';
 import { NCRFilters, EMPTY_FILTERS, applyFilters, type NCRFilterState } from './NCRFilters';
 import { CLASSIFICATIONS, STATUSES, STATUS_LABELS, classificationOf, normaliseDept, stageIndex } from './ncrShared';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 
 const NEW_ID = 'new';
 
@@ -87,6 +88,8 @@ export function NCRWorkflow() {
           </button>
         )}
       </div>
+
+      <SignedCopyTracker tab="ncr" records={records} rowLabel={(r) => [r.ref, r.project].filter(Boolean).join(' - ') || r.id} />
 
       {records.length === 0 ? (
         <EmptyState
