@@ -7,6 +7,8 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useAuth } from '../../hooks/useAuth';
 import { StatusBadge } from '../shared/StatusBadge';
 import { EvidencePanel } from '../evidence/EvidencePanel';
+import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 import { CommentThread } from '../shared/CommentThread';
 
 const DEPTS = ['IED / QAQC', 'Projects', 'OSD', 'IT', 'Facility', 'Procurement', 'Store', 'P&E', 'HR'];
@@ -162,6 +164,9 @@ export function TUVTracker() {
           Add Recommendation
         </button>
       </div>
+
+      <SignedCopyTracker tab="tuv" records={records}
+        rowLabel={(r) => [r.num, r.desc?.slice(0, 60)].filter(Boolean).join(' ') || r.id} />
 
       {/* ── KPI tiles ────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -341,6 +346,7 @@ function TUVModal({
   onTransition: (to: TUVRecordStatus, reason: string, kind: 'forward' | 'reject' | 'reopen' | 'verify') => void;
   onToggleArchive: () => void;
 }) {
+  const allTuvRecords = useTUVStore((s) => s.records);
   const [formData, setFormData] = useState({
     num: record?.num || '',
     cl: record?.cl || '',
@@ -549,6 +555,8 @@ function TUVModal({
             <CommentThread entityType="tuv" entityId={record.id} projectId={record.id} />
           </div>
         )}
+
+        {record && <div className="mb-4"><SignedCopyCard tab="tuv" records={allTuvRecords} rowId={record.id} /></div>}
 
         {record && showEvidence && (
           <EvidencePanel entityType="tuv" entityId={record.id} projectId={record.id} open={showEvidence} onClose={() => setShowEvidence(false)} />

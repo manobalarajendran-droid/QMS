@@ -13,6 +13,8 @@ import { PTA_DEPARTMENTS } from '../../types';
 import { StatusBadge } from '../shared/StatusBadge';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
+import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 import { CommentThread } from '../shared/CommentThread';
 
 const STATUSES: AuditProgrammeRecordStatus[] = ['Planned', 'In Progress', 'Completed', 'Follow-up'];
@@ -137,6 +139,9 @@ export function AuditProgramme() {
             <Plus className="w-3.5 h-3.5" /> New Audit
           </button>
         </div>
+
+        <SignedCopyTracker tab="audit" records={records}
+          rowLabel={(r) => [r.ref, r.dep, r.dt].filter(Boolean).join(' ') || r.id} />
 
         {/* Search */}
         <div className="relative">
@@ -278,6 +283,7 @@ function DeptSelect({ value, onChange }: { value: string; onChange: (v: string) 
 function AuditDetailPanel({ record, onClose }: { record: AuditProgrammeRecord; onClose: () => void }) {
   const { user } = useAuth();
   const ncrRecords = useNCRStore((s) => s.records);
+  const allAuditRecords = useAuditProgrammeStore((s) => s.records);
   const isMR = user?.role === 'admin' || user?.role === 'qa_manager';
 
   const [showEdit, setShowEdit] = useState(false);
@@ -460,6 +466,8 @@ function AuditDetailPanel({ record, onClose }: { record: AuditProgrammeRecord; o
           <CommentThread entityType="audit" entityId={record.id} projectId={projectId} />
         </section>
       )}
+
+      <SignedCopyCard tab="audit" records={allAuditRecords} rowId={record.id} />
 
       {showEvidence && (
         <EvidencePanel entityType="audit" entityId={record.id} projectId={projectId} open={showEvidence} onClose={() => setShowEvidence(false)} />

@@ -4,6 +4,7 @@ import type { NCRRecord, NCRRecordStatus } from '../../store/useNCRStore';
 import { useNCRStore } from '../../store/useNCRStore';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 import { EvidencePanel } from '../evidence/EvidencePanel';
+import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
 import { NCRForm } from './NCRForm';
 import { NCRStageBody } from './NCRStageBody';
 import { NCRHistory } from './NCRHistory';
@@ -42,6 +43,7 @@ function StageChips({ status }: { status: NCRRecordStatus }) {
 /** One NCR on its own page. The next step is the big button; rare actions sit under "More". */
 export function NCRRecordPage({ record, onBack }: { record: NCRRecord; onBack: () => void }) {
   const me = useCurrentUser();
+  const ncrRecords = useNCRStore((s) => s.records);
   const isMR = me.role === 'admin' || me.role === 'qa_manager';
   const canEdit = me.can.canEdit && (isMR || me.role === 'department_spoc');
   const canDelete = me.can.canDelete;
@@ -116,6 +118,7 @@ export function NCRRecordPage({ record, onBack }: { record: NCRRecord; onBack: (
           onConfirm={(reason) => { store().transitionStatus(record.id, ask.to, by, reason, ask.kind); setAsk(null); }}
         />
       )}
+      <SignedCopyCard tab="ncr" records={ncrRecords} rowId={record.id} />
       {evidence && <EvidencePanel entityType="ncr" entityId={record.id} projectId={record.project || record.id} open onClose={() => setEvidence(false)} />}
       {editing && (
         <NCREditDialog

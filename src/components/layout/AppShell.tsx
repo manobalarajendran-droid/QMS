@@ -32,6 +32,7 @@ const TUVTracker = lazyWithRetry(() => import('../tuv/TUVTracker').then((m) => (
 const AuditProgramme = lazyWithRetry(() => import('../audit/AuditProgramme').then((m) => ({ default: m.AuditProgramme })));
 const DMLManager = lazyWithRetry(() => import('../documents/DMLManager').then((m) => ({ default: m.DMLManager })));
 const DCRWorkflow = lazyWithRetry(() => import('../documents/DCRWorkflow').then((m) => ({ default: m.DCRWorkflow })));
+const SignedCopiesOverview = lazyWithRetry(() => import('../signedcopies/SignedCopiesOverview').then((m) => ({ default: m.SignedCopiesOverview })));
 const WFilesPage = lazyWithRetry(() => import('../wfiles/WFilesPage').then((m) => ({ default: m.WFilesPage })));
 const AnnualSetPage = lazyWithRetry(() => import('../wfiles/AnnualSetPage').then((m) => ({ default: m.AnnualSetPage })));
 const ComplianceMap = lazyWithRetry(() => import('../compliance/ComplianceMap').then((m) => ({ default: m.ComplianceMap })));
@@ -52,6 +53,7 @@ function renderScreen(screen: ViewTab): ReactNode {
     case 'dml_manager': return <DMLManager />;
     case 'dcr_workflow': return <DCRWorkflow />;
     case 'w_files': return <WFilesPage />;
+    case 'signed_copies': return <SignedCopiesOverview />;
     case 'annual_set': return <AnnualSetPage />;
     case 'change_control': return <ChangeControlTracker />;
     case 'compliance_map': return <ComplianceMap />;

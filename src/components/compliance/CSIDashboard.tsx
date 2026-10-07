@@ -13,8 +13,10 @@ import { StatusBadge } from '../shared/StatusBadge';
 import { VARIANT_STYLES, resolveStatusVariant } from '../shared/statusBadgeUtils';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
+import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
 import { CommentThread } from '../shared/CommentThread';
 import { normalizeScore } from '../../lib/csiScore';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 
 const RATING_BUCKETS = ['All', 'Excellent', 'Good', 'Satisfactory', 'Fair', 'Needs Improvement'] as const;
 
@@ -117,6 +119,8 @@ export function CSIDashboard() {
           </div>
           <button onClick={() => { setEditingRecord(null); setShowForm(true); }} className="inline-flex items-center gap-1.5 bg-accent text-accent-fg px-3 py-1.5 rounded-xl text-[12.5px] font-semibold hover:bg-accent-hover transition-colors shadow-sm">+ New Survey</button>
         </div>
+
+        <SignedCopyTracker tab="csi" records={records} rowLabel={(r) => [r.clientName || r.cl, r.surveyDate].filter(Boolean).join(' - ') || r.id} />
 
         {/* KPI strip */}
         <div className="grid grid-cols-2 gap-3">
@@ -360,6 +364,7 @@ export function CSIDashboard() {
             <div className="print:hidden space-y-4 pt-2 border-t border-border-subtle">
               <CommentThread entityType="csi" entityId={selected.id} projectId={selected.id} />
             </div>
+            <SignedCopyCard tab="csi" records={records} rowId={selected.id} />
             {showEvidence && (
               <EvidencePanel entityType="csi" entityId={selected.id} projectId={selected.id} open={showEvidence} onClose={() => setShowEvidence(false)} />
             )}

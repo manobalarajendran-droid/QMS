@@ -12,6 +12,8 @@ import { PTA_DEPARTMENTS } from '../../types';
 import { StatusBadge } from '../shared/StatusBadge';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
+import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
+import { SignedCopyTracker } from '../signedcopies/SignedCopyTracker';
 import { CommentThread } from '../shared/CommentThread';
 import {
   CheckCircle,
@@ -141,6 +143,8 @@ export function DCRWorkflow() {
             + New DCR
           </button>
         </div>
+
+        <SignedCopyTracker tab="dcr" records={records} rowLabel={(r) => [r.dcrNo, r.title].filter(Boolean).join(' - ') || r.id} />
 
         <div className="relative">
           <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary" />
@@ -280,6 +284,7 @@ function DeptSelect({ value, onChange }: { value: string; onChange: (v: string) 
 
 function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () => void }) {
   const { user } = useAuth();
+  const dcrRecords = useDCRStore((s) => s.records);
   const isMR = user?.role === 'admin' || user?.role === 'qa_manager';
 
   const [showEdit, setShowEdit] = useState(false);
@@ -506,6 +511,8 @@ function DCRDetailPanel({ record, onClose }: { record: DCRRecord; onClose: () =>
           <CommentThread entityType="dcr" entityId={record.id} projectId={projectId} />
         </section>
       )}
+
+      <SignedCopyCard tab="dcr" records={dcrRecords} rowId={record.id} />
 
       {showEvidence && (
         <EvidencePanel entityType="dcr" entityId={record.id} projectId={projectId} open={showEvidence} onClose={() => setShowEvidence(false)} />
