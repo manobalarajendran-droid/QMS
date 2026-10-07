@@ -6,8 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileText, Upload, Loader2, Eye } from 'lucide-react';
 import { EvidenceViewer } from '../evidence/EvidenceViewer';
 import { evidenceViewKind } from '../evidence/evidenceFileRules';
-import { WFilePinBox } from './WFilePinBox';
-import { fetchFile, listDrafts, pinStatus, PinNeededError, uploadDraft, type DraftFile, type PinStatus } from './wfilesApi';
+import { fetchFile, listDrafts, uploadDraft, type DraftFile } from './wfilesApi';
 
 interface DCRDraftFilesProps {
   dcrId: string;
@@ -17,7 +16,7 @@ interface DCRDraftFilesProps {
   isMR: boolean;
 }
 
-type Load = { kind: 'loading' } | { kind: 'ready' } | { kind: 'pin'; status: PinStatus } | { kind: 'error'; message: string };
+type Load = { kind: 'loading' } | { kind: 'ready' } | { kind: 'error'; message: string };
 
 function errText(e: unknown, fallback: string): string {
   return e instanceof Error ? e.message : fallback;
@@ -36,19 +35,13 @@ const baseName = (id: string) => id.split('/').pop() ?? id;
 
 interface ReadResult { load: Load; drafts: DraftFile[] }
 
-/** Reads the drafts; says "pin" when the helper wants the PIN first. */
+/** Reads the drafts kept by the laptop helper for this DCR. */
 async function readDrafts(dcrId: string): Promise<ReadResult> {
   try {
     return { load: { kind: 'ready' }, drafts: await listDrafts(dcrId) };
   } catch (e) {
-    return { load: await loadForError(e), drafts: [] };
+    return { load: { kind: 'error', message: errText(e, 'Could not load the files.') }, drafts: [] };
   }
-}
-
-async function loadForError(e: unknown): Promise<Load> {
-  if (!(e instanceof PinNeededError)) return { kind: 'error', message: errText(e, 'Could not load the files.') };
-  try { return { kind: 'pin', status: await pinStatus() }; }
-  catch (e2) { return { kind: 'error', message: errText(e2, 'Could not reach the file helper.') }; }
 }
 
 export function DCRDraftFiles({ dcrId, wFileId, canUpload, approved, isMR }: DCRDraftFilesProps) {
@@ -65,7 +58,6 @@ export function DCRDraftFiles({ dcrId, wFileId, canUpload, approved, isMR }: DCR
   }, []);
 
   const refresh = useCallback(async () => apply(await readDrafts(dcrId)), [dcrId, apply]);
-  const askPinOr = async (e: unknown) => setLoad(await loadForError(e));
 
   useEffect(() => {
     let live = true;
@@ -81,8 +73,7 @@ export function DCRDraftFiles({ dcrId, wFileId, canUpload, approved, isMR }: DCR
       if (evidenceViewKind(name) === 'none') saveBlob(blob, name);
       else setViewing({ blob, name });
     } catch (e) {
-      if (e instanceof PinNeededError) await askPinOr(e);
-      else setError(errText(e, 'Could not open the file.'));
+      setError(errText(e, 'Could not open the file.'));
     } finally {
       setBusy(null);
     }
@@ -96,8 +87,7 @@ export function DCRDraftFiles({ dcrId, wFileId, canUpload, approved, isMR }: DCR
       await uploadDraft(dcrId, file);
       await refresh();
     } catch (e) {
-      if (e instanceof PinNeededError) await askPinOr(e);
-      else setError(errText(e, 'Could not upload the file.'));
+      setError(errText(e, 'Could not upload the file.'));
     } finally {
       setBusy(null);
       if (inputRef.current) inputRef.current.value = '';
@@ -117,7 +107,6 @@ export function DCRDraftFiles({ dcrId, wFileId, canUpload, approved, isMR }: DCR
       <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">Document files</h3>
       {load.kind === 'loading' && <p className="flex items-center gap-2 text-xs text-text-tertiary"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</p>}
       {load.kind === 'error' && <p className="text-xs text-danger-text" role="alert">{load.message}</p>}
-      {load.kind === 'pin' && <WFilePinBox status={load.status} onUnlocked={() => { setLoad({ kind: 'loading' }); void refresh(); }} />}
       {load.kind === 'ready' && (
         <div className="space-y-3">
           <div>

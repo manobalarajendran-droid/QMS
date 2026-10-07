@@ -10,11 +10,10 @@ import { useAuth } from '../../hooks/useAuth';
 import { useDCRStore } from '../../store/useDCRStore';
 import { EvidenceViewer } from '../evidence/EvidenceViewer';
 import { evidenceViewKind } from '../evidence/evidenceFileRules';
-import { WFilePinBox } from './WFilePinBox';
 import { AnnualSetCell } from './AnnualSetCell';
 import { ANNUAL_DEPTS, ANNUAL_DOCS, annualKey, cellState, type AnnualDept, type AnnualDoc, type CellState } from './annualSet';
 import { saveDCRPrefillData } from './dcrPrefill';
-import { fetchFile, PinNeededError, readWFiles, saveBlob, type WFile, type WFilesLoad } from './wfilesApi';
+import { fetchFile, readWFiles, saveBlob, type WFile, type WFilesLoad } from './wfilesApi';
 
 const FIRST_YEAR = 2024;
 
@@ -65,7 +64,6 @@ export function AnnualSetPage() {
       if (evidenceViewKind(f.name) === 'none') saveBlob(blob, f.name);
       else setViewing({ blob, name: f.name });
     } catch (e) {
-      if (e instanceof PinNeededError) { reload(); return; }
       setOpenError(e instanceof Error ? e.message : 'Could not open the file.');
     } finally {
       setBusyId(null);
@@ -111,7 +109,6 @@ export function AnnualSetPage() {
         {header}
         {load.kind === 'loading' && <p className="flex items-center gap-2 text-[12.5px] text-text-tertiary"><Loader2 className="h-4 w-4 animate-spin" /> Loading W: files…</p>}
         {load.kind === 'error' && <p className="rounded-xl border border-border/60 bg-surface p-4 text-[12.5px] text-danger-text" role="alert">{load.message}</p>}
-        {load.kind === 'pin' && <WFilePinBox status={load.status} onUnlocked={reload} />}
       </div>
     );
   }

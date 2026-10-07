@@ -12,19 +12,6 @@ export interface WFile {
   docNo: string | null;
 }
 
-export interface PinStatus {
-  hasPin: boolean;
-  unlockedUntil: number;
-  lockedUntil: number;
-}
-
-/** Thrown when the helper wants the PIN before showing files. */
-export class PinNeededError extends Error {
-  constructor() {
-    super('PIN needed');
-  }
-}
-
 let cachedHost: string | null = null;
 
 /** The helper's current address, or null when the laptop helper is not running. */
@@ -48,26 +35,9 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
     cachedHost = null; // address may have changed; read it again next time
     throw new Error('Cannot reach the QMS file helper. The laptop may be off or offline.');
   }
-  const body = (await res.json().catch(() => ({}))) as { error?: string; needPin?: boolean };
-  if (res.status === 423 && body.needPin) throw new PinNeededError();
+  const body = (await res.json().catch(() => ({}))) as { error?: string };
   if (!res.ok) throw new Error(body.error || `File helper error ${res.status}`);
   return body as T;
-}
-
-export function pinStatus(): Promise<PinStatus> {
-  return call<PinStatus>('/pin/status');
-}
-
-export function setPin(pin: string): Promise<PinStatus> {
-  return call<PinStatus>('/pin/set', { method: 'POST', body: JSON.stringify({ pin }) });
-}
-
-export function unlockPin(pin: string): Promise<PinStatus> {
-  return call<PinStatus>('/pin/unlock', { method: 'POST', body: JSON.stringify({ pin }) });
-}
-
-export function resetPin(email: string): Promise<{ ok: boolean }> {
-  return call<{ ok: boolean }>('/pin/reset', { method: 'POST', body: JSON.stringify({ email }) });
 }
 
 export async function listFiles(): Promise<WFile[]> {
@@ -105,8 +75,7 @@ export async function uploadDraft(dcrId: string, file: File): Promise<void> {
     cachedHost = null;
     throw new Error('Cannot reach the QMS file helper. The laptop may be off or offline.');
   }
-  const body = (await res.json().catch(() => ({}))) as { error?: string; needPin?: boolean };
-  if (res.status === 423 && body.needPin) throw new PinNeededError();
+  const body = (await res.json().catch(() => ({}))) as { error?: string };
   if (!res.ok) throw new Error(body.error || `File helper error ${res.status}`);
 }
 
@@ -119,20 +88,15 @@ export async function fetchFile(id: string): Promise<Blob> {
   return res.blob();
 }
 
-export type WFilesLoad = { kind: 'ready'; files: WFile[] } | { kind: 'pin'; status: PinStatus } | { kind: 'error'; message: string };
+export type WFilesLoad = { kind: 'ready'; files: WFile[] } | { kind: 'error'; message: string };
 
-/** Reads the W: file list; says "pin" when the helper wants the PIN first. */
+/** Reads the W: file list from the laptop helper. */
 export async function readWFiles(): Promise<WFilesLoad> {
   try {
     await getHost(true);
     return { kind: 'ready', files: await listFiles() };
   } catch (e) {
-    if (!(e instanceof PinNeededError)) return { kind: 'error', message: e instanceof Error ? e.message : 'Could not load the files.' };
-    try {
-      return { kind: 'pin', status: await pinStatus() };
-    } catch (e2) {
-      return { kind: 'error', message: e2 instanceof Error ? e2.message : 'Could not reach the file helper.' };
-    }
+    return { kind: 'error', message: e instanceof Error ? e.message : 'Could not load the files.' };
   }
 }
 

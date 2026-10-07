@@ -1,5 +1,5 @@
 // "QMS files (W:)" screen: every file in the Master QMS Repository, READ ONLY,
-// served by the laptop helper after the user types their PIN. To change a
+// served by the laptop helper. To change a
 // document, people raise a DCR (Document changes screen) - files here never change.
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FolderOpen, Folder, ChevronDown, ChevronRight, Search, FileText, RefreshCw, Loader2, FilePen } from 'lucide-react';
@@ -7,10 +7,9 @@ import { navigate } from '../../lib/router';
 import { saveDCRPrefill } from './dcrPrefill';
 import { EvidenceViewer } from '../evidence/EvidenceViewer';
 import { evidenceViewKind } from '../evidence/evidenceFileRules';
-import { WFilePinBox } from './WFilePinBox';
-import { fetchFile, getHost, listFiles, pinStatus, PinNeededError, type PinStatus, type WFile } from './wfilesApi';
+import { fetchFile, getHost, listFiles, type WFile } from './wfilesApi';
 
-type Stage = { kind: 'loading' } | { kind: 'error'; message: string } | { kind: 'pin'; status: PinStatus } | { kind: 'ready' };
+type Stage = { kind: 'loading' } | { kind: 'error'; message: string } | { kind: 'ready' };
 
 function sizeText(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
@@ -38,20 +37,13 @@ function groupByTop(files: WFile[]): [string, WFile[]][] {
 
 interface LoadResult { stage: Stage; files: WFile[] }
 
-/** Reads the files; says "pin" when the helper wants the PIN first. */
+/** Reads the W: file list from the laptop helper. */
 async function readFiles(): Promise<LoadResult> {
   try {
     await getHost(true);
     return { stage: { kind: 'ready' }, files: await listFiles() };
   } catch (e) {
-    if (!(e instanceof PinNeededError)) {
-      return { stage: { kind: 'error', message: e instanceof Error ? e.message : 'Could not load the files.' }, files: [] };
-    }
-    try {
-      return { stage: { kind: 'pin', status: await pinStatus() }, files: [] };
-    } catch (e2) {
-      return { stage: { kind: 'error', message: e2 instanceof Error ? e2.message : 'Could not reach the file helper.' }, files: [] };
-    }
+    return { stage: { kind: 'error', message: e instanceof Error ? e.message : 'Could not load the files.' }, files: [] };
   }
 }
 
@@ -99,7 +91,6 @@ export function WFilesPage() {
       if (evidenceViewKind(f.name) === 'none') saveBlob(blob, f.name);
       else setViewing({ blob, name: f.name });
     } catch (e) {
-      if (e instanceof PinNeededError) { load(); return; }
       setOpenError(e instanceof Error ? e.message : 'Could not open the file.');
     } finally {
       setBusyId(null);
@@ -125,9 +116,6 @@ export function WFilesPage() {
   }
   if (stage.kind === 'error') {
     return <div className="flex flex-col gap-4">{header}<p className="rounded-xl border border-border/60 bg-surface p-4 text-[12.5px] text-danger-text" role="alert">{stage.message}</p></div>;
-  }
-  if (stage.kind === 'pin') {
-    return <div className="flex flex-col gap-4">{header}<WFilePinBox status={stage.status} onUnlocked={load} /></div>;
   }
 
   return (
