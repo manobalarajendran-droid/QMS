@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import {
   Sun, Inbox, AlertTriangle, ClipboardCheck, CheckSquare, MessageSquareHeart,
   FileText, GitBranch, Landmark, Target, ShieldCheck, Users, ListTodo,
-  Workflow, Map, ScrollText, Upload, FolderOpen, CalendarCheck,
+  Workflow, Map, ScrollText, Upload, FolderOpen, CalendarCheck, FileCheck,
 } from 'lucide-react';
 import type { ViewTab } from '../types';
 
@@ -62,6 +62,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: 'dcr_workflow', label: 'Document changes', icon: <GitBranch className={ic} aria-hidden="true" />, screens: ['dcr_workflow', 'change_control'], keywords: 'dcr change request revision' },
       { id: 'w_files', label: 'QMS files (W:)', icon: <FolderOpen className={ic} aria-hidden="true" />, screens: ['w_files'], keywords: 'repository folder procedure form manual pdf w drive files' },
       { id: 'annual_set', label: 'Yearly QMS set', icon: <CalendarCheck className={ic} aria-hidden="true" />, screens: ['annual_set'], keywords: 'objectives issue log risk register opportunity annual yearly' },
+      { id: 'signed_copies', label: 'Signed copies', icon: <FileCheck className={ic} aria-hidden="true" />, screens: ['signed_copies'], keywords: 'signed scanned copy record ncr dcr audit tuv mrm csi objectives' },
     ],
   },
   {
@@ -107,6 +108,7 @@ export const SCREEN_TITLES: Record<ViewTab, string> = {
   dcr_workflow: 'Document changes',
   w_files: 'QMS files (W:)',
   annual_set: 'Yearly QMS set',
+  signed_copies: 'Signed copies',
   change_control: 'Document changes',
   mrm_manager: 'Management review',
   objectives: 'Objectives & KPIs',

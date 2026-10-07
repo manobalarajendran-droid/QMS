@@ -129,7 +129,7 @@ export type ViewTab =
   | 'mr_dashboard' | 'voc' | 'deviations' | 'audit_records' | 'tuv_tracker' | 'change_control'
   | 'tasks' | 'workflows' | 'dml_manager' | 'dcr_workflow' | 'compliance_map' | 'mrm_manager'
   | 'objectives' | 'pms' | 'kpi' | 'today' | 'approvals'
-  | 'users' | 'audit_trail' | 'import_v12' | 'w_files' | 'annual_set';
+  | 'users' | 'audit_trail' | 'import_v12' | 'w_files' | 'annual_set' | 'signed_copies';
 
 // ── Templates ─────────────────────────────────────────────────────────────────
 
