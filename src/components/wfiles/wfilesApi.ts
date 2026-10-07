@@ -118,3 +118,30 @@ export async function fetchFile(id: string): Promise<Blob> {
   if (!res.ok) throw new Error('Could not open the file. Try again.');
   return res.blob();
 }
+
+export type WFilesLoad = { kind: 'ready'; files: WFile[] } | { kind: 'pin'; status: PinStatus } | { kind: 'error'; message: string };
+
+/** Reads the W: file list; says "pin" when the helper wants the PIN first. */
+export async function readWFiles(): Promise<WFilesLoad> {
+  try {
+    await getHost(true);
+    return { kind: 'ready', files: await listFiles() };
+  } catch (e) {
+    if (!(e instanceof PinNeededError)) return { kind: 'error', message: e instanceof Error ? e.message : 'Could not load the files.' };
+    try {
+      return { kind: 'pin', status: await pinStatus() };
+    } catch (e2) {
+      return { kind: 'error', message: e2 instanceof Error ? e2.message : 'Could not reach the file helper.' };
+    }
+  }
+}
+
+/** Saves a file to the user's Downloads (for types the viewer cannot show). */
+export function saveBlob(blob: Blob, name: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}

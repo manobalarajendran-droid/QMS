@@ -20,6 +20,7 @@ export const SCREEN_SLUGS: Record<ViewTab, string> = {
   dml_manager: 'documents',
   dcr_workflow: 'dcr',
   w_files: 'qms-files',
+  annual_set: 'annual-set',
   change_control: 'change-requests',
   mrm_manager: 'management-review',
   objectives: 'objectives',

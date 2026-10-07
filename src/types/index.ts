@@ -129,7 +129,7 @@ export type ViewTab =
   | 'mr_dashboard' | 'voc' | 'deviations' | 'audit_records' | 'tuv_tracker' | 'change_control'
   | 'tasks' | 'workflows' | 'dml_manager' | 'dcr_workflow' | 'compliance_map' | 'mrm_manager'
   | 'objectives' | 'pms' | 'kpi' | 'today' | 'approvals'
-  | 'users' | 'audit_trail' | 'import_v12' | 'w_files';
+  | 'users' | 'audit_trail' | 'import_v12' | 'w_files' | 'annual_set';
 
 // ── Templates ─────────────────────────────────────────────────────────────────
 
@@ -900,6 +900,8 @@ export interface DCRRecord extends BaseEntity, ApprovalMetadata {
   stateHistory?: DCRStateHistoryEntry[];
   /** W: file this DCR proposes to replace (laptop file helper id). */
   wFileId?: string;
+  /** Yearly set tag "doc|department|year" (Quality Objectives, Issue Log, registers). */
+  annualKey?: string;
 }
 
 export interface DCRStateHistoryEntry {
