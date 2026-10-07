@@ -22,19 +22,34 @@ export async function getHost(fresh = false): Promise<string | null> {
   return cachedHost;
 }
 
-async function call<T>(path: string, init?: RequestInit): Promise<T> {
+const NOT_RUNNING = 'The QMS file helper is not running. Ask the QMS admin to start it.';
+
+/**
+ * Fetches from the helper. When the helper was restarted it has a new address,
+ * so on a network failure the address is read again and the call tried once more.
+ */
+async function helperFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const host = await getHost();
-  if (!host) throw new Error('The QMS file helper is not running. Ask the QMS admin to start it.');
-  let res: Response;
+  if (!host) throw new Error(NOT_RUNNING);
   try {
-    res = await fetch(host + path, {
-      ...init,
-      headers: { Authorization: `Bearer ${getAccessToken() ?? ''}`, 'Content-Type': 'application/json' },
-    });
+    return await fetch(host + path, init);
   } catch {
-    cachedHost = null; // address may have changed; read it again next time
-    throw new Error('Cannot reach the QMS file helper. The laptop may be off or offline.');
+    const fresh = await getHost(true).catch(() => null);
+    if (!fresh) { cachedHost = null; throw new Error(NOT_RUNNING); }
+    try {
+      return await fetch(fresh + path, init);
+    } catch {
+      cachedHost = null; // read the address again next time
+      throw new Error('Cannot reach the QMS file helper. The laptop may be off or offline.');
+    }
   }
+}
+
+async function call<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await helperFetch(path, {
+    ...init,
+    headers: { Authorization: `Bearer ${getAccessToken() ?? ''}`, 'Content-Type': 'application/json' },
+  });
   const body = (await res.json().catch(() => ({}))) as { error?: string };
   if (!res.ok) throw new Error(body.error || `File helper error ${res.status}`);
   return body as T;
@@ -61,20 +76,12 @@ export async function listDrafts(dcrId: string): Promise<DraftFile[]> {
 
 /** Sends the raw file to the helper. Needs its own fetch: call() always sends JSON. */
 export async function uploadDraft(dcrId: string, file: File): Promise<void> {
-  const host = await getHost();
-  if (!host) throw new Error('The QMS file helper is not running. Ask the QMS admin to start it.');
   const q = `dcr=${encodeURIComponent(dcrId)}&name=${encodeURIComponent(file.name)}`;
-  let res: Response;
-  try {
-    res = await fetch(`${host}/draft/upload?${q}`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${getAccessToken() ?? ''}`, 'Content-Type': 'application/octet-stream' },
-      body: file,
-    });
-  } catch {
-    cachedHost = null;
-    throw new Error('Cannot reach the QMS file helper. The laptop may be off or offline.');
-  }
+  const res = await helperFetch(`/draft/upload?${q}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getAccessToken() ?? ''}`, 'Content-Type': 'application/octet-stream' },
+    body: file,
+  });
   const body = (await res.json().catch(() => ({}))) as { error?: string };
   if (!res.ok) throw new Error(body.error || `File helper error ${res.status}`);
 }
@@ -82,8 +89,7 @@ export async function uploadDraft(dcrId: string, file: File): Promise<void> {
 /** Downloads one file through a short-lived signed link. */
 export async function fetchFile(id: string): Promise<Blob> {
   const { path } = await call<{ path: string }>(`/sign?id=${encodeURIComponent(id)}`, { method: 'POST' });
-  const host = await getHost();
-  const res = await fetch(host + path);
+  const res = await helperFetch(path);
   if (!res.ok) throw new Error('Could not open the file. Try again.');
   return res.blob();
 }
