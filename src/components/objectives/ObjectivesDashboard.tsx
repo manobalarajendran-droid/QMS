@@ -8,6 +8,7 @@ import type { ObjectiveRecord, ObjectiveRecordStatus } from "../../store/useObje
 import { Target, Plus, ChevronDown, ChevronRight, Users, TrendingUp, Clock, User as UserIcon, Paperclip, MessageSquare, Printer, Search, CheckCircle2 } from "lucide-react";
 import { StatusBadge } from "../shared/StatusBadge";
 import { EvidencePanel } from "../evidence/EvidencePanel";
+import { SignedCopyCard } from "../signedcopies/SignedCopyCard";
 import { CommentThread } from "../shared/CommentThread";
 
 const DEPTS = ["IED / QAQC", "Projects", "OSD", "IT", "Facility", "Procurement", "Store", "P&E", "HR"];
@@ -405,6 +406,7 @@ function ObjectiveModal({
   onTransition: (to: ObjectiveRecordStatus, reason: string, kind: "forward" | "reject" | "reopen" | "verify") => void;
   onToggleArchive: () => void;
 }) {
+  const objRecords = useObjectivesStore((s) => s.records);
   const [formData, setFormData] = useState({
     yr: record?.yr || "",
     dept: record?.dept || "",
@@ -681,6 +683,8 @@ function ObjectiveModal({
             <CommentThread entityType="objective" entityId={record.id} projectId={record.id} />
           </div>
         )}
+
+        {record && <SignedCopyCard tab="objectives" records={objRecords} rowId={record.id} />}
 
         {record && showEvidence && (
           <EvidencePanel entityType="objective" entityId={record.id} projectId={record.id} open={showEvidence} onClose={() => setShowEvidence(false)} />

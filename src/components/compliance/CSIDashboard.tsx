@@ -13,6 +13,7 @@ import { StatusBadge } from '../shared/StatusBadge';
 import { VARIANT_STYLES, resolveStatusVariant } from '../shared/statusBadgeUtils';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
+import { SignedCopyCard } from '../signedcopies/SignedCopyCard';
 import { CommentThread } from '../shared/CommentThread';
 import { normalizeScore } from '../../lib/csiScore';
 
@@ -360,6 +361,7 @@ export function CSIDashboard() {
             <div className="print:hidden space-y-4 pt-2 border-t border-border-subtle">
               <CommentThread entityType="csi" entityId={selected.id} projectId={selected.id} />
             </div>
+            <SignedCopyCard tab="csi" records={records} rowId={selected.id} />
             {showEvidence && (
               <EvidencePanel entityType="csi" entityId={selected.id} projectId={selected.id} open={showEvidence} onClose={() => setShowEvidence(false)} />
             )}
