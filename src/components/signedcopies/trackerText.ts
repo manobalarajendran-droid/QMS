@@ -3,6 +3,12 @@ type Counts = { signed: number; missing: number; notLinked: number } | null;
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
+/** The line to show: counts only once files and links are both trusted; a links load error replaces the counts. */
+export function trackerLine(counts: Counts, linksState: 'loading' | 'ready' | 'error', linksError: string | null): { main: string; sub: string } {
+  if (linksState === 'error') return { main: linksError ?? "Can't count, saved links did not load", sub: '' };
+  return trackerText(counts);
+}
+
 export function trackerText(counts: Counts): { main: string; sub: string } {
   if (!counts) return { main: "Can't count, W: offline", sub: '' };
   const total = counts.signed + counts.missing;

@@ -19,6 +19,30 @@ describe('matches', () => {
   });
 });
 
+describe('resolveSignedCopies: TUV and longest key', () => {
+  const A = '06 - Records (Owner-Controlled, Audit Read)/Audit Records (MR + Auditors only)';
+  const audRow = { id: 'au', groups: [['production'], ['2025']] };
+  const tuvRow = { id: 'tu', groups: [['tuv'], ['2025']] };
+  it('audit ignores a file with "tuv" in its name (not matched, not listed)', () => {
+    const r = resolveSignedCopies('audit', [audRow], [file('f1', 'TUV Production 2025.pdf', A)], []);
+    expect(r.byRow.au).toEqual([]);
+    expect(r.notLinked).toEqual([]);
+  });
+  it('tuv only considers files with "tuv" in the name', () => {
+    const r = resolveSignedCopies('tuv', [tuvRow], [file('f1', 'Internal Audit 2025.pdf', A), file('f2', 'TUV_audit 2025.pdf', A)], []);
+    expect(r.byRow.tu.map((x) => x.fileName)).toEqual(['TUV_audit 2025.pdf']);
+    expect(r.notLinked).toEqual([]);
+  });
+  it('keeps only the longest key when one row key is part of another', () => {
+    const short = { id: 's', groups: [['sabic'], ['2025']] };
+    const long = { id: 'l', groups: [['sabickayan'], ['2025']] };
+    const r = resolveSignedCopies('csi', [short, long], [file('f1', 'CSI SABIC KAYAN 2025.pdf')], []);
+    expect(r.byRow.l).toHaveLength(1);
+    expect(r.byRow.s).toEqual([]);
+    expect(r.notLinked).toEqual([]);
+  });
+});
+
 describe('resolveSignedCopies', () => {
   it('auto-links a file that matches exactly one row', () => {
     const r = resolveSignedCopies('csi', [rowA, rowB], [file('f1', 'FM-CSS-01_CHEMANOL_2025.pdf')], []);

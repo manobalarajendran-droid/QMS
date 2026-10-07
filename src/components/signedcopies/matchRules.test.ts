@@ -63,6 +63,16 @@ describe('matchRules', () => {
     expect(rowKeys('audit', { dep: 'P&E', dt: '2025-03-10' })).toEqual([]);
     expect(rowKeys('csi', { clientName: 'ABC', yr: 2025 })).toEqual([]);
   });
+  it('a key only matches on a token boundary (no longer number or word around it)', () => {
+    expect(hit('ncr', { ref: 'NCR-001' }, 'NCR-001 signed.pdf')).toBe(true);
+    expect(hit('ncr', { ref: 'NCR-001' }, 'NCR-0010 signed.pdf')).toBe(false);
+    expect(hit('audit', { ref: 'IA-01' }, 'Audit IA-01 report.pdf')).toBe(true);
+    expect(hit('audit', { ref: 'IA-01' }, 'Audit IA-010 report.pdf')).toBe(false);
+    const dcr = { dcrNo: 'DCR-001' };
+    expect(hit('dcr', dcr, 'DOCUMENT CHANGE REQUEST 001.pdf')).toBe(true);
+    expect(hit('dcr', dcr, 'DOCUMENT CHANGE REQUEST 2001.pdf')).toBe(false);
+    expect(hit('dcr', dcr, 'DOCUMENT CHANGE REQUEST 0012.pdf')).toBe(false);
+  });
   it('every tab has at least one W: folder', () => {
     for (const r of Object.values(RULES)) expect(r.folders.length).toBeGreaterThan(0);
   });

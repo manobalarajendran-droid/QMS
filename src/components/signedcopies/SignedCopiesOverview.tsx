@@ -9,12 +9,12 @@ import { useTUVStore } from '../../store/useTUVStore';
 import { useMRMStore } from '../../store/useMRMStore';
 import { TAB_LABEL, type SignedTab } from './matchRules';
 import { TAB_SCREEN } from './tabScreen';
-import { trackerText } from './trackerText';
+import { trackerLine } from './trackerText';
 import { useTabSignedCopies } from './useTabSignedCopies';
 
 function TabLine({ tab, records }: { tab: SignedTab; records: ReadonlyArray<{ id: string }> }) {
   const sc = useTabSignedCopies(tab, records);
-  const t = sc.filesState === 'loading' ? { main: 'Counting…', sub: '' } : trackerText(sc.resolved.counts);
+  const t = sc.filesState === 'loading' ? { main: 'Counting…', sub: '' } : trackerLine(sc.resolved.counts, sc.linksState, sc.linksError);
   return (
     <li>
       <button type="button" onClick={() => navigate(TAB_SCREEN[tab])}

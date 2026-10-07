@@ -21,7 +21,7 @@ export function SignedCopyCard({ tab, records, rowId }: Props) {
   const canEdit = roleHasPermission(useAuthStore((s) => s.currentUser)?.role, 'canEdit');
   const [picking, setPicking] = useState(false);
   const files = sc.resolved.byRow[rowId] ?? [];
-  const empty = files.length === 0 ? emptyCardNote(sc.filesState) : null;
+  const empty = files.length === 0 && sc.linksState !== 'error' ? emptyCardNote(sc.filesState) : null;
 
   return (
     <section className="bg-surface rounded-xl border border-border p-4 print:hidden" aria-label="Signed copy">

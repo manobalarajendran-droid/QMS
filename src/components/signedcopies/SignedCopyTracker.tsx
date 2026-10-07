@@ -5,7 +5,7 @@ import { roleHasPermission } from '../../lib/permissions';
 import { useWFileOpener } from '../wfiles/useWFileOpener';
 import { WFileButton } from '../wfiles/WFileOpen';
 import type { SignedTab } from './matchRules';
-import { trackerText } from './trackerText';
+import { trackerLine } from './trackerText';
 import { useTabSignedCopies } from './useTabSignedCopies';
 
 interface Props<R extends { id: string }> { tab: SignedTab; records: ReadonlyArray<R>; rowLabel: (r: R) => string }
@@ -19,7 +19,7 @@ export function SignedCopyTracker<R extends { id: string }>({ tab, records, rowL
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState<Record<string, string>>({});
   if (sc.filesState === 'loading') return <p className="text-xs text-text-tertiary print:hidden">Counting signed copies…</p>;
-  const t = trackerText(sc.resolved.counts);
+  const t = trackerLine(sc.resolved.counts, sc.linksState, sc.linksError);
   const loose = sc.resolved.notLinked;
 
   return (
@@ -56,7 +56,7 @@ export function SignedCopyTracker<R extends { id: string }>({ tab, records, rowL
           ))}
         </ul>
       )}
-      {sc.linksError && <p className="mt-1 text-xs text-red-600">{sc.linksError}</p>}
+      {sc.linksError && sc.linksState !== 'error' && <p className="mt-1 text-xs text-red-600">{sc.linksError}</p>}
       {opener.error && <p className="mt-1 text-xs text-red-600">{opener.error}</p>}
       {opener.viewer}
     </div>
