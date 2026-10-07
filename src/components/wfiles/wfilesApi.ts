@@ -86,6 +86,19 @@ export async function uploadDraft(dcrId: string, file: File): Promise<void> {
   if (!res.ok) throw new Error(body.error || `File helper error ${res.status}`);
 }
 
+/** Saves an evidence file in the laptop "QMS Evidence" folder. Returns its helper id ('ev:...'). */
+export async function uploadEvidence(entityType: string, entityId: string, file: File): Promise<{ id: string; size: number }> {
+  const q = `type=${encodeURIComponent(entityType)}&id=${encodeURIComponent(entityId)}&name=${encodeURIComponent(file.name)}`;
+  const res = await helperFetch(`/evidence/upload?${q}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getAccessToken() ?? ''}`, 'Content-Type': 'application/octet-stream' },
+    body: file,
+  });
+  const body = (await res.json().catch(() => ({}))) as { error?: string; file?: { id: string; size: number } };
+  if (!res.ok || !body.file) throw new Error(body.error || `File helper error ${res.status}`);
+  return body.file;
+}
+
 /** Downloads one file through a short-lived signed link. */
 export async function fetchFile(id: string): Promise<Blob> {
   const { path } = await call<{ path: string }>(`/sign?id=${encodeURIComponent(id)}`, { method: 'POST' });

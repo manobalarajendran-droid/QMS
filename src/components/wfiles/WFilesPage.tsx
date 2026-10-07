@@ -2,12 +2,14 @@
 // served by the laptop helper. To change a
 // document, people raise a DCR (Document changes screen) - files here never change.
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FolderOpen, Folder, ChevronDown, ChevronRight, Search, FileText, RefreshCw, Loader2, FilePen } from 'lucide-react';
+import { FolderOpen, Folder, ChevronDown, ChevronRight, Search, FileText, RefreshCw, Loader2, FilePen, AlertTriangle } from 'lucide-react';
 import { navigate } from '../../lib/router';
 import { saveDCRPrefill } from './dcrPrefill';
 import { EvidenceViewer } from '../evidence/EvidenceViewer';
 import { evidenceViewKind } from '../evidence/evidenceFileRules';
 import { fetchFile, getHost, listFiles, type WFile } from './wfilesApi';
+import { useDMLStore } from '../../store/useDMLStore';
+import { buildWFileIndex } from './wfileIndex';
 
 type Stage = { kind: 'loading' } | { kind: 'error'; message: string } | { kind: 'ready' };
 
@@ -55,6 +57,13 @@ export function WFilesPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [viewing, setViewing] = useState<{ blob: Blob; name: string } | null>(null);
   const [openError, setOpenError] = useState<string | null>(null);
+  const [showOrphans, setShowOrphans] = useState(false);
+  const dmlRecords = useDMLStore((s) => s.records);
+  const orphanIds = useMemo(
+    () => new Set(buildWFileIndex(files, dmlRecords.map((r) => r.no)).orphans.map((f) => f.id)),
+    [files, dmlRecords],
+  );
+  const orphans = useMemo(() => files.filter((f) => orphanIds.has(f.id)), [files, orphanIds]);
 
   const apply = useCallback((r: LoadResult) => {
     setFiles(r.files);
@@ -129,6 +138,30 @@ export function WFilesPage() {
       </div>
       <p className="text-[11px] text-text-tertiary">{shown.length} of {files.length} files</p>
       {openError && <p className="text-[12px] text-danger-text" role="alert">{openError}</p>}
+      {orphans.length > 0 && (
+        <section className="rounded-xl border border-warning/40 bg-warning-subtle">
+          <button onClick={() => setShowOrphans((v) => !v)} aria-expanded={showOrphans}
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[12.5px] font-semibold text-warning-text">
+            {showOrphans ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+            <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+            <span className="flex-1">{orphans.length} files have a document number that is not on the Document Master List</span>
+          </button>
+          {showOrphans && (
+            <ul className="border-t border-warning/30 bg-surface">
+              {orphans.map((f) => (
+                <li key={f.id}>
+                  <button onClick={() => void openFile(f)} disabled={busyId !== null}
+                    className="flex w-full min-w-0 items-center gap-2 px-3 py-1.5 text-left hover:bg-surface-hover disabled:opacity-60">
+                    {busyId === f.id ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /> : <FileText className="h-3.5 w-3.5 shrink-0 text-text-tertiary" />}
+                    <span className="min-w-0 flex-1 truncate text-[12px] text-text-primary">{f.name}</span>
+                    <span className="hidden shrink-0 truncate text-[10.5px] text-text-tertiary sm:block">{f.folder}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
       <div className="flex flex-col gap-2">
         {groups.map(([top, list]) => {
           const isOpen = searching || !!open[top];
@@ -153,6 +186,7 @@ export function WFilesPage() {
                           <span className="block truncate text-[10.5px] text-text-tertiary">{f.folder.split('/').slice(1).join(' / ') || top}</span>
                         </span>
                         {f.docNo && <span className="shrink-0 rounded-md bg-accent-subtle px-1.5 py-0.5 text-[10.5px] font-semibold text-accent-text">{f.docNo}</span>}
+                        {orphanIds.has(f.id) && <span title="This number is not on the Document Master List" className="shrink-0 rounded-md bg-warning-subtle px-1.5 py-0.5 text-[10px] font-bold text-warning-text">NOT ON DML</span>}
                         <span className="hidden shrink-0 text-[10.5px] text-text-tertiary sm:block">{sizeText(f.size)} · {f.at.slice(0, 10)}</span>
                       </button>
                       <button onClick={() => { saveDCRPrefill(f); navigate('dcr_workflow'); }}

@@ -10,6 +10,8 @@ import { StatusBadge } from '../shared/StatusBadge';
 import { StateTransitionBar } from '../shared/StateTransitionBar';
 import { EvidencePanel } from '../evidence/EvidencePanel';
 import { CommentThread } from '../shared/CommentThread';
+import { DMLWFileCard } from './DMLWFileCard';
+import { useWFiles } from '../wfiles/useWFiles';
 
 const LEVEL_COLOR: Record<string, string> = {
   'L1': 'text-purple-700 bg-purple-100 dark:bg-purple-900/30 dark:text-purple-300',
@@ -123,6 +125,10 @@ export function DMLManager() {
   const [filterAssignee, setFilterAssignee] = useState<string>('All');
   const [showFilters, setShowFilters] = useState(false);
   const [overdueOnly, setOverdueOnly] = useState(false);
+  const [noFileOnly, setNoFileOnly] = useState(false);
+  const { state: wState, index: wIndex } = useWFiles();
+  const wReady = wState.kind === 'ready';
+  const hasNoWFile = (r: DMLRecord) => wReady && wIndex.filesFor(r.no).length === 0;
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'due' | 'no'>('newest');
   const [expandedLevels, setExpandedLevels] = useState<Record<string, boolean>>({ L1: true, L2: true, L3: false, L4: false });
   const [selectedId, setSelectedId] = useRouteRecord('dml_manager');
@@ -144,6 +150,7 @@ export function DMLManager() {
       if (filterDept !== 'All' && r.dept !== filterDept) return false;
       if (filterAssignee !== 'All' && r.assignedTo !== filterAssignee) return false;
       if (overdueOnly && !isOverdueDML(r)) return false;
+      if (noFileOnly && !(wReady && wIndex.filesFor(r.no).length === 0)) return false;
       if (search) {
         const q = search.toLowerCase();
         return (r.tt || '').toLowerCase().includes(q) || (r.no || '').toLowerCase().includes(q);
@@ -162,7 +169,7 @@ export function DMLManager() {
       return 0;
     });
     return list;
-  }, [records, showArchived, filterLevel, filterStatus, filterDept, filterAssignee, overdueOnly, search, sortBy]);
+  }, [records, showArchived, filterLevel, filterStatus, filterDept, filterAssignee, overdueOnly, noFileOnly, wReady, wIndex, search, sortBy]);
 
   const byLevel = useMemo(() => {
     const groups: Record<string, DMLRecord[]> = { L1: [], L2: [], L3: [], L4: [] };
@@ -184,6 +191,7 @@ export function DMLManager() {
     (filterDept !== 'All' ? 1 : 0) +
     (filterAssignee !== 'All' ? 1 : 0) +
     (overdueOnly ? 1 : 0) +
+    (noFileOnly ? 1 : 0) +
     (showArchived ? 1 : 0);
 
   const clearFilters = () => {
@@ -192,6 +200,7 @@ export function DMLManager() {
     setFilterDept('All');
     setFilterAssignee('All');
     setOverdueOnly(false);
+    setNoFileOnly(false);
     setShowArchived(false);
   };
 
@@ -311,6 +320,10 @@ export function DMLManager() {
                   <input type="checkbox" checked={overdueOnly} onChange={(e) => setOverdueOnly(e.target.checked)} className="rounded border-border" />
                   Overdue only
                 </label>
+                <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary" title={wReady ? '' : 'W: list not loaded yet'}>
+                  <input type="checkbox" checked={noFileOnly} disabled={!wReady} onChange={(e) => setNoFileOnly(e.target.checked)} className="rounded border-border" />
+                  No file on W: only
+                </label>
                 <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-secondary">
                   <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="rounded border-border" />
                   Show archived
@@ -373,6 +386,8 @@ export function DMLManager() {
                           <span className="font-medium text-text-primary line-clamp-2">{r.tt || r.no}</span>
                           <div className="flex items-center gap-1 shrink-0">
                             {overdue && <span className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-danger-subtle text-danger-text">OVERDUE</span>}
+                            {hasNoWFile(r) && <span title="No file on W: has this number" className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-warning-subtle text-warning-text">NO FILE</span>}
+                            {r.wFilePending && <span title="Approved change: W: file not swapped yet" className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-warning-subtle text-warning-text">SWAP W:</span>}
                             <StatusBadge status={STATUS_LABELS[normalizeStatus(r.status)] ?? r.status} />
                           </div>
                         </div>
@@ -506,6 +521,8 @@ function DMLDetailPanel({
           <InfoField label="Due Date" value={record.dueDate} />
         </div>
       </div>
+
+      <DMLWFileCard record={record} isMR={isMR} />
 
       <div className="bg-surface rounded-xl border border-border p-4">
         <h3 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-2">Notes</h3>

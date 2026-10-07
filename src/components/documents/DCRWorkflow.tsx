@@ -3,6 +3,8 @@ import { DCRDraftFiles } from '../wfiles/DCRDraftFiles';
 import { prefillLinks, takeDCRPrefill, type DCRPrefill } from '../wfiles/dcrPrefill';
 import { useRouteRecord } from '../../lib/router';
 import { useDCRStore } from '../../store/useDCRStore';
+import { useDMLStore } from '../../store/useDMLStore';
+import { normDocNo } from '../wfiles/wfileIndex';
 import type { DCRRecord, DCRStatus } from '../../store/useDCRStore';
 import { useAuth } from '../../hooks/useAuth';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -549,6 +551,7 @@ function DCRFormModal({
   prefill?: DCRPrefill;
 }) {
   const authUsers = useAuthStore((s) => s.users);
+  const dmlRecords = useDMLStore((s) => s.records);
 
   const [formData, setFormData] = useState<DCRFormData>({
     docNo: initial?.docNo ?? prefill?.docNo ?? '',
@@ -564,14 +567,23 @@ function DCRFormModal({
     comments: initial?.comments ?? '',
   });
 
+  // The Document Master List row this DCR changes, found by document number.
+  const dmlMatch = useMemo(() => {
+    const key = normDocNo(formData.docNo);
+    return key ? dmlRecords.find((d) => !d.isArchived && normDocNo(d.no) === key) : undefined;
+  }, [dmlRecords, formData.docNo]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-surface w-full max-w-3xl rounded-xl p-4 shadow-2xl border border-border my-8">
         <h3 className="text-xl font-bold mb-4">{initial ? 'Edit Change Request' : 'New Change Request'}</h3>
-        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ ...formData, docId: initial?.docId ?? '', ...(prefill && !initial ? prefillLinks(prefill) : {}) }); }} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ ...formData, docId: dmlMatch?.id ?? initial?.docId ?? '', ...(prefill && !initial ? prefillLinks(prefill) : {}) }); }} className="space-y-4">
           <fieldset className="grid grid-cols-2 gap-4">
             <Labeled label="Document Number">
               <input className={inputCls} value={formData.docNo} onChange={(e) => setFormData({ ...formData, docNo: e.target.value })} placeholder="e.g. PTA-HSE-P-02" required />
+              {formData.docNo.trim() && (dmlMatch
+                ? <p className="mt-1 text-[11px] text-success-text">On the Document Master List: {dmlMatch.tt || dmlMatch.no} ({dmlMatch.rv || 'no rev'})</p>
+                : <p className="mt-1 text-[11px] text-warning-text">Not on the Document Master List. Approval will not update any DML row.</p>)}
             </Labeled>
             <Labeled label="Document Title">
               <input className={inputCls} value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />

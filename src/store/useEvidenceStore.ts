@@ -39,6 +39,8 @@ export interface EvidenceAttachment {
   dataUrl?: string;
   /** External URL (for linked evidence not stored locally) */
   externalUrl?: string;
+  /** W: helper id when this is a link to a file on the W: drive (no copy kept) */
+  wFileId?: string;
   /** SHA-256 hash of the file for integrity verification */
   hash?: string;
   /** Who uploaded it */

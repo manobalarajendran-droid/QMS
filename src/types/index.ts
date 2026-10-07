@@ -853,6 +853,17 @@ export interface DMLRecord extends BaseEntity, ApprovalMetadata {
   assignedTo?: string;
   dueDate?: string;
   stateHistory?: DMLStateHistoryEntry[];
+  /** Set when a DCR is approved: the new revision is agreed, but MR still has to put the new file on W:. */
+  wFilePending?: DMLWFilePending;
+}
+
+export interface DMLWFilePending {
+  dcrNo: string;
+  /** Revision the W: file must carry after the swap. */
+  rv: string;
+  at: string;
+  /** W: file the DCR proposed to replace, if one was picked. */
+  wFileId?: string;
 }
 
 export interface DMLStateHistoryEntry {

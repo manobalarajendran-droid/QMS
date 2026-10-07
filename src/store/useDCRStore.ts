@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useAuditStore } from './useAuditStore';
-import { useDMLStore } from './useDMLStore';
+import { useDMLStore, computeNextRevision } from './useDMLStore';
 import { generateRecordId, generateDocNo } from '../lib/idGenerator';
+import { normDocNo } from '../components/wfiles/wfileIndex';
 import type { DCRRecord, DCRStatus, DCRStateHistoryEntry } from '../types';
 
 export type { DCRRecord, DCRStatus, DCRStateHistoryEntry } from '../types';
@@ -29,6 +30,13 @@ export interface DCRStore {
  */
 export function generateDCRNo(records: DCRRecord[]): string {
   return generateDocNo('DCR', new Date().getFullYear(), records, 'dcrNo', 3);
+}
+
+/** "2" or "02" -> "Rev 02"; keeps "Rev 02" as is; empty stays empty. */
+function revLabel(rev?: string): string {
+  const t = (rev ?? '').trim();
+  if (!t) return '';
+  return /^\d+$/.test(t) ? `Rev ${t.padStart(2, '0')}` : t;
 }
 
 export const useDCRStore = create<DCRStore>()(
@@ -187,16 +195,23 @@ export const useDCRStore = create<DCRStore>()(
           comments || 'DCR approved by General Manager'
         );
 
-        // v12 parity fix: approving a DCR propagates its revision into the matching DML record
-        // (matched by document number), setting that document Active. See saveDCR() in v12.
+        // Approving a DCR moves its DML row to the next revision and flags that the
+        // controlled copy on W: still has to be swapped by MR. The row is found by the
+        // DCR's docId first, then by document number ("PT/QSP/MR/02" == "PT-QSP-MR-02").
         const dmlStore = useDMLStore.getState();
-        const match = dmlStore.records.find((d) => (d.no ?? '').trim() === (existing.docNo ?? '').trim());
+        const key = normDocNo(existing.docNo);
+        const match =
+          dmlStore.records.find((d) => !!existing.docId && d.id === existing.docId) ??
+          (key ? dmlStore.records.find((d) => normDocNo(d.no) === key) : undefined);
         if (match) {
+          const rv = revLabel(existing.revNo) || computeNextRevision(match.rv);
           dmlStore.updateRecord(match.id, {
-            rv: existing.revNo || match.rv,
+            rv,
             reviewDate: todayStr,
             status: 'Active',
+            wFilePending: { dcrNo: existing.dcrNo, rv, at: now, ...(existing.wFileId ? { wFileId: existing.wFileId } : {}) },
           });
+          if (existing.docId !== match.id) get().updateRecord(id, { docId: match.id });
         }
       },
 

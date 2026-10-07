@@ -8,6 +8,9 @@ import { apiFetch, apiRaw, ApiError } from '../../lib/apiClient';
 import { roleHasPermission } from '../../lib/permissions';
 import { EVIDENCE_ACCEPT, checkEvidenceFile, evidenceViewKind } from './evidenceFileRules';
 import { EvidenceViewer } from './EvidenceViewer';
+import { WFileAttachPicker } from '../wfiles/WFileAttachPicker';
+import { useWFileOpener } from '../wfiles/useWFileOpener';
+import { uploadEvidence, type WFile } from '../wfiles/wfilesApi';
 
 type EvidenceEntityType =
   'requirement' | 'test' | 'capa' | 'ncr' | 'dcr' | 'audit' | 'mrm' | 'csi'
@@ -34,6 +37,8 @@ interface ServerEvidenceFile {
   uploadedBy: string;
   uploadedByName?: string;
   uploadedAt: string;
+  /** Set when the row is a link to a W: file (POST /evidence/link). */
+  wFileId?: string;
 }
 
 function toEvidenceAttachment(item: ServerEvidenceFile): EvidenceAttachment {
@@ -50,6 +55,7 @@ function toEvidenceAttachment(item: ServerEvidenceFile): EvidenceAttachment {
     uploadedBy: item.uploadedByName || item.uploadedBy,
     uploadedAt: item.uploadedAt,
     reviewed: false,
+    wFileId: item.wFileId || undefined,
   };
 }
 
@@ -147,16 +153,37 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
     });
   }, [readFileAsDataUrl, addAttachment, entityId, entityType, currentUser]);
 
+  // The file is saved on the office laptop (helper + tunnel), not in the cloud.
+  // The API keeps only the row that points at it.
   const uploadToServer = useCallback(async (file: File, desc: string) => {
-    const form = new FormData();
-    form.append('file', file, file.name);
-    form.append('entityType', entityType);
-    form.append('entityId', entityId);
-    if (desc) form.append('description', desc);
-    const response = await apiRaw('/evidence/upload', { method: 'POST', body: form });
-    const data = (await response.json()) as { evidence: ServerEvidenceFile };
+    const saved = await uploadEvidence(entityType, entityId, file);
+    const data = await apiFetch<{ evidence: ServerEvidenceFile }>('/evidence/link', {
+      method: 'POST',
+      body: JSON.stringify({ entityType, entityId, wFileId: saved.id, fileName: file.name, fileSize: saved.size, description: desc }),
+    });
     setServerAttachments((current) => [toEvidenceAttachment(data.evidence), ...current]);
   }, [entityId, entityType]);
+
+  const wOpener = useWFileOpener();
+  const [linking, setLinking] = useState(false);
+
+  /** Saves a link to a W: file on this record. The file stays on W: only. */
+  const linkWFile = async (file: WFile) => {
+    setLinking(true);
+    setErrors([]);
+    try {
+      const data = await apiFetch<{ evidence: ServerEvidenceFile }>('/evidence/link', {
+        method: 'POST',
+        body: JSON.stringify({ entityType, entityId, wFileId: file.id, fileName: file.name, description: description.trim() }),
+      });
+      setServerAttachments((current) => [toEvidenceAttachment(data.evidence), ...current]);
+      setDescription('');
+    } catch (error) {
+      setErrors([messageOf(error, 'Could not attach the W: file.')]);
+    } finally {
+      setLinking(false);
+    }
+  };
 
   const handleFiles = useCallback(
     async (files: FileList | null) => {
@@ -197,6 +224,10 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
   );
 
   const handleDownload = async (attachment: EvidenceAttachment) => {
+    if (attachment.wFileId) {
+      await wOpener.open({ id: attachment.wFileId, name: attachment.fileName });
+      return;
+    }
     if (attachment.dataUrl) {
       const link = document.createElement('a');
       link.href = attachment.dataUrl;
@@ -224,7 +255,7 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
   };
 
   const handleView = async (attachment: EvidenceAttachment) => {
-    if (evidenceViewKind(attachment.fileName) === 'none') {
+    if (attachment.wFileId || evidenceViewKind(attachment.fileName) === 'none') {
       await handleDownload(attachment);
       return;
     }
@@ -284,6 +315,7 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
 
   return (
     <>
+    {wOpener.viewer}
     {viewing && (
       <EvidenceViewer
         blob={viewing.blob}
@@ -393,6 +425,11 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
             </div>
           )}
 
+          {isServerMode && canUpload && (
+            <WFileAttachPicker onPick={(f) => void linkWFile(f)} busy={linking} />
+          )}
+          {wOpener.error && <p className="text-xs text-danger-text">{wOpener.error}</p>}
+
           {/* Evidence list */}
           {visibleAttachments.length === 0 ? (
             <div className="text-center py-5 text-text-tertiary">
@@ -411,7 +448,7 @@ export function EvidencePanel({ entityType, entityId, open, onClose }: Props) {
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-text-primary truncate">{att.fileName}</p>
                       <p className="text-xs text-text-tertiary">
-                        {t('evidence.fileSize', { size: formatFileSize(att.sizeBytes) })}
+                        {att.wFileId?.startsWith('ev:') ? `On office laptop · ${formatFileSize(att.sizeBytes)}` : att.wFileId ? 'Link to W: file' : t('evidence.fileSize', { size: formatFileSize(att.sizeBytes) })}
                         {' · '}
                         {att.uploadedBy}
                         {' · '}
